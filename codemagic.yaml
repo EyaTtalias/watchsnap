@@ -22,10 +22,6 @@ workflows:
           export BUILD_TARGET=capacitor
           npm run build
           npx cap sync ios
-      - name: Install CocoaPods
-        script: |
-          cd ios/App
-          pod install
       - name: Build iOS
         script: |
           xcode-project use-profiles
