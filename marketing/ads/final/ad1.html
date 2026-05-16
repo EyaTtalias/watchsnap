@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Scan Result</title>
+<style>
+/* ── All values scaled at 1.7× from the real app's Tailwind/CSS ── */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1080px; height:1080px; overflow:hidden;
+  background:#0A0A0A;
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:#fff;
+  position:relative;
+}
+
+/* ─────── iOS Status bar ─────── */
+.status-bar {
+  height:44px;
+  background:#0A0A0A;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px 0 36px;
+  flex-shrink:0;
+}
+.sb-time { font-size:17px; font-weight:600; letter-spacing:0.1px; }
+.sb-icons { display:flex; align-items:center; gap:6px; }
+.sb-signal { display:flex; align-items:flex-end; gap:1.5px; }
+.sb-bar { width:4px; border-radius:1px; background:#fff; }
+.sb-wifi { font-size:14px; line-height:1; }
+.sb-battery {
+  width:28px; height:14px; border-radius:3px;
+  border:1.5px solid rgba(255,255,255,0.6);
+  position:relative; display:flex; align-items:center;
+}
+.sb-battery::after {
+  content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%);
+  width:3px; height:7px; background:rgba(255,255,255,0.5); border-radius:0 2px 2px 0;
+}
+.sb-battery-fill {
+  height:100%; width:75%; background:#fff; border-radius:1.5px 0 0 1.5px;
+  margin:1.5px;
+}
+
+/* ─────── Navbar (exact replica of Navbar.tsx) ─────── */
+.navbar {
+  height:95px;
+  background:rgba(10,10,10,0.97);
+  border-bottom:1.5px solid #1E1E1E;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px;
+  flex-shrink:0;
+}
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.nav-logo-circle {
+  width:51px; height:51px; border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.nav-brand { font-size:28px; font-weight:700; letter-spacing:-0.5px; color:#fff; }
+.nav-brand .snap {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.nav-links { display:flex; align-items:center; gap:36px; }
+.nav-link { font-size:21px; font-weight:500; color:#6b7280; text-decoration:none; }
+.nav-link.active { color:#C9A84C; }
+.nav-upgrade {
+  display:flex; align-items:center; gap:8px;
+  border-radius:9999px;
+  background:linear-gradient(to right,#C9A84C,#A8882F);
+  padding:10px 24px;
+  font-size:18px; font-weight:700; color:#000;
+  flex-shrink:0;
+}
+
+/* ─────── Content area ─────── */
+.content {
+  padding:0 110px;
+  display:flex; flex-direction:column; gap:20px;
+  padding-top:36px;
+}
+
+/* ─────── Hero image card (ResultCard ① — h-64 + border) ─────── */
+/* border-2 border-red-500/50, rounded-3xl, overflow-hidden, relative */
+.hero-card {
+  border-radius:41px;
+  border:3.5px solid rgba(239,68,68,0.5);
+  overflow:hidden;
+  position:relative;
+  height:420px;
+  flex-shrink:0;
+}
+
+/* Simulated watch photo background */
+.hero-photo {
+  width:100%; height:100%;
+  background:
+    radial-gradient(ellipse 90% 75% at 50% 40%, #1c1410 0%, #100a08 40%, #070404 100%);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+/* Subtle film grain on photo */
+.hero-photo::before {
+  content:''; position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.15;
+  z-index:1;
+}
+
+/* ── CSS Patek Philippe Calatrava watch (photo prop) ── */
+.watch-in-photo {
+  position:relative; width:240px; height:240px; z-index:2;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,0.9)) drop-shadow(0 4px 12px rgba(0,0,0,0.8));
+}
+.w-glow-photo {
+  position:absolute; inset:-28px; border-radius:50%;
+  background:radial-gradient(circle, rgba(210,200,160,0.12) 0%, transparent 62%);
+}
+.w-case-photo {
+  width:240px; height:240px; border-radius:50%;
+  background:linear-gradient(148deg,#e6e6e6 0%,#b0b0b0 22%,#dcdcdc 44%,#909090 66%,#d4d4d4 100%);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:
+    0 0 0 4px #a0a0a0,
+    0 0 0 7.5px #303030,
+    0 28px 60px rgba(0,0,0,0.95),
+    0 6px 18px rgba(0,0,0,0.7),
+    inset 0 2px 4px rgba(255,255,255,0.55);
+  position:relative; z-index:1;
+}
+.w-dial-photo {
+  width:200px; height:200px; border-radius:50%;
+  background:radial-gradient(circle at 34% 26%, #faf7ed 0%, #eedfbf 46%, #d6c898 100%);
+  position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+}
+.w-dial-photo::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 67% 23%, rgba(255,255,255,0.28) 0%, transparent 50%);
+  border-radius:50%;
+}
+.w-ring-p { position:absolute; inset:8px; border-radius:50%; border:0.5px solid rgba(110,88,36,0.24); }
+.w-ring-p2 { position:absolute; inset:2px; border-radius:50%; border:0.5px solid rgba(110,88,36,0.12); }
+/* Hour markers */
+.hm-p {
+  position:absolute; top:9px; left:calc(50% - 1.5px);
+  width:3px; height:11px; background:rgba(45,34,10,0.6); border-radius:1.5px;
+  transform-origin:center 91px;
+}
+.hm-p.lg { width:4px; height:15px; top:7px; background:rgba(30,22,6,0.85); transform-origin:center 93px; }
+/* Dial text */
+.dp-crown { position:absolute; top:40px; font-size:10px; color:#1e1608; text-align:center; width:100%; }
+.dp-brand { position:absolute; top:56px; font-size:10px; font-weight:900; color:#18120a; letter-spacing:2.2px; text-align:center; width:100%; }
+.dp-city { position:absolute; top:71px; font-size:6.5px; color:#7a6840; letter-spacing:2px; text-align:center; width:100%; }
+/* Subdial at 6 */
+.dp-subdial {
+  position:absolute; bottom:40px; width:36px; height:36px;
+  border-radius:50%; border:0.5px solid rgba(100,80,38,0.4);
+}
+.dp-subdial::after { content:''; position:absolute; inset:5px; border-radius:50%; border:0.5px solid rgba(100,80,38,0.22); }
+/* Hands */
+.dp-hh {
+  position:absolute; bottom:50%; left:calc(50% - 4.5px); width:9px; height:68px;
+  background:linear-gradient(180deg,#161008 0%,#2c2010 100%);
+  border-radius:4.5px 4.5px 2px 2px; transform-origin:bottom center; transform:rotate(162deg);
+  z-index:3; box-shadow:0 2px 5px rgba(0,0,0,0.55);
+}
+.dp-mh {
+  position:absolute; bottom:50%; left:calc(50% - 3.5px); width:7px; height:86px;
+  background:linear-gradient(180deg,#161008 0%,#2c2010 100%);
+  border-radius:3.5px 3.5px 2px 2px; transform-origin:bottom center; transform:rotate(43deg);
+  z-index:3; box-shadow:0 2px 5px rgba(0,0,0,0.55);
+}
+.dp-center {
+  position:absolute; width:12px; height:12px; border-radius:50%;
+  background:#1e1608; box-shadow:0 0 5px rgba(0,0,0,0.8); z-index:5;
+}
+
+/* Gradient overlay from-[#0D0D0D] via-[#0D0D0D]/70 to-transparent */
+.hero-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, #0D0D0D 0%, rgba(13,13,13,0.72) 45%, transparent 80%);
+  z-index:3;
+}
+
+/* Red top strip — bg-red-500/90 */
+.hero-replica-strip {
+  position:absolute; top:0; left:0; right:0;
+  background:rgba(239,68,68,0.9);
+  padding:14px 0;
+  text-align:center;
+  z-index:10;
+}
+.hrs-text {
+  font-size:22px; font-weight:900; color:#fff; letter-spacing:0.16em;
+}
+
+/* Brand/model text overlay at bottom */
+.hero-textblock {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:0 34px 32px;
+  z-index:5;
+}
+.ht-brand {
+  font-size:76px; font-weight:900; letter-spacing:-1.5px; line-height:1;
+  color:#fca5a5; /* red-300 */
+  margin-bottom:6px;
+}
+.ht-model {
+  font-size:32px; font-weight:700; color:#fff;
+  margin-bottom:10px;
+}
+.ht-model .replica-suffix { font-size:28px; font-weight:600; color:#f87171; margin-left:10px; }
+.ht-ref {
+  display:inline-block;
+  background:rgba(0,0,0,0.45);
+  border-radius:10px; padding:6px 14px;
+  font-size:22px; color:#e5e7eb; font-family:monospace; font-weight:600;
+}
+
+/* ─────── Auth badge (ResultCard ②) ─────── */
+/* border-2 border-red-500/60 bg-red-500/18 rounded-2xl px-5 py-4 */
+.auth-badge {
+  display:flex; align-items:center; gap:26px;
+  border-radius:27px;
+  border:3px solid rgba(239,68,68,0.60);
+  background:rgba(239,68,68,0.18);
+  padding:24px 34px;
+  flex-shrink:0;
+}
+.ab-icon-circle {
+  width:74px; height:74px; border-radius:50%;
+  background:rgba(239,68,68,0.20);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.ab-icon-circle svg { width:40px; height:40px; }
+.ab-text-col { flex:1; min-width:0; }
+.ab-label-row { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+.ab-pulse {
+  width:17px; height:17px; border-radius:50%; background:#f87171;
+  flex-shrink:0;
+  animation:pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.85); }
+}
+.ab-label { font-size:27px; font-weight:900; color:#f87171; letter-spacing:-0.2px; }
+.ab-sublabel { font-size:20px; font-weight:600; color:#dc2626; }
+
+/* ─────── Replica warning banner (ResultCard ③) ─────── */
+/* rounded-2xl border-2 border-red-500/50 bg-red-500/10 overflow-hidden */
+.replica-banner {
+  border-radius:27px;
+  border:3px solid rgba(239,68,68,0.50);
+  background:rgba(239,68,68,0.10);
+  overflow:hidden;
+  flex-shrink:0;
+}
+/* Header: bg-red-500/25 px-5 py-3.5 */
+.rb-header {
+  background:rgba(239,68,68,0.25);
+  padding:20px 34px;
+  display:flex; align-items:center; gap:17px;
+}
+.rb-header svg { width:34px; height:34px; flex-shrink:0; color:#f87171; }
+.rb-h-title { font-size:22px; font-weight:900; color:#fca5a5; margin-bottom:3px; }
+.rb-h-sub { font-size:18px; color:rgba(248,113,113,0.72); }
+/* Flags: px-5 py-4 */
+.rb-flags { padding:22px 34px 24px; }
+.rb-flags-label {
+  font-size:17px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.12em; color:rgba(248,113,113,0.62); margin-bottom:18px;
+}
+.rb-flag-item { display:flex; align-items:flex-start; gap:17px; margin-bottom:16px; }
+.rb-flag-item:last-child { margin-bottom:0; }
+.rb-flag-item svg { width:27px; height:27px; color:#f87171; flex-shrink:0; margin-top:2px; }
+.rb-flag-text { font-size:22px; color:rgba(252,165,165,0.92); line-height:1.4; }
+
+/* ─────── Market value card (ResultCard ④) ─────── */
+/* rounded-3xl border-2 border-red-500/30 bg-[#160a0a] px-5 py-7 */
+.value-card {
+  border-radius:41px;
+  border:3.5px solid rgba(239,68,68,0.30);
+  background:#160a0a;
+  padding:36px 54px;
+  text-align:center;
+  flex-shrink:0;
+  box-shadow:0 0 68px rgba(239,68,68,0.18);
+}
+.vc-label-row { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:18px; }
+.vc-label-row svg { width:27px; height:27px; color:#f87171; }
+.vc-label { font-size:20px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:#f87171; }
+.vc-price-row { display:flex; align-items:baseline; justify-content:center; gap:10px; }
+.vc-price {
+  font-size:82px; font-weight:900; line-height:1;
+  color:#fca5a5;
+  letter-spacing:-2px;
+}
+.vc-separator { font-size:44px; font-weight:400; color:#4b5563; align-self:center; }
+.vc-sub { margin-top:16px; font-size:19px; color:rgba(248,113,113,0.72); max-width:560px; margin-left:auto; margin-right:auto; line-height:1.5; }
+
+/* ─────── Mobile bottom tab bar ─────── */
+.bottom-bar {
+  position:absolute; bottom:0; left:0; right:0;
+  height:68px;
+  background:rgba(10,10,10,0.97);
+  border-top:1.5px solid #1E1E1E;
+  display:flex; align-items:stretch;
+}
+.bb-tab {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:5px;
+  color:#6b7280;
+}
+.bb-tab.active { color:#C9A84C; }
+.bb-tab svg { width:34px; height:34px; }
+.bb-tab-label { font-size:17px; font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- ① Status bar -->
+<div class="status-bar">
+  <div class="sb-time">9:41</div>
+  <div class="sb-icons">
+    <div class="sb-signal">
+      <div class="sb-bar" style="height:5px"></div>
+      <div class="sb-bar" style="height:8px"></div>
+      <div class="sb-bar" style="height:11px"></div>
+      <div class="sb-bar" style="height:14px"></div>
+    </div>
+    <div class="sb-wifi">
+      <svg width="18" height="14" viewBox="0 0 24 18" fill="none"><path d="M1 7.5C5.5 3 10.5 1 12 1s6.5 2 11 6.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M4.5 11C7 8.5 9.5 7 12 7s5 1.5 7.5 4" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M8 14.5C9.5 13 10.8 12.5 12 12.5s2.5.5 4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.5" fill="#fff"/></svg>
+    </div>
+    <div class="sb-battery">
+      <div class="sb-battery-fill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ② Navbar (exact replica of Navbar.tsx) -->
+<div class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-circle">
+      <!-- Clock icon (lucide) -->
+      <svg width="28" height="28" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <span class="nav-brand">Watch<span class="snap">Snap</span></span>
+  </div>
+
+  <div class="nav-links">
+    <span class="nav-link">Home</span>
+    <span class="nav-link active">Scan</span>
+    <span class="nav-link">Collection</span>
+  </div>
+
+  <div class="nav-upgrade">
+    <!-- Crown icon (lucide) -->
+    <svg width="22" height="22" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+      <path d="M2 20h20M5 20 3 8l6.5 5L12 4l2.5 9L21 8l-2 12"/>
+    </svg>
+    Upgrade
+  </div>
+</div>
+
+<!-- ③ Scrollable content -->
+<div class="content">
+
+  <!-- Hero image card — ResultCard ① -->
+  <div class="hero-card">
+    <!-- Simulated watch photo -->
+    <div class="hero-photo">
+      <!-- CSS Patek Philippe Calatrava watch illustration -->
+      <div class="watch-in-photo">
+        <div class="w-glow-photo"></div>
+        <div class="w-case-photo">
+          <div class="w-dial-photo">
+            <div class="w-ring-p"></div>
+            <div class="w-ring-p2"></div>
+            <!-- 12 hour markers -->
+            <div class="hm-p lg" style="transform:rotate(0deg)"></div>
+            <div class="hm-p"    style="transform:rotate(30deg)"></div>
+            <div class="hm-p"    style="transform:rotate(60deg)"></div>
+            <div class="hm-p lg" style="transform:rotate(90deg)"></div>
+            <div class="hm-p"    style="transform:rotate(120deg)"></div>
+            <div class="hm-p"    style="transform:rotate(150deg)"></div>
+            <div class="hm-p lg" style="transform:rotate(180deg)"></div>
+            <div class="hm-p"    style="transform:rotate(210deg)"></div>
+            <div class="hm-p"    style="transform:rotate(240deg)"></div>
+            <div class="hm-p lg" style="transform:rotate(270deg)"></div>
+            <div class="hm-p"    style="transform:rotate(300deg)"></div>
+            <div class="hm-p"    style="transform:rotate(330deg)"></div>
+            <div class="dp-crown">♛</div>
+            <div class="dp-brand">PATEK PHILIPPE</div>
+            <div class="dp-city">G E N È V E</div>
+            <div class="dp-subdial"></div>
+            <div class="dp-hh"></div>
+            <div class="dp-mh"></div>
+            <div class="dp-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gradient overlay — from-[#0D0D0D] via-[#0D0D0D]/70 to-transparent -->
+    <div class="hero-overlay"></div>
+
+    <!-- Red top strip: absolute top-0 bg-red-500/90 -->
+    <div class="hero-replica-strip">
+      <span class="hrs-text">⚠ REPLICA DETECTED</span>
+    </div>
+
+    <!-- Brand / model / ref overlay — absolute bottom-0 -->
+    <div class="hero-textblock">
+      <div class="ht-brand">Patek Philippe</div>
+      <div class="ht-model">
+        Calatrava
+        <span class="replica-suffix">(Replica)</span>
+      </div>
+      <span class="ht-ref">Ref. 3919P-001</span>
+    </div>
+  </div>
+
+  <!-- Auth badge — ResultCard ② -->
+  <div class="auth-badge">
+    <div class="ab-icon-circle">
+      <!-- XCircle lucide icon -->
+      <svg width="40" height="40" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+    </div>
+    <div class="ab-text-col">
+      <div class="ab-label-row">
+        <div class="ab-pulse"></div>
+        <span class="ab-label">REPLICA DETECTED</span>
+      </div>
+      <div class="ab-sublabel">Multiple authentication failures found</div>
+    </div>
+  </div>
+
+  <!-- Replica warning banner — ResultCard ③ -->
+  <div class="replica-banner">
+    <!-- Header -->
+    <div class="rb-header">
+      <!-- AlertTriangle lucide -->
+      <svg width="34" height="34" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <div>
+        <div class="rb-h-title">REPLICA DETECTED</div>
+        <div class="rb-h-sub">Do not pay authentic prices for this watch.</div>
+      </div>
+    </div>
+    <!-- Flags -->
+    <div class="rb-flags">
+      <div class="rb-flags-label">Authentication Failures</div>
+      <div class="rb-flag-item">
+        <svg width="27" height="27" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span class="rb-flag-text">Dial font weight inconsistent with authentic production standards</span>
+      </div>
+      <div class="rb-flag-item">
+        <svg width="27" height="27" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span class="rb-flag-text">Crown engraving depth and logo proportions anomalous</span>
+      </div>
+      <div class="rb-flag-item">
+        <svg width="27" height="27" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span class="rb-flag-text">Case finishing and polishing below authentic specification</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market value card — ResultCard ④ -->
+  <div class="value-card">
+    <div class="vc-label-row">
+      <!-- AlertTriangle -->
+      <svg width="27" height="27" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span class="vc-label">Estimated Replica Value</span>
+    </div>
+    <div class="vc-price-row">
+      <span class="vc-price">$80</span>
+      <span class="vc-separator">–</span>
+      <span class="vc-price">$200</span>
+    </div>
+    <div class="vc-sub">This is the estimated replica value — not the authentic watch price.</div>
+  </div>
+
+</div>
+
+<!-- ④ Mobile bottom tab bar (exact replica of Navbar.tsx mobile bar) -->
+<div class="bottom-bar">
+  <div class="bb-tab">
+    <!-- Home icon -->
+    <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="bb-tab-label">Home</span>
+  </div>
+  <div class="bb-tab active">
+    <!-- Camera icon -->
+    <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+    <span class="bb-tab-label">Scan</span>
+  </div>
+  <div class="bb-tab">
+    <!-- BookMarked icon -->
+    <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      <polyline points="15 7 17 9 21 5"/>
+    </svg>
+    <span class="bb-tab-label">Collection</span>
+  </div>
+</div>
+
+</body>
+</html>

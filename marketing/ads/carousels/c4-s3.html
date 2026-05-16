@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 4 · Slide 3 — CTA (Pro)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #080808; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  .bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 55% at 50% 55%, rgba(212,175,55,0.09) 0%, transparent 65%), #080808; }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 88% 88% at 50% 50%, transparent 35%, rgba(0,0,0,0.65) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 52px 100px; text-align: center; }
+
+  .top-bar { position: absolute; top: 52px; left: 68px; right: 68px; display: flex; align-items: center; justify-content: space-between; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; box-shadow: 0 0 10px rgba(212,175,55,0.7); }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #444; font-weight: 600; }
+
+  .who-uses { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 44px; }
+  .wu-pill { display: flex; align-items: center; gap: 7px; background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.20); border-radius: 30px; padding: 9px 18px; font-size: 15px; color: #D4AF37; font-weight: 600; }
+
+  .cta-headline { font-size: 52px; font-weight: 900; color: #fff; line-height: 1.15; letter-spacing: -1px; margin-bottom: 12px; }
+  .cta-headline .hl { background: linear-gradient(135deg, #D4AF37, #F0CC5A, #B8922A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .cta-sub { font-size: 21px; color: #666; margin-bottom: 44px; line-height: 1.4; }
+
+  .cta-btn { display: inline-flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #D4AF37 0%, #F0CC5A 50%, #B8922A 100%); color: #000; font-size: 22px; font-weight: 900; padding: 20px 48px; border-radius: 60px; box-shadow: 0 12px 36px rgba(212,175,55,0.33); margin-bottom: 14px; }
+  .cta-url { font-size: 17px; color: rgba(212,175,55,0.45); margin-bottom: 48px; }
+
+  .plans-row { display: flex; gap: 18px; justify-content: center; width: 100%; margin-bottom: 44px; }
+  .plan {
+    flex: 1; background: #111; border: 1px solid #1E1E1E;
+    border-radius: 18px; padding: 22px 16px; text-align: center;
+  }
+  .plan.featured { border-color: rgba(212,175,55,0.35); background: rgba(212,175,55,0.04); }
+  .plan-name { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .plan-price { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+  .plan-period { font-size: 13px; color: #555; margin-bottom: 10px; }
+  .plan-free { font-size: 12px; color: #4ade80; }
+  .plan-badge { font-size: 11px; color: #D4AF37; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 3px 10px; }
+
+  .bottom-dots { position: absolute; bottom: 52px; left: 68px; display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; }
+  .dot.done { background: rgba(212,175,55,0.4); }
+  .dot.active { background: #D4AF37; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">3 OF 3</div>
+  </div>
+
+  <div class="who-uses">
+    <div class="wu-pill">⌚ Dealers</div>
+    <div class="wu-pill">🏛️ Estate Attorneys</div>
+    <div class="wu-pill">🔄 Flippers</div>
+    <div class="wu-pill">📦 Collectors</div>
+  </div>
+
+  <div class="cta-headline">The watch tool<br><span class="hl">pros actually use.</span></div>
+  <div class="cta-sub">Scan. Authenticate. Value. In under 15 seconds.</div>
+
+  <div class="cta-btn">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/></svg>
+    Try 3 Scans Free
+  </div>
+  <div class="cta-url">watchsnap.vercel.app</div>
+
+  <div class="plans-row">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-period">3 scans</div>
+      <div class="plan-free">No card required</div>
+    </div>
+    <div class="plan featured">
+      <div class="plan-name">Pro Monthly</div>
+      <div class="plan-price">$9.99</div>
+      <div class="plan-period">/ month</div>
+      <div class="plan-badge">Most Popular</div>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Pro Annual</div>
+      <div class="plan-price">$60</div>
+      <div class="plan-period">/ year</div>
+      <div class="plan-free">Save 50%</div>
+    </div>
+  </div>
+
+  <div class="bottom-dots">
+    <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div>
+  </div>
+</div>
+</body>
+</html>

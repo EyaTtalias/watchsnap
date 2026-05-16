@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Rolex Datejust · Authentic</title>
+<style>
+/* ── All values at 1.7× from real app Tailwind ── */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1080px; height:1080px; overflow:hidden;
+  background:#0A0A0A;
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:#fff; position:relative;
+}
+
+/* ─── iOS Status Bar ─── */
+.status-bar {
+  height:44px; background:#0A0A0A;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px 0 36px; flex-shrink:0;
+}
+.sb-time { font-size:17px; font-weight:600; }
+.sb-icons { display:flex; align-items:center; gap:7px; }
+.sb-signal { display:flex; align-items:flex-end; gap:1.5px; }
+.sb-bar { width:4px; border-radius:1px; background:#fff; }
+.sb-battery {
+  width:28px; height:14px; border-radius:3px;
+  border:1.5px solid rgba(255,255,255,0.6);
+  position:relative; display:flex; align-items:center;
+}
+.sb-battery::after {
+  content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%);
+  width:3px; height:7px; background:rgba(255,255,255,0.5); border-radius:0 2px 2px 0;
+}
+.sb-battery-fill { height:100%; width:78%; background:#fff; border-radius:1.5px 0 0 1.5px; margin:1.5px; }
+
+/* ─── Navbar ─── */
+.navbar {
+  height:95px; background:rgba(10,10,10,0.97);
+  border-bottom:1.5px solid #1E1E1E;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; flex-shrink:0;
+}
+.nav-logo { display:flex; align-items:center; gap:12px; }
+.nav-logo-circle {
+  width:51px; height:51px; border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.nav-brand { font-size:28px; font-weight:700; letter-spacing:-0.5px; color:#fff; }
+.nav-brand .snap {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.nav-links { display:flex; align-items:center; gap:36px; }
+.nav-link { font-size:21px; font-weight:500; color:#6b7280; }
+.nav-link.active { color:#C9A84C; }
+.nav-upgrade {
+  display:flex; align-items:center; gap:8px; border-radius:9999px;
+  background:linear-gradient(to right,#C9A84C,#A8882F);
+  padding:10px 24px; font-size:18px; font-weight:700; color:#000; flex-shrink:0;
+}
+
+/* ─── Content ─── */
+.content {
+  padding:26px 108px 0;
+  display:flex; flex-direction:column; gap:11px;
+}
+
+/* ─── Hero Card ─── */
+.hero-card {
+  border-radius:41px;
+  border:3px solid #2A2A2A;
+  overflow:hidden; position:relative; height:256px; flex-shrink:0;
+}
+.hero-photo {
+  width:100%; height:100%;
+  background:radial-gradient(ellipse 80% 70% at 50% 42%, #1a1812 0%, #100f08 38%, #070707 100%);
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.hero-photo::after {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 55% 45% at 50% 42%, rgba(212,175,55,0.08) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+/* ── CSS Rolex Datejust Ref. 1601 ── */
+.watch-in-photo {
+  position:relative; width:236px; height:236px; z-index:2;
+  filter:drop-shadow(0 18px 36px rgba(0,0,0,0.95)) drop-shadow(0 4px 12px rgba(0,0,0,0.7));
+}
+.dj-glow {
+  position:absolute; inset:-18px; border-radius:50%;
+  background:radial-gradient(circle, rgba(212,175,55,0.16) 0%, rgba(180,140,20,0.04) 42%, transparent 65%);
+}
+/* Fluted yellow-gold bezel */
+.dj-bezel {
+  position:absolute; inset:0; border-radius:50%; z-index:0;
+  background: repeating-conic-gradient(#D4AF37 0deg 4.5deg, #7a5810 4.5deg 7.5deg);
+}
+.dj-case {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:196px; height:196px; border-radius:50%;
+  background:linear-gradient(148deg,#e4e4e4 0%,#b8b8b8 24%,#e0e0e0 48%,#969696 72%,#d4d4d4 100%);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 3px #a0a0a0, 0 0 0 6px #282828, 0 22px 55px rgba(0,0,0,0.95), inset 0 2px 4px rgba(255,255,255,0.55);
+  z-index:1;
+}
+.dj-dial {
+  width:164px; height:164px; border-radius:50%;
+  background:radial-gradient(circle at 36% 28%, #f8f2e5 0%, #ece0c2 46%, #d8c894 100%);
+  position:relative; display:flex; align-items:center; justify-content:center;
+}
+.dj-dial::before {
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 66% 24%, rgba(255,255,255,0.30) 0%, transparent 52%);
+}
+/* Date window at 3 o'clock */
+.dj-date {
+  position:absolute; left:calc(50% + 52px); top:calc(50% - 9px);
+  width:20px; height:18px; background:#fff;
+  border:1px solid rgba(80,60,20,0.3); border-radius:2px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:8.5px; font-weight:900; color:#111; font-family:Arial,sans-serif;
+  z-index:6;
+}
+/* Gold baton hour markers */
+.dj-hm {
+  position:absolute; top:7px; left:calc(50% - 3px);
+  width:6px; height:12px;
+  background:linear-gradient(180deg,#D4AF37,#A87820);
+  border-radius:1.5px; transform-origin:center 75px; z-index:2;
+}
+.dj-hm.lg {
+  width:8px; height:16px; top:5px; left:calc(50% - 4px);
+  transform-origin:center 77px;
+}
+/* Dial text */
+.dj-crown-sym { position:absolute; top:25px; font-size:9px; color:#7a5a10; text-align:center; width:100%; z-index:3; }
+.dj-brand-text { position:absolute; top:38px; font-size:9.5px; font-weight:900; color:#2a1e08; letter-spacing:2.5px; text-align:center; width:100%; z-index:3; }
+.dj-op-text { position:absolute; top:51px; font-size:5.5px; color:#6a5020; letter-spacing:1.8px; text-align:center; width:100%; z-index:3; }
+.dj-model-text { position:absolute; top:61px; font-size:7px; font-weight:600; color:#3a2a0a; letter-spacing:1.5px; text-align:center; width:100%; z-index:3; font-style:italic; }
+/* Dauphine gold hands */
+.dj-hh {
+  position:absolute; bottom:50%; left:calc(50% - 5px);
+  width:10px; height:55px;
+  background:linear-gradient(180deg,#D4AF37,#A87820);
+  border-radius:5px 5px 2px 2px;
+  clip-path:polygon(50% 0%,85% 28%,85% 100%,15% 100%,15% 28%);
+  transform-origin:bottom center; transform:rotate(168deg);
+  z-index:3;
+}
+.dj-mh {
+  position:absolute; bottom:50%; left:calc(50% - 4px);
+  width:8px; height:70px;
+  background:linear-gradient(180deg,#D4AF37,#A87820);
+  border-radius:4px 4px 2px 2px;
+  clip-path:polygon(50% 0%,85% 22%,85% 100%,15% 100%,15% 22%);
+  transform-origin:bottom center; transform:rotate(38deg);
+  z-index:3;
+}
+.dj-sh {
+  position:absolute; bottom:50%; left:calc(50% - 1px);
+  width:2px; height:78px; background:#ef4444; border-radius:1px;
+  transform-origin:bottom center; transform:rotate(-80deg); z-index:4;
+}
+.dj-center {
+  position:absolute; width:10px; height:10px; border-radius:50%;
+  background:#D4AF37; box-shadow:0 0 5px rgba(212,175,55,0.7); z-index:5;
+}
+/* Hero gradient overlay — no red strip, authentic */
+.hero-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, #0D0D0D 0%, rgba(13,13,13,0.65) 40%, transparent 72%);
+  z-index:3;
+}
+.hero-textblock {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:0 34px 24px; z-index:5;
+}
+.ht-brand {
+  font-size:68px; font-weight:900; letter-spacing:-1.5px; line-height:1;
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  margin-bottom:4px;
+}
+.ht-model { font-size:27px; font-weight:700; color:#fff; margin-bottom:7px; }
+.ht-ref {
+  display:inline-block; background:rgba(0,0,0,0.42); border-radius:10px;
+  padding:5px 13px; font-size:20px; color:#e5e7eb; font-family:monospace; font-weight:600;
+}
+
+/* ─── Auth Badge — Likely Authentic / emerald ─── */
+.auth-badge {
+  display:flex; align-items:center; gap:22px;
+  border-radius:27px;
+  border:3px solid rgba(34,197,94,0.50);
+  background:rgba(34,197,94,0.15);
+  padding:17px 30px; flex-shrink:0;
+}
+.ab-icon-circle {
+  width:66px; height:66px; border-radius:50%;
+  background:rgba(34,197,94,0.20);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.ab-text-col { flex:1; }
+.ab-label-row { display:flex; align-items:center; gap:11px; margin-bottom:4px; }
+.ab-pulse {
+  width:14px; height:14px; border-radius:50%; background:#4ade80;
+  flex-shrink:0; animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.85);} }
+.ab-label { font-size:25px; font-weight:900; color:#4ade80; }
+.ab-sublabel { font-size:18px; font-weight:600; color:#16a34a; }
+
+/* ─── Market Value Card — gold ─── */
+.value-card {
+  border-radius:41px;
+  border:3.5px solid rgba(212,175,55,0.30);
+  background:#141208;
+  padding:22px 50px; text-align:center; flex-shrink:0;
+  box-shadow:0 0 60px rgba(212,175,55,0.22);
+}
+.vc-label-row { display:flex; align-items:center; justify-content:center; gap:11px; margin-bottom:11px; }
+.vc-label { font-size:19px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:#D4AF37; }
+.vc-price-row { display:flex; align-items:baseline; justify-content:center; gap:8px; }
+.vc-price {
+  font-size:68px; font-weight:900; line-height:1; letter-spacing:-2px;
+  background:linear-gradient(135deg,#D4AF37,#F0CC5A,#D4AF37);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.vc-sep { font-size:36px; font-weight:400; color:#4b5563; align-self:center; }
+.vc-sub-row { margin-top:8px; display:flex; align-items:center; justify-content:center; gap:10px; }
+.vc-sub-text { font-size:17px; color:#4b5563; }
+.vc-market { display:flex; align-items:center; gap:6px; font-size:17px; font-weight:600; color:#4ade80; }
+
+/* ─── Confidence Bar ─── */
+.confidence-card {
+  border-radius:27px; border:2px solid #2A2A2A; background:#181818;
+  padding:17px 25px; flex-shrink:0;
+}
+.conf-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.conf-label { font-size:20px; font-weight:600; color:#d1d5db; }
+.conf-right { display:flex; align-items:center; gap:9px; }
+.conf-level { font-size:17px; font-weight:600; color:#22c55e; }
+.conf-pct { font-size:24px; font-weight:900; color:#22c55e; }
+.conf-bar-bg { height:17px; width:100%; overflow:hidden; border-radius:9999px; background:#222; }
+.conf-bar-fill { height:100%; width:88%; border-radius:9999px; background:linear-gradient(90deg,rgba(34,197,94,0.6),#22c55e); }
+
+/* ─── Technical Specs ─── */
+.specs-label { font-size:17px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#4b5563; margin-bottom:9px; }
+.specs-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.spec-pill { border-radius:27px; border:2px solid #2A2A2A; background:#181818; padding:15px 14px; }
+.sp-head { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+.sp-lbl { font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:0.11em; color:#4b5563; }
+.sp-val { font-size:18px; font-weight:700; color:#fff; line-height:1.2; }
+
+/* ─── Authentication Analysis ─── */
+.auth-analysis {
+  border-radius:27px; border:2px solid #2A2A2A; background:#181818;
+  padding:18px 24px; flex-shrink:0;
+}
+.aa-head { display:flex; align-items:center; gap:10px; margin-bottom:11px; }
+.aa-title { font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:rgba(212,175,55,0.72); }
+.aa-text { font-size:19px; line-height:1.55; color:#e5e7eb; }
+
+/* ─── Insurance Report ─── */
+.insurance-card {
+  border-radius:27px; border:2px solid #2A2A2A; background:#181818;
+  overflow:hidden; flex-shrink:0;
+}
+.ins-header {
+  background:linear-gradient(135deg,rgba(212,175,55,0.09),rgba(212,175,55,0.03));
+  border-bottom:1.5px solid rgba(212,175,55,0.18);
+  padding:13px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ins-hl { display:flex; align-items:center; gap:10px; }
+.ins-h-title { font-size:21px; font-weight:800; color:#D4AF37; }
+.ins-generated {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(34,197,94,0.10); border:1.5px solid rgba(34,197,94,0.32);
+  border-radius:20px; padding:4px 13px;
+  font-size:15px; font-weight:700; color:#4ade80;
+}
+.ins-body { padding:10px 24px 0; }
+.ins-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.ins-row:last-child { border-bottom:none; }
+.ins-k { font-size:17px; color:#4b5563; font-weight:500; }
+.ins-v { font-size:17px; color:#e5e7eb; font-weight:700; }
+.ins-v.gold { color:#D4AF37; }
+.ins-v.green { color:#4ade80; }
+.ins-footer { padding:11px 24px 14px; display:flex; gap:11px; }
+.ins-dl {
+  flex:1; background:linear-gradient(135deg,#D4AF37,#A8882F); color:#000;
+  font-size:18px; font-weight:800; border-radius:12px; padding:11px 0;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.ins-share {
+  background:#111; border:1.5px solid rgba(212,175,55,0.26); color:#D4AF37;
+  font-size:17px; font-weight:700; border-radius:12px; padding:11px 19px;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+}
+
+/* ─── Bottom Tab Bar ─── */
+.bottom-bar {
+  position:absolute; bottom:0; left:0; right:0; height:68px;
+  background:rgba(10,10,10,0.97); border-top:1.5px solid #1E1E1E;
+  display:flex; align-items:stretch;
+}
+.bb-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:#6b7280; }
+.bb-tab.active { color:#C9A84C; }
+.bb-tab-label { font-size:16px; font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <div class="sb-time">9:41</div>
+  <div class="sb-icons">
+    <div class="sb-signal">
+      <div class="sb-bar" style="height:5px"></div>
+      <div class="sb-bar" style="height:8px"></div>
+      <div class="sb-bar" style="height:11px"></div>
+      <div class="sb-bar" style="height:14px"></div>
+    </div>
+    <svg width="18" height="14" viewBox="0 0 24 18" fill="none">
+      <path d="M1 7.5C5.5 3 10.5 1 12 1s6.5 2 11 6.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M4.5 11C7 8.5 9.5 7 12 7s5 1.5 7.5 4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8 14.5C9.5 13 10.8 12.5 12 12.5s2.5.5 4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="17" r="1.5" fill="#fff"/>
+    </svg>
+    <div class="sb-battery"><div class="sb-battery-fill"></div></div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-circle">
+      <svg width="28" height="28" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <span class="nav-brand">Watch<span class="snap">Snap</span></span>
+  </div>
+  <div class="nav-links">
+    <span class="nav-link">Home</span>
+    <span class="nav-link active">Scan</span>
+    <span class="nav-link">Collection</span>
+  </div>
+  <div class="nav-upgrade">
+    <svg width="22" height="22" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+      <path d="M2 20h20M5 20 3 8l6.5 5L12 4l2.5 9L21 8l-2 12"/>
+    </svg>
+    Upgrade
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- ① Hero Image Card — authentic, no red strip -->
+  <div class="hero-card">
+    <div class="hero-photo">
+      <!-- CSS Rolex Datejust Ref. 1601 -->
+      <div class="watch-in-photo">
+        <div class="dj-glow"></div>
+        <div class="dj-bezel"></div>
+        <div class="dj-case">
+          <div class="dj-dial">
+            <div class="dj-date">14</div>
+            <!-- Hour markers (3 o'clock skipped — date window) -->
+            <div class="dj-hm lg" style="transform:rotate(0deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(30deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(60deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(120deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(150deg)"></div>
+            <div class="dj-hm lg" style="transform:rotate(180deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(210deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(240deg)"></div>
+            <div class="dj-hm lg" style="transform:rotate(270deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(300deg)"></div>
+            <div class="dj-hm"    style="transform:rotate(330deg)"></div>
+            <div class="dj-crown-sym">♛</div>
+            <div class="dj-brand-text">ROLEX</div>
+            <div class="dj-op-text">OYSTER PERPETUAL</div>
+            <div class="dj-model-text">Datejust</div>
+            <div class="dj-hh"></div>
+            <div class="dj-mh"></div>
+            <div class="dj-sh"></div>
+            <div class="dj-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-textblock">
+      <div class="ht-brand">Rolex</div>
+      <div class="ht-model">Datejust</div>
+      <span class="ht-ref">Ref. 1601</span>
+    </div>
+  </div>
+
+  <!-- ② Auth Badge — Likely Authentic -->
+  <div class="auth-badge">
+    <div class="ab-icon-circle">
+      <svg width="36" height="36" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <div class="ab-text-col">
+      <div class="ab-label-row">
+        <div class="ab-pulse"></div>
+        <span class="ab-label">Likely Authentic</span>
+      </div>
+      <div class="ab-sublabel">Passes AI authentication check</div>
+    </div>
+  </div>
+
+  <!-- ③ Market Value — gold -->
+  <div class="value-card">
+    <div class="vc-label-row">
+      <svg width="25" height="25" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+      </svg>
+      <span class="vc-label">Market Value</span>
+    </div>
+    <div class="vc-price-row">
+      <span class="vc-price">$6,200</span>
+      <span class="vc-sep">–</span>
+      <span class="vc-price">$6,800</span>
+    </div>
+    <div class="vc-sub-row">
+      <span class="vc-sub-text">Secondary market · Chrono24 / eBay</span>
+      <span class="vc-market">
+        <svg width="17" height="17" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+        </svg>
+        Price Rising
+      </span>
+    </div>
+  </div>
+
+  <!-- ④ AI Confidence -->
+  <div class="confidence-card">
+    <div class="conf-header">
+      <span class="conf-label">AI Confidence</span>
+      <div class="conf-right">
+        <span class="conf-level">High Confidence</span>
+        <span class="conf-pct">88%</span>
+      </div>
+    </div>
+    <div class="conf-bar-bg"><div class="conf-bar-fill"></div></div>
+  </div>
+
+  <!-- ⑤ Technical Specs -->
+  <div>
+    <div class="specs-label">Technical Specs</div>
+    <div class="specs-grid">
+      <div class="spec-pill">
+        <div class="sp-head">
+          <svg width="19" height="19" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span class="sp-lbl">Production</span>
+        </div>
+        <div class="sp-val">circa 1972</div>
+      </div>
+      <div class="spec-pill">
+        <div class="sp-head">
+          <svg width="19" height="19" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+          </svg>
+          <span class="sp-lbl">Movement</span>
+        </div>
+        <div class="sp-val">Cal. 1570 Auto</div>
+      </div>
+      <div class="spec-pill">
+        <div class="sp-head">
+          <svg width="19" height="19" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+          <span class="sp-lbl">Case</span>
+        </div>
+        <div class="sp-val">Stainless Steel</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ Authentication Analysis -->
+  <div class="auth-analysis">
+    <div class="aa-head">
+      <svg width="22" height="22" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span class="aa-title">Authentication Analysis</span>
+    </div>
+    <div class="aa-text">Case proportions, bezel engraving depth, and dial printing are consistent with authentic Rolex production standards from circa 1972. Fluted gold bezel shows characteristic period-correct patina. Crown logo at 12 o'clock matches reference documentation for Ref. 1601.</div>
+  </div>
+
+  <!-- ⑦ Insurance Report -->
+  <div class="insurance-card">
+    <div class="ins-header">
+      <div class="ins-hl">
+        <svg width="24" height="24" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <span class="ins-h-title">Insurance Report</span>
+      </div>
+      <div class="ins-generated">
+        <svg width="14" height="14" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Generated
+      </div>
+    </div>
+    <div class="ins-body">
+      <div class="ins-row">
+        <span class="ins-k">Make</span><span class="ins-v">Rolex</span>
+      </div>
+      <div class="ins-row">
+        <span class="ins-k">Model</span><span class="ins-v">Datejust · Ref. 1601</span>
+      </div>
+      <div class="ins-row">
+        <span class="ins-k">Year / Movement</span><span class="ins-v">circa 1972 · Cal. 1570</span>
+      </div>
+      <div class="ins-row">
+        <span class="ins-k">Est. Value</span><span class="ins-v gold">$6,200 – $6,800</span>
+      </div>
+      <div class="ins-row">
+        <span class="ins-k">Auth Status</span><span class="ins-v green">✓ Likely Authentic</span>
+      </div>
+      <div class="ins-row">
+        <span class="ins-k">Report ID</span>
+        <span class="ins-v" style="font-family:monospace;font-size:15px;color:#555;">WS-2024-7741</span>
+      </div>
+    </div>
+    <div class="ins-footer">
+      <div class="ins-dl">
+        <svg width="19" height="19" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download PDF
+      </div>
+      <div class="ins-share">
+        <svg width="18" height="18" fill="none" stroke="#D4AF37" stroke-width="2.5" viewBox="0 0 24 24">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        Share
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Tab Bar -->
+<div class="bottom-bar">
+  <div class="bb-tab">
+    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="bb-tab-label">Home</span>
+  </div>
+  <div class="bb-tab active">
+    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+    <span class="bb-tab-label">Scan</span>
+  </div>
+  <div class="bb-tab">
+    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      <polyline points="15 7 17 9 21 5"/>
+    </svg>
+    <span class="bb-tab-label">Collection</span>
+  </div>
+</div>
+
+</body>
+</html>

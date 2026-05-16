@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Instagram Kit Preview</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050505;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;color:#fff;padding:40px}
+  h1{font-size:32px;font-weight:900;margin-bottom:6px}
+  h1 span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{font-size:15px;color:rgba(255,255,255,0.4);margin-bottom:40px}
+  .subtitle em{color:#C9A84C;font-style:normal;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .card{
+    border-radius:16px;overflow:hidden;
+    border:1px solid rgba(201,168,76,0.2);
+    background:#111;
+    transition:transform 0.2s,border-color 0.2s;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .card:hover{transform:translateY(-4px);border-color:rgba(201,168,76,0.5)}
+  .thumb{
+    width:100%;aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#111,#0a0a0a);
+    font-size:48px;
+    border-bottom:1px solid rgba(201,168,76,0.1);
+  }
+  .info{padding:14px}
+  .num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:4px}
+  .name{font-size:14px;font-weight:800;color:#fff;margin-bottom:3px}
+  .val{font-size:13px;color:rgba(201,168,76,0.8);font-weight:700}
+  .type{
+    display:inline-block;margin-top:6px;
+    font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:3px 10px;border-radius:100px;
+  }
+  .type.auth{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+  .type.fake{background:rgba(220,38,38,0.12);color:#ef4444;border:1px solid rgba(220,38,38,0.25)}
+  .instructions{
+    margin-top:48px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);
+    border-radius:16px;padding:28px 32px;max-width:800px;
+  }
+  .inst-title{font-size:18px;font-weight:900;color:#C9A84C;margin-bottom:16px}
+  ol{padding-left:20px}
+  li{font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:10px;line-height:1.5}
+  li strong{color:#fff}
+  .tip{margin-top:20px;font-size:13px;color:rgba(201,168,76,0.6);background:rgba(201,168,76,0.04);border-left:3px solid rgba(201,168,76,0.3);padding:10px 16px;border-radius:0 8px 8px 0}
+</style>
+</head>
+<body>
+
+<h1>Watch<span>Snap</span> — Instagram Image Kit</h1>
+<p class="subtitle">10 ready-to-screenshot cards · 1080×1080px · <em>Click any card to open it</em></p>
+
+<div class="grid">
+  <a class="card" href="01-rolex-submariner.html" target="_blank">
+    <div class="thumb">🔵</div>
+    <div class="info">
+      <div class="num">01</div>
+      <div class="name">Rolex Submariner</div>
+      <div class="val">$12,800 – $15,400</div>
+      <div class="type auth">✓ Authentic</div>
+    </div>
+  </a>
+  <a class="card" href="02-patek-nautilus.html" target="_blank">
+    <div class="thumb">⬛</div>
+    <div class="info">
+      <div class="num">02</div>
+      <div class="name">Patek Nautilus</div>
+      <div class="val">$148,000 – $165,000</div>
+      <div class="type auth">✓ Authentic</div>
+    </div>
+  </a>
+  <a class="card" href="03-omega-seamaster.html" target="_blank">
+    <div class="thumb">🌊</div>
+    <div class="info">
+      <div class="num">03</div>
+      <div class="name">Omega Seamaster 300</div>
+      <div class="val">$4,200 – $5,800</div>
+      <div class="type auth">✓ Authentic · Vintage</div>
+    </div>
+  </a>
+  <a class="card" href="04-ap-royal-oak.html" target="_blank">
+    <div class="thumb">⬡</div>
+    <div class="info">
+      <div class="num">04</div>
+      <div class="name">AP Royal Oak Jumbo</div>
+      <div class="val">$87,500 – $96,000</div>
+      <div class="type auth">✓ Authentic</div>
+    </div>
+  </a>
+  <a class="card" href="05-heuer-carrera.html" target="_blank">
+    <div class="thumb">🏎️</div>
+    <div class="info">
+      <div class="num">05</div>
+      <div class="name">Heuer Carrera</div>
+      <div class="val">$14,600 – $18,000</div>
+      <div class="type auth">✓ Authentic · Vintage</div>
+    </div>
+  </a>
+  <a class="card" href="06-replica-warning.html" target="_blank">
+    <div class="thumb">⚠️</div>
+    <div class="info">
+      <div class="num">06</div>
+      <div class="name">"Rolex Daytona" Fake</div>
+      <div class="val">$80 – $150 (replica)</div>
+      <div class="type fake">✕ Replica</div>
+    </div>
+  </a>
+  <a class="card" href="07-cartier-santos.html" target="_blank">
+    <div class="thumb">⬜</div>
+    <div class="info">
+      <div class="num">07</div>
+      <div class="name">Cartier Santos</div>
+      <div class="val">$7,400 – $8,600</div>
+      <div class="type auth">✓ Authentic</div>
+    </div>
+  </a>
+  <a class="card" href="08-iwc-portugieser.html" target="_blank">
+    <div class="thumb">🕰️</div>
+    <div class="info">
+      <div class="num">08</div>
+      <div class="name">IWC Portugieser</div>
+      <div class="val">$8,900 – $10,200</div>
+      <div class="type auth">✓ Authentic</div>
+    </div>
+  </a>
+  <a class="card" href="09-lange-datograph.html" target="_blank">
+    <div class="thumb">🇩🇪</div>
+    <div class="info">
+      <div class="num">09</div>
+      <div class="name">A. Lange & Söhne</div>
+      <div class="val">$82,000 – $94,000</div>
+      <div class="type auth">✓ Authentic</div>
+    </div>
+  </a>
+  <a class="card" href="10-rolex-daytona.html" target="_blank">
+    <div class="thumb">🏁</div>
+    <div class="info">
+      <div class="num">10</div>
+      <div class="name">Rolex Daytona</div>
+      <div class="val">$28,400+</div>
+      <div class="type auth">✓ Authentic · Ceramic</div>
+    </div>
+  </a>
+</div>
+
+<div class="instructions">
+  <div class="inst-title">📸 How to Screenshot for Instagram</div>
+  <ol>
+    <li><strong>Click any card above</strong> — it opens the full 1080×1080px card in a new tab</li>
+    <li><strong>Windows:</strong> Press <strong>Windows + Shift + S</strong> → select the card area → paste into Instagram or editor</li>
+    <li><strong>Mac:</strong> Press <strong>Cmd + Shift + 4</strong> → drag to select the 1080×1080 card area</li>
+    <li><strong>Browser zoom:</strong> Make sure your browser zoom is at <strong>100%</strong> for pixel-perfect output (Ctrl/Cmd + 0)</li>
+    <li><strong>Best tool:</strong> Use <a href="https://www.screely.com" style="color:#C9A84C">screely.com</a> or your OS screenshot tool cropped to the card</li>
+  </ol>
+  <div class="tip">
+    💡 <strong>Pro tip:</strong> Screenshot card #06 (Replica Warning) for the most engaging content — "fake watch caught" posts get 3–5× more engagement than standard product posts.
+  </div>
+</div>
+
+</body>
+</html>

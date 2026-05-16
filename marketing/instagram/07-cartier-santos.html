@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    background:#08070a;
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+    color:#fff;
+  }
+  .bg{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.15) 0%, transparent 58%),
+      radial-gradient(ellipse 40% 35% at 10% 100%, rgba(180,140,200,0.06) 0%, transparent 55%),
+      #08070a;
+  }
+  /* Elegant fine grid */
+  .grid{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(201,168,76,0.025) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+
+  .wrap{position:relative;z-index:10;width:100%;height:100%;display:flex;flex-direction:column;padding:44px 60px;gap:24px}
+
+  .header{display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-icon{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8882F);display:flex;align-items:center;justify-content:center;font-size:21px}
+  .logo-text{font-size:25px;font-weight:900}
+  .logo-text span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .scan-chip{
+    font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+    color:rgba(201,168,76,0.6);border:1px solid rgba(201,168,76,0.2);
+    border-radius:100px;padding:8px 20px;
+  }
+
+  /* Elegant title */
+  .title-sec{text-align:center}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(201,168,76,0.45);margin-bottom:10px}
+  .big-brand{
+    font-size:80px;font-weight:900;letter-spacing:-3px;
+    background:linear-gradient(135deg,#C9A84C 0%,#E2C06D 40%,#C9A84C 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1;
+  }
+  .model-line{font-size:32px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+
+  /* Santos square watch art */
+  .art-row{display:flex;align-items:center;justify-content:center;gap:50px;flex:1}
+  .santos-wrap{position:relative}
+  .santos-glow{position:absolute;inset:-40px;border-radius:30px;background:radial-gradient(circle,rgba(201,168,76,0.18) 0%,transparent 60%)}
+  .santos{
+    width:240px;height:240px;border-radius:22px;
+    background:linear-gradient(145deg,#1a1614,#080604);
+    border:3px solid rgba(201,168,76,0.5);
+    box-shadow:0 0 60px rgba(201,168,76,0.15),0 30px 70px rgba(0,0,0,0.9);
+    position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  /* Visible screws at corners */
+  .screw{position:absolute;width:10px;height:10px;border-radius:50%;background:rgba(201,168,76,0.4);border:1px solid rgba(201,168,76,0.6)}
+  .s1{top:12px;left:12px} .s2{top:12px;right:12px} .s3{bottom:12px;left:12px} .s4{bottom:12px;right:12px}
+  .santos-face{
+    width:170px;height:170px;border-radius:14px;
+    background:radial-gradient(ellipse at 35% 35%,#14100c,#050302);
+    border:1.5px solid rgba(201,168,76,0.3);
+    position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  /* Roman numeral markers */
+  .rm{position:absolute;font-size:8px;font-weight:900;color:rgba(201,168,76,0.7)}
+  .r12{top:10px;left:50%;transform:translateX(-50%)}
+  .r3{right:10px;top:50%;transform:translateY(-50%)}
+  .r6{bottom:10px;left:50%;transform:translateX(-50%)}
+  .r9{left:10px;top:50%;transform:translateY(-50%)}
+  .s-hand{position:absolute;bottom:50%;left:50%;transform-origin:50% 100%;border-radius:2px 2px 0 0}
+  .sh-hr{width:5px;height:50px;margin-left:-2.5px;background:#E8DCC8;transform:rotate(-40deg)}
+  .sh-mn{width:3px;height:65px;margin-left:-1.5px;background:#E8DCC8;transform:rotate(120deg)}
+  .sh-sc{width:2px;height:70px;margin-left:-1px;background:#C9A84C;transform:rotate(240deg)}
+  .s-dot{position:absolute;top:50%;left:50%;width:9px;height:9px;border-radius:50%;background:#C9A84C;transform:translate(-50%,-50%);z-index:5}
+  .cartier-txt{position:absolute;bottom:22%;left:50%;transform:translateX(-50%);font-size:7px;font-weight:700;letter-spacing:1.5px;color:rgba(201,168,76,0.5);white-space:nowrap}
+
+  /* Info cards right */
+  .info-cards{display:flex;flex-direction:column;gap:14px;flex:1;max-width:420px}
+  .icard{
+    background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.15);
+    border-radius:18px;padding:20px 24px;
+  }
+  .ic-label{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:8px}
+  .ic-val{font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px}
+  .ic-val.gold{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .ic-val.green{color:#22c55e}
+  .ic-sub{font-size:12px;color:rgba(255,255,255,0.3);margin-top:3px}
+
+  .value-hero{
+    background:rgba(201,168,76,0.06);border:2px solid rgba(201,168,76,0.25);
+    border-radius:18px;padding:22px 28px;
+  }
+  .vh-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:8px}
+  .vh-value{
+    font-size:52px;font-weight:900;letter-spacing:-2px;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1;
+  }
+  .vh-range{font-size:13px;color:rgba(255,255,255,0.3);margin-top:4px}
+
+  .footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(201,168,76,0.1);padding-top:18px}
+  .cta{font-size:16px;font-weight:700;color:rgba(255,255,255,0.4)}
+  .cta span{color:#C9A84C;font-weight:900}
+  .auth-row{display:flex;align-items:center;gap:9px}
+  .auth-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e}
+  .auth-text{font-size:14px;font-weight:800;color:#22c55e;letter-spacing:1px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid"></div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">⌚</div>
+      <div class="logo-text">Watch<span>Snap</span></div>
+    </div>
+    <div class="scan-chip">AI Scan Result</div>
+  </div>
+
+  <div class="title-sec">
+    <div class="eyebrow">Identified in 12 seconds</div>
+    <div class="big-brand">Cartier</div>
+    <div class="model-line">Santos de Cartier</div>
+  </div>
+
+  <div class="art-row">
+    <div class="santos-wrap">
+      <div class="santos-glow"></div>
+      <div class="santos">
+        <div class="screw s1"></div>
+        <div class="screw s2"></div>
+        <div class="screw s3"></div>
+        <div class="screw s4"></div>
+        <div class="santos-face">
+          <div class="rm r12">XII</div>
+          <div class="rm r3">III</div>
+          <div class="rm r6">VI</div>
+          <div class="rm r9">IX</div>
+          <div class="s-hand sh-hr"></div>
+          <div class="s-hand sh-mn"></div>
+          <div class="s-hand sh-sc"></div>
+          <div class="s-dot"></div>
+          <div class="cartier-txt">CARTIER PARIS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-cards">
+      <div class="value-hero">
+        <div class="vh-label">Market Value</div>
+        <div class="vh-value">$7,400</div>
+        <div class="vh-range">Range: $7,400 – $8,600 · Secondary market</div>
+      </div>
+      <div class="icard">
+        <div class="ic-label">Reference</div>
+        <div class="ic-val">WSSA0029</div>
+        <div class="ic-sub">Large Steel · 2022 · Cal. 1847 MC</div>
+      </div>
+      <div class="icard">
+        <div class="ic-label">Authentication</div>
+        <div class="ic-val green">✓ Authentic</div>
+        <div class="ic-sub">96% AI confidence · Dial &amp; caseback verified</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="cta">Try free · <span>watchsnap.vercel.app</span></div>
+    <div class="auth-row">
+      <div class="auth-dot"></div>
+      <div class="auth-text">Verified · 96% Confidence</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 1 · Slide 4 — CTA</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #080808; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 65% 55% at 50% 60%, rgba(212,175,55,0.10) 0%, transparent 65%),
+      #080808;
+  }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.6) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 52px 100px; text-align: center; }
+
+  .top-bar { position: absolute; top: 52px; left: 68px; right: 68px; display: flex; align-items: center; justify-content: space-between; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; box-shadow: 0 0 12px rgba(212,175,55,0.8); }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #444; font-weight: 600; letter-spacing: 1px; }
+
+  /* Mike's mic drop quote */
+  .quote-wrap { margin-bottom: 52px; }
+  .quote-text {
+    font-size: 34px; font-weight: 700; color: #ccc; line-height: 1.4;
+    font-style: italic; margin-bottom: 18px;
+  }
+  .quote-text strong { color: #fff; font-style: normal; }
+  .quote-attr { font-size: 16px; color: #555; }
+
+  /* Divider */
+  .divider { width: 80px; height: 2px; background: linear-gradient(90deg, transparent, #D4AF37, transparent); margin: 0 auto 52px; }
+
+  /* CTA headline */
+  .cta-headline {
+    font-size: 52px; font-weight: 900; color: #fff; line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 14px;
+  }
+  .cta-headline .hl {
+    background: linear-gradient(135deg, #D4AF37, #F0CC5A, #B8922A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .cta-sub { font-size: 22px; color: #666; margin-bottom: 48px; line-height: 1.4; }
+
+  /* Button */
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, #D4AF37 0%, #F0CC5A 50%, #B8922A 100%);
+    color: #000; font-size: 24px; font-weight: 900;
+    padding: 22px 52px; border-radius: 60px;
+    box-shadow: 0 12px 40px rgba(212,175,55,0.35), 0 4px 16px rgba(212,175,55,0.2);
+    letter-spacing: 0.3px; margin-bottom: 16px;
+    text-decoration: none;
+  }
+  .cta-url { font-size: 18px; color: rgba(212,175,55,0.5); letter-spacing: 0.5px; margin-bottom: 48px; }
+
+  /* Trust pills */
+  .trust-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 52px; }
+  .trust-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: #111; border: 1px solid #222;
+    border-radius: 30px; padding: 9px 18px;
+    font-size: 14px; color: #888;
+  }
+  .trust-pill svg { opacity: 0.6; }
+
+  /* Story recap mini */
+  .story-recap {
+    background: #101010; border: 1px solid #1E1E1E;
+    border-radius: 16px; padding: 16px 24px;
+    display: flex; align-items: center; gap: 16px;
+    width: 100%;
+  }
+  .recap-from { font-size: 13px; color: #555; }
+  .recap-arrow { color: #D4AF37; font-size: 18px; font-weight: 900; flex-shrink: 0; }
+  .recap-to { font-size: 20px; font-weight: 800; color: #fff; }
+  .recap-to span { color: #D4AF37; }
+
+  .bottom-dots { position: absolute; bottom: 52px; left: 68px; display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; }
+  .dot.done { background: rgba(212,175,55,0.4); }
+  .dot.active { background: #D4AF37; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">4 OF 4</div>
+  </div>
+
+  <div class="quote-wrap">
+    <div class="quote-text">"I literally stood there like an <strong>idiot</strong>.<br>Best $15 I ever spent."</div>
+    <div class="quote-attr">— Mike, Brooklyn NY</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="cta-headline">What's hiding in<br><span class="hl">YOUR drawer?</span></div>
+  <div class="cta-sub">Snap a photo. Get the value. In 15 seconds.</div>
+
+  <div class="cta-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/></svg>
+    Try Free — 3 Scans on Us
+  </div>
+  <div class="cta-url">watchsnap.vercel.app</div>
+
+  <div class="trust-row">
+    <div class="trust-pill"><svg width="14" height="14" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No sign-up required</div>
+    <div class="trust-pill"><svg width="14" height="14" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Results in 15 seconds</div>
+    <div class="trust-pill"><svg width="14" height="14" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>1,000+ brands covered</div>
+  </div>
+
+  <div class="story-recap">
+    <div class="recap-from">Mike paid</div>
+    <div style="font-size:22px; font-weight:900; color:#555; flex-shrink:0;">$15</div>
+    <div class="recap-arrow">→</div>
+    <div class="recap-to">Rolex worth <span>$9,200</span></div>
+  </div>
+
+  <div class="bottom-dots">
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot active"></div>
+  </div>
+</div>
+</body>
+</html>

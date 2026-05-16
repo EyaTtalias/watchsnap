@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force dark background globally — overrides any browser/OS injection */
+html, body {
+  background-color: #0A0A0A !important;
+  color-scheme: dark;
+}
+
+/* Prevent iOS/Android light-mode from overriding our dark palette */
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: dark;
+    background-color: #0A0A0A !important;
+  }
+  body {
+    background-color: #0A0A0A !important;
+    color: #ffffff !important;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    background-color: #0A0A0A;
+    /* height:100% tells Capacitor WebView that the document fills the viewport */
+    height: 100%;
+    /* Never set overflow on html — let body be the scroll container */
+  }
+
+  body {
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /*
+      SCROLL FIX for Capacitor Android WebView:
+      - overflow-y: scroll (not auto) — always creates a scroll container,
+        which is what Capacitor WebView needs to fire touch-scroll events.
+      - Do NOT set overflow-x on body — it interferes with vertical scroll
+        in WebView. Horizontal clipping is handled by the inner wrapper div.
+      - -webkit-overflow-scrolling: touch — momentum scroll on iOS/WebView.
+    */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    color-scheme: dark;
+    min-height: 100dvh;
+  }
+
+  /* Prevent iOS input zoom */
+  input, textarea, select {
+    font-size: 16px;
+  }
+
+  /* Smooth tap response */
+  button, a, [role="button"] {
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+
+  /* Minimum tap target — 56px on mobile for thumb comfort */
+  button {
+    min-height: 52px;
+  }
+  @media (max-width: 640px) {
+    button { min-height: 56px; }
+  }
+
+  /* Very small screens */
+  @media (max-width: 390px) {
+    html { font-size: 15px; }
+  }
+
+  ::selection {
+    background: rgba(201, 168, 76, 0.35);
+    color: #ffffff;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0A0A0A; }
+  ::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 3px; }
+}
+
+@layer utilities {
+  /* ── Gold palette — unified to #C9A84C to match all inline Tailwind usage ── */
+  .text-gold          { color: #C9A84C; }
+  .bg-gold            { background-color: #C9A84C; }
+  .border-gold        { border-color: #C9A84C; }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #C9A84C 0%, #E2C06D 50%, #A8882F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Ensure gradient text never falls back to invisible on mobile */
+    display: inline-block;
+  }
+
+  /* ── Cards: slightly elevated dark tone ── */
+  .card-dark {
+    background: #111111;
+    border: 1px solid #2A2A2A;
+    border-radius: 20px;
+  }
+
+  /* ── Gold glow ── */
+  .glow-gold {
+    box-shadow: 0 0 30px rgba(201, 168, 76, 0.18);
+  }
+  @media (max-width: 640px) {
+    .glow-gold {
+      box-shadow: 0 0 40px rgba(201, 168, 76, 0.28);
+    }
+  }
+
+  /* ── Auth badge colours ── */
+  .auth-authentic {
+    background: rgba(34, 197, 94, 0.14);
+    border-color: rgba(34, 197, 94, 0.45);
+    color: #4ade80;
+  }
+  .auth-replica {
+    background: rgba(239, 68, 68, 0.14);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #f87171;
+  }
+  .auth-indeterminate {
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+  }
+
+  /* ── Force card backgrounds on mobile (prevent browser color injection) ── */
+  @media (max-width: 640px) {
+    .bg-\[\#111111\]  { background-color: #111111 !important; }
+    .bg-\[\#0D0D0D\]  { background-color: #0D0D0D !important; }
+    .bg-\[\#181818\]  { background-color: #181818 !important; }
+    .bg-\[\#0A0A0A\]  { background-color: #0A0A0A !important; }
+  }
+
+  /* ── Safe bottom padding for phones with home bar ── */
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* ── Mobile scan result animations ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  .animate-slide-up {
+    animation: slideUp 0.45s ease-out forwards;
+  }
+
+  @keyframes pulseGold {
+    0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.2); }
+    50%       { box-shadow: 0 0 50px rgba(201,168,76,0.45); }
+  }
+  .animate-glow-pulse {
+    animation: pulseGold 2.5s ease-in-out infinite;
+  }
+}

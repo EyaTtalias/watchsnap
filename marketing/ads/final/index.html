@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Final Facebook Ad Images</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#060606; color:#fff; font-family:-apple-system,'Segoe UI',sans-serif; min-height:100vh; padding:44px; }
+  .header { text-align:center; margin-bottom:52px; }
+  .header h1 { font-size:34px; font-weight:900; background:linear-gradient(135deg,#D4AF37,#F0CC5A,#B8922A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:10px; }
+  .header p { color:#555; font-size:15px; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:26px; max-width:1300px; margin:0 auto; }
+
+  .ad-card { background:#0E0E0E; border:1px solid #1E1E1E; border-radius:20px; overflow:hidden; transition:border-color 0.2s, transform 0.2s; }
+  .ad-card:hover { border-color:#D4AF37; transform:translateY(-4px); }
+  .card-preview { height:220px; display:flex; align-items:center; justify-content:center; font-size:72px; position:relative; }
+  .card-preview.r { background:radial-gradient(ellipse 65% 65% at 50% 50%, rgba(220,38,38,0.15) 0%, #080404 100%); }
+  .card-preview.a { background:radial-gradient(ellipse 65% 65% at 50% 50%, rgba(180,110,20,0.15) 0%, #070606 100%); }
+  .card-preview.g { background:radial-gradient(ellipse 65% 65% at 50% 50%, rgba(212,175,55,0.12) 0%, #080807 100%); }
+  .card-preview.gr { background:radial-gradient(ellipse 65% 65% at 50% 50%, rgba(74,222,128,0.10) 0%, #07080A 100%); }
+  .card-preview.pg { background:radial-gradient(ellipse 65% 65% at 50% 50%, rgba(74,222,128,0.10) 0%, #060A06 100%); }
+
+  .card-body { padding:20px 22px 18px; }
+  .card-num { font-size:11px; color:#D4AF37; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+  .card-title { font-size:17px; font-weight:800; color:#fff; margin-bottom:6px; line-height:1.3; }
+  .card-hook { font-size:13px; color:#555; line-height:1.5; margin-bottom:12px; font-style:italic; }
+  .card-tags { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+  .tag { background:#1A1A1A; border:1px solid #252525; border-radius:20px; padding:4px 10px; font-size:11px; color:#777; }
+  .tag.r { border-color:rgba(220,38,38,0.3); color:#f87171; background:rgba(220,38,38,0.06); }
+  .tag.g { border-color:rgba(74,222,128,0.3); color:#4ade80; background:rgba(74,222,128,0.06); }
+  .tag.gold { border-color:rgba(212,175,55,0.3); color:#D4AF37; background:rgba(212,175,55,0.06); }
+  .card-links { display:flex; gap:10px; }
+  .open-btn { flex:1; display:block; background:linear-gradient(135deg,#D4AF37,#B8922A); color:#000; font-size:14px; font-weight:800; padding:11px 16px; border-radius:10px; text-align:center; text-decoration:none; }
+  .copy-btn { display:block; background:#111; border:1px solid #252525; color:#888; font-size:14px; font-weight:600; padding:11px 16px; border-radius:10px; text-align:center; text-decoration:none; }
+
+  .copy-section { max-width:900px; margin:46px auto 0; background:#0E0E0E; border:1px solid #1E1E1E; border-radius:20px; padding:26px 32px; }
+  .copy-section h2 { font-size:20px; font-weight:800; color:#D4AF37; margin-bottom:14px; }
+  .copy-section p { font-size:14px; color:#666; line-height:1.7; }
+  .copy-section a { color:#D4AF37; text-decoration:none; font-weight:700; }
+
+  .instructions { max-width:900px; margin:24px auto 0; background:#0E0E0E; border:1px solid #1E1E1E; border-radius:20px; padding:26px 32px; }
+  .instructions h2 { font-size:20px; font-weight:800; color:#D4AF37; margin-bottom:14px; }
+  .instructions ol { padding-left:20px; }
+  .instructions li { font-size:14px; color:#888; margin-bottom:10px; line-height:1.6; }
+  code { background:#1A1A1A; border:1px solid #252525; border-radius:5px; padding:2px 7px; font-size:12px; color:#D4AF37; }
+  .tip { background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.14); border-radius:10px; padding:14px 18px; margin-top:16px; font-size:14px; color:#888; line-height:1.6; }
+  .tip strong { color:#D4AF37; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>WatchSnap · Final Facebook Ad Images</h1>
+  <p>5 clean visual ads · 1080×1080px · CSS-only watches · No long text — story copy in Ads Manager</p>
+</div>
+
+<div class="grid">
+
+  <div class="ad-card">
+    <div class="card-preview r">⚠️</div>
+    <div class="card-body">
+      <div class="card-num">Ad 1 · Red Alert</div>
+      <div class="card-title">REPLICA DETECTED — Patek Philippe</div>
+      <div class="card-hook">"I almost wired $14,000 to a guy I met on Facebook Marketplace."</div>
+      <div class="card-tags">
+        <span class="tag r">Replica Detected</span>
+        <span class="tag r">$14K saved</span>
+        <span class="tag">3 flags</span>
+        <span class="tag">High urgency</span>
+      </div>
+      <div class="card-links">
+        <a class="open-btn" href="ad1.html" target="_blank">Open Image →</a>
+        <a class="copy-btn" href="ad-copy.txt" target="_blank">Ad Copy</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview a">🏷️</div>
+    <div class="card-body">
+      <div class="card-num">Ad 2 · Amber Discovery</div>
+      <div class="card-title">Estate Sale Find — Omega Seamaster $4,200</div>
+      <div class="card-hook">"My wife told me to stop buying junk at estate sales. Then I found this."</div>
+      <div class="card-tags">
+        <span class="tag gold">Omega Seamaster 300</span>
+        <span class="tag g">$4,200</span>
+        <span class="tag">$40 paid</span>
+        <span class="tag">1969 vintage</span>
+      </div>
+      <div class="card-links">
+        <a class="open-btn" href="ad2.html" target="_blank">Open Image →</a>
+        <a class="copy-btn" href="ad-copy.txt" target="_blank">Ad Copy</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview g">⌚</div>
+    <div class="card-body">
+      <div class="card-num">Ad 3 · Warm Heirloom</div>
+      <div class="card-title">Inherited Mystery — Rolex Datejust $6,800</div>
+      <div class="card-hook">"My grandpa left me his watch. I had no idea what it was."</div>
+      <div class="card-tags">
+        <span class="tag gold">Rolex Datejust</span>
+        <span class="tag gold">$6,800</span>
+        <span class="tag">Ref. 1601</span>
+        <span class="tag">Insurance report</span>
+      </div>
+      <div class="card-links">
+        <a class="open-btn" href="ad3.html" target="_blank">Open Image →</a>
+        <a class="copy-btn" href="ad-copy.txt" target="_blank">Ad Copy</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview gr">📊</div>
+    <div class="card-body">
+      <div class="card-num">Ad 4 · Portfolio Grid</div>
+      <div class="card-title">Collector Portfolio — $86,900 Live Value</div>
+      <div class="card-hook">"I stopped using spreadsheets to track my watch collection."</div>
+      <div class="card-tags">
+        <span class="tag g">$86,900 portfolio</span>
+        <span class="tag g">↑ +11.9%</span>
+        <span class="tag">4 watches</span>
+        <span class="tag">Collectors</span>
+      </div>
+      <div class="card-links">
+        <a class="open-btn" href="ad4.html" target="_blank">Open Image →</a>
+        <a class="copy-btn" href="ad-copy.txt" target="_blank">Ad Copy</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview pg">💰</div>
+    <div class="card-body">
+      <div class="card-num">Ad 5 · Profit Green</div>
+      <div class="card-title">Flipper's Secret — Tudor +$1,250 Profit</div>
+      <div class="card-hook">"How I stopped losing money on bad flips."</div>
+      <div class="card-tags">
+        <span class="tag g">2× profit margin</span>
+        <span class="tag">Tudor Black Bay</span>
+        <span class="tag">Chrono24 + eBay</span>
+        <span class="tag">Dealers</span>
+      </div>
+      <div class="card-links">
+        <a class="open-btn" href="ad5.html" target="_blank">Open Image →</a>
+        <a class="copy-btn" href="ad-copy.txt" target="_blank">Ad Copy</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="copy-section">
+  <h2>📝 Ad Copy File</h2>
+  <p>All 5 Facebook ad stories, headlines, descriptions, CTA copy and hashtags are in <a href="ad-copy.txt" target="_blank">ad-copy.txt</a>. Open the file, copy the relevant block for each ad, and paste directly into Facebook Ads Manager under "Primary Text" and "Headline" fields.</p>
+</div>
+
+<div class="instructions">
+  <h2>📸 Export Each Ad as 1080×1080 PNG</h2>
+  <ol>
+    <li>Click <strong>"Open Image →"</strong> to open the ad (pre-sized at 1080×1080px)</li>
+    <li>Chrome DevTools (<code>F12</code>) → Toggle Device Toolbar → set <code>1080 × 1080</code></li>
+    <li><code>Ctrl+Shift+P</code> → type <strong>"Capture screenshot"</strong> → <strong>"Capture full size screenshot"</strong></li>
+    <li>Save as <code>.PNG</code> — never JPG (gradient quality loss)</li>
+    <li>In Facebook Ads Manager: create <strong>Single Image Ad</strong> → upload PNG → 1:1 format</li>
+    <li>Paste story text from <code>ad-copy.txt</code> into Primary Text field</li>
+    <li>Set destination URL: <code>watchsnap.vercel.app</code></li>
+  </ol>
+  <div class="tip">
+    <strong>💡 A/B Testing tip:</strong> Start with Ad 1 (fear/loss) vs Ad 3 (emotional/heirloom) at identical budgets — $20/day each. These two angles consistently win on CTR vs value or ROI ads. Scale the winner after 5 days. Then test Ad 5 (ROI) separately to a Dealer / Collector audience.
+  </div>
+</div>
+
+</body>
+</html>

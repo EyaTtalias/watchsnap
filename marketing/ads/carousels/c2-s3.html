@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 2 · Slide 3 — Omega Reveal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #090800; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 55% at 50% 50%, rgba(212,175,55,0.14) 0%, rgba(251,146,60,0.05) 45%, transparent 70%),
+      #090800;
+  }
+  .rays { position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 50% 46%, rgba(212,175,55,0.018) 0deg 8deg, transparent 8deg 16deg); }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 85% at 50% 50%, transparent 30%, rgba(0,0,0,0.78) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; padding: 48px 68px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 42px; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; box-shadow: 0 0 10px rgba(212,175,55,0.7); }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #555; font-weight: 600; }
+
+  /* Auth badge */
+  .auth-tag { display: inline-flex; align-items: center; gap: 9px; background: rgba(34,197,94,0.10); border: 1.5px solid rgba(34,197,94,0.38); border-radius: 40px; padding: 9px 22px; font-size: 15px; font-weight: 800; color: #4ade80; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 32px; }
+
+  /* Omega watch illustration */
+  .watch-omega { position: relative; width: 185px; height: 185px; margin-bottom: 36px; }
+  .omega-glow { position: absolute; inset: -22px; border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,0.20) 0%, transparent 68%); }
+  .omega-bezel {
+    width: 185px; height: 185px; border-radius: 50%;
+    background: conic-gradient(from 0deg, #1a1800 0deg, #3a3200 25deg, #1a1800 50deg, #4a4000 75deg, #1a1800 100deg, #3a3200 125deg, #1a1800 150deg, #4a4000 175deg, #1a1800 200deg, #3a3200 225deg, #1a1800 250deg, #4a4000 275deg, #1a1800 300deg, #3a3200 325deg, #1a1800 360deg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 50px rgba(212,175,55,0.28), 0 0 100px rgba(212,175,55,0.08);
+    position: relative; z-index: 1;
+  }
+  .omega-face {
+    width: 149px; height: 149px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 33%, #c0b060 0%, #806c28 35%, #3a2c08 80%, #1a1400 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    border: 1px solid #2a2000;
+  }
+  .omega-face::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 62% 30%, rgba(255,255,255,0.08) 0%, transparent 50%); }
+  .omega-brand { font-size: 10px; font-weight: 900; color: #D4AF37; letter-spacing: 2.5px; text-align: center; position: absolute; top: 29px; }
+  .omega-model { font-size: 7px; color: #8a7030; letter-spacing: 1px; position: absolute; top: 43px; }
+  .omega-year { font-size: 8px; color: #605030; font-weight: 700; position: absolute; bottom: 28px; }
+  .omega-center { width: 7px; height: 7px; background: #D4AF37; border-radius: 50%; z-index: 2; box-shadow: 0 0 5px rgba(212,175,55,0.7); }
+  .omega-h { position: absolute; bottom: 50%; left: calc(50% - 2px); width: 4px; height: 42px; background: #D4AF37; border-radius: 2px; transform-origin: bottom center; transform: rotate(-50deg); }
+  .omega-m { position: absolute; bottom: 50%; left: calc(50% - 1.5px); width: 3px; height: 54px; background: #e8e8e8; border-radius: 2px; transform-origin: bottom center; transform: rotate(40deg); }
+
+  /* Result info */
+  .result-brand { font-size: 18px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
+  .result-model { font-size: 50px; font-weight: 900; color: #fff; line-height: 1.0; letter-spacing: -1px; text-align: center; margin-bottom: 8px; }
+  .result-year { font-size: 20px; color: #666; text-align: center; margin-bottom: 32px; }
+
+  /* Price */
+  .price-reveal {
+    text-align: center; padding: 20px 52px;
+    background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.22);
+    border-radius: 20px; margin-bottom: 0;
+  }
+  .pr-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+  .pr-num {
+    font-size: 82px; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, #B8922A 0%, #D4AF37 35%, #F0CC5A 60%, #D4AF37 80%, #B8922A 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    letter-spacing: -2px;
+  }
+  .pr-sub { font-size: 14px; color: #555; margin-top: 4px; }
+
+  .bottom-row { margin-top: auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; background: #1A1A1A; }
+  .dot.done { background: rgba(212,175,55,0.4); }
+  .dot.active { background: #D4AF37; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="rays"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">3 OF 4</div>
+  </div>
+
+  <div class="auth-tag">
+    <svg width="15" height="15" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    Likely Authentic
+  </div>
+
+  <div class="watch-omega">
+    <div class="omega-glow"></div>
+    <div class="omega-bezel">
+      <div class="omega-face">
+        <div class="omega-brand">OMEGA</div>
+        <div class="omega-model">SEAMASTER</div>
+        <div class="omega-center"></div>
+        <div class="omega-h"></div>
+        <div class="omega-m"></div>
+        <div class="omega-year">1968</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-brand">Omega</div>
+  <div class="result-model">Seamaster 300</div>
+  <div class="result-year">Reference 165.024 · 1968 Vintage</div>
+
+  <div class="price-reveal">
+    <div class="pr-label">Secondary Market Value</div>
+    <div class="pr-num">$4,800</div>
+    <div class="pr-sub">Range: $4,200 – $6,500 · Stable · Cal. 565</div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="dots">
+      <div class="dot done"></div>
+      <div class="dot done"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

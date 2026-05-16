@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    background:#080303;
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+    color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:44px 60px;
+  }
+  .bg{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -5%, rgba(220,38,38,0.14) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 80% 80%, rgba(220,38,38,0.06) 0%, transparent 55%),
+      #080303;
+  }
+  .grid{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(220,38,38,0.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(220,38,38,0.04) 1px,transparent 1px);
+    background-size:54px 54px;
+  }
+
+  .header{position:relative;z-index:10;width:100%;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-icon{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8882F);display:flex;align-items:center;justify-content:center;font-size:21px}
+  .logo-text{font-size:25px;font-weight:900}
+  .logo-text span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  /* Big replica banner */
+  .replica-banner{
+    position:relative;z-index:10;
+    width:100%;
+    background:rgba(220,38,38,0.12);
+    border:2px solid rgba(220,38,38,0.5);
+    border-radius:20px;
+    padding:28px 40px;
+    display:flex;align-items:center;gap:24px;
+  }
+  .rep-icon{
+    width:70px;height:70px;border-radius:50%;
+    background:rgba(220,38,38,0.15);border:2px solid rgba(220,38,38,0.4);
+    display:flex;align-items:center;justify-content:center;
+    font-size:36px;flex-shrink:0;
+  }
+  .rep-text{}
+  .rep-title{font-size:36px;font-weight:900;color:#ef4444;letter-spacing:-0.5px;margin-bottom:4px}
+  .rep-sub{font-size:16px;color:rgba(220,38,38,0.6);font-weight:600}
+
+  /* Watch face (cracked/damaged look) */
+  .watch-center{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;gap:60px}
+  .watch-wrap{position:relative}
+  .warning-glow{
+    position:absolute;inset:-30px;border-radius:50%;
+    background:radial-gradient(circle,rgba(220,38,38,0.2) 0%,transparent 65%);
+  }
+  .bezel{
+    width:260px;height:260px;border-radius:50%;
+    background:conic-gradient(from 0deg,#1a1a1a,#333,#1a1a1a,#222,#1a1a1a);
+    padding:10px;
+    box-shadow:0 0 40px rgba(220,38,38,0.2),0 20px 60px rgba(0,0,0,0.9);
+  }
+  .face{
+    width:100%;height:100%;border-radius:50%;
+    background:radial-gradient(ellipse at 40% 35%,#0f0f0f,#000);
+    position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  }
+  .mk{position:absolute;background:rgba(255,255,255,0.3);width:2px;height:10px;top:12px;left:50%;margin-left:-1px;transform-origin:50% 110px}
+  .mk.lg{background:rgba(255,255,255,0.5);height:15px;top:8px}
+  .hand{position:absolute;bottom:50%;left:50%;transform-origin:50% 100%;border-radius:2px 2px 0 0}
+  .h-hr{width:5px;height:70px;margin-left:-2.5px;background:rgba(255,255,255,0.8);transform:rotate(-15deg)}
+  .h-mn{width:3px;height:88px;margin-left:-1.5px;background:rgba(255,255,255,0.8);transform:rotate(105deg)}
+  .h-sc{width:2px;height:95px;margin-left:-1px;background:#ef4444;transform:rotate(215deg)}
+  .center-d{position:absolute;top:50%;left:50%;width:10px;height:10px;border-radius:50%;background:#999;transform:translate(-50%,-50%);z-index:5}
+  /* Fake logo text */
+  .fake-logo{position:absolute;top:28%;left:50%;transform:translateX(-50%);font-size:10px;font-weight:900;letter-spacing:1.5px;color:rgba(255,255,255,0.3);white-space:nowrap;text-align:center}
+  /* Crack overlay */
+  .crack{
+    position:absolute;top:20%;left:40%;width:60px;height:80px;
+    background:none;
+    border-left:2px solid rgba(220,38,38,0.4);
+    transform:rotate(25deg) skew(10deg);
+    pointer-events:none;
+  }
+
+  /* Flags list */
+  .flags{flex:1}
+  .flags-title{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(220,38,38,0.6);margin-bottom:16px}
+  .flag-item{
+    display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;
+    padding:14px 18px;
+    background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.15);
+    border-radius:12px;
+  }
+  .flag-x{width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;color:#ef4444;font-weight:900;flex-shrink:0;margin-top:1px}
+  .flag-text{font-size:15px;color:rgba(255,255,255,0.7);line-height:1.4}
+  .flag-text strong{color:#ef4444;font-weight:800}
+
+  /* Value row */
+  .value-row{
+    position:relative;z-index:10;width:100%;
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;padding:20px 32px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .vr-left{font-size:16px;color:rgba(255,255,255,0.4)}
+  .vr-left strong{color:rgba(255,255,255,0.7)}
+  .vr-val{
+    font-size:36px;font-weight:900;color:#ef4444;letter-spacing:-1px;
+  }
+  .vr-note{font-size:12px;color:rgba(220,38,38,0.5);text-align:right;margin-top:2px}
+
+  .footer{
+    position:relative;z-index:10;
+    width:100%;display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid rgba(220,38,38,0.1);padding-top:20px;
+  }
+  .cta{font-size:16px;font-weight:700;color:rgba(255,255,255,0.35)}
+  .cta span{color:#C9A84C;font-weight:900}
+  .tagline{font-size:13px;color:rgba(220,38,38,0.5);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid"></div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">⌚</div>
+    <div class="logo-text">Watch<span>Snap</span></div>
+  </div>
+  <div style="font-size:13px;font-weight:700;letter-spacing:2px;color:rgba(220,38,38,0.6);border:1px solid rgba(220,38,38,0.25);border-radius:100px;padding:8px 18px;text-transform:uppercase">
+    Authentication Report
+  </div>
+</div>
+
+<div class="replica-banner">
+  <div class="rep-icon">⚠️</div>
+  <div class="rep-text">
+    <div class="rep-title">REPLICA DETECTED</div>
+    <div class="rep-sub">"Rolex Daytona" · Ref. 116500LN (Counterfeit)</div>
+  </div>
+</div>
+
+<div class="watch-center">
+  <div class="watch-wrap">
+    <div class="warning-glow"></div>
+    <div class="bezel">
+      <div class="face">
+        <div class="mk lg" style="transform:rotate(0deg)"></div>
+        <div class="mk" style="transform:rotate(30deg)"></div>
+        <div class="mk" style="transform:rotate(60deg)"></div>
+        <div class="mk lg" style="transform:rotate(90deg)"></div>
+        <div class="mk" style="transform:rotate(120deg)"></div>
+        <div class="mk" style="transform:rotate(150deg)"></div>
+        <div class="mk lg" style="transform:rotate(180deg)"></div>
+        <div class="mk" style="transform:rotate(210deg)"></div>
+        <div class="mk" style="transform:rotate(240deg)"></div>
+        <div class="mk lg" style="transform:rotate(270deg)"></div>
+        <div class="mk" style="transform:rotate(300deg)"></div>
+        <div class="mk" style="transform:rotate(330deg)"></div>
+        <div class="fake-logo">ROLEX<br>OYSTER PERPETUAL<br>DAYTONA</div>
+        <div class="hand h-hr"></div>
+        <div class="hand h-mn"></div>
+        <div class="hand h-sc"></div>
+        <div class="center-d"></div>
+        <div class="crack"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flags">
+    <div class="flags-title">Authentication Flags</div>
+    <div class="flag-item">
+      <div class="flag-x">✕</div>
+      <div class="flag-text"><strong>Dial text quality</strong> — Inconsistent font weight, blurred coronet engraving</div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-x">✕</div>
+      <div class="flag-text"><strong>Crown logo</strong> — Crown proportions do not match factory specification</div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-x">✕</div>
+      <div class="flag-text"><strong>Bezel alignment</strong> — 3° rotational offset from case</div>
+    </div>
+    <div class="flag-item">
+      <div class="flag-x">✕</div>
+      <div class="flag-text"><strong>Hand finishing</strong> — Polished surfaces show tooling marks</div>
+    </div>
+  </div>
+</div>
+
+<div class="value-row">
+  <div class="vr-left">Listed price: <strong>$450</strong> &nbsp;·&nbsp; Authentic Daytona: ~$28,000+</div>
+  <div>
+    <div class="vr-val">$80 – $150</div>
+    <div class="vr-note">Estimated replica resale value</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cta">Scan before you buy · <span>watchsnap.vercel.app</span></div>
+  <div class="tagline">Don't Get Scammed</div>
+</div>
+</body>
+</html>

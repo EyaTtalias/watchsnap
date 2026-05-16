@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Facebook Feed Ads</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#060606; color:#fff; font-family:-apple-system,'Segoe UI',sans-serif; min-height:100vh; padding:44px; }
+
+  .header { text-align:center; margin-bottom:54px; }
+  .header h1 { font-size:34px; font-weight:900; background:linear-gradient(135deg,#D4AF37,#F0CC5A,#B8922A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:10px; }
+  .header p { color:#555; font-size:15px; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:28px; max-width:1300px; margin:0 auto; }
+
+  .ad-card { background:#0E0E0E; border:1px solid #1E1E1E; border-radius:20px; overflow:hidden; transition:border-color 0.2s, transform 0.2s; }
+  .ad-card:hover { border-color:#D4AF37; transform:translateY(-4px); }
+
+  .card-preview { height:200px; display:flex; align-items:center; justify-content:center; font-size:64px; position:relative; overflow:hidden; }
+  .card-preview.red { background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(220,38,38,0.12) 0%, #0A0A0A 100%); }
+  .card-preview.amber { background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(180,120,30,0.14) 0%, #0A0808 100%); }
+  .card-preview.warm { background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(212,175,55,0.12) 0%, #090806 100%); }
+  .card-preview.green { background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(74,222,128,0.10) 0%, #080A08 100%); }
+  .card-preview.profit { background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(74,222,128,0.10) 0%, #070A07 100%); }
+
+  .card-body { padding:22px 24px 20px; }
+  .card-num { font-size:11px; color:#D4AF37; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+  .card-title { font-size:17px; font-weight:800; color:#fff; margin-bottom:6px; line-height:1.3; }
+  .card-headline { font-size:13px; color:#666; line-height:1.55; margin-bottom:12px; font-style:italic; }
+  .card-tags { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:16px; }
+  .tag { background:#1A1A1A; border:1px solid #252525; border-radius:20px; padding:4px 10px; font-size:11px; color:#777; }
+  .tag.red { border-color:rgba(220,38,38,0.3); color:#f87171; background:rgba(220,38,38,0.07); }
+  .tag.green { border-color:rgba(74,222,128,0.3); color:#4ade80; background:rgba(74,222,128,0.07); }
+  .tag.gold { border-color:rgba(212,175,55,0.3); color:#D4AF37; background:rgba(212,175,55,0.07); }
+  .open-btn { display:block; background:linear-gradient(135deg,#D4AF37,#B8922A); color:#000; font-size:14px; font-weight:800; padding:11px 20px; border-radius:10px; text-align:center; text-decoration:none; }
+  .open-btn:hover { opacity:0.9; }
+
+  .instructions { max-width:900px; margin:50px auto 0; background:#0E0E0E; border:1px solid #1E1E1E; border-radius:20px; padding:28px 34px; }
+  .instructions h2 { font-size:20px; font-weight:800; color:#D4AF37; margin-bottom:16px; }
+  .instructions ol { padding-left:20px; }
+  .instructions li { font-size:14px; color:#888; margin-bottom:10px; line-height:1.6; }
+  code { background:#1A1A1A; border:1px solid #252525; border-radius:5px; padding:2px 7px; font-size:12px; color:#D4AF37; }
+  .tip { background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.14); border-radius:10px; padding:14px 18px; margin-top:18px; font-size:14px; color:#888; line-height:1.6; }
+  .tip strong { color:#D4AF37; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>WatchSnap · Facebook Feed Ads</h1>
+  <p>5 premium single-page ads · 1080×1080px · Facebook / Instagram feed · CSS-only watch illustrations</p>
+</div>
+
+<div class="grid">
+
+  <div class="ad-card">
+    <div class="card-preview red">⚠️</div>
+    <div class="card-body">
+      <div class="card-num">Ad 1 · Red Alert Theme</div>
+      <div class="card-title">The Near Scam — Patek Philippe</div>
+      <div class="card-headline">"I almost wired $14,000 to a guy I met on Facebook Marketplace."</div>
+      <div class="card-tags">
+        <span class="tag red">Replica Detected</span>
+        <span class="tag red">$14K saved</span>
+        <span class="tag">Miami FL</span>
+        <span class="tag">High urgency</span>
+      </div>
+      <a class="open-btn" href="ad1.html" target="_blank">Open Ad 1 →</a>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview amber">🏷️</div>
+    <div class="card-body">
+      <div class="card-num">Ad 2 · Warm Amber Theme</div>
+      <div class="card-title">Estate Sale Discovery — Omega Seamaster</div>
+      <div class="card-headline">"My wife told me to stop buying junk at estate sales. Then I found this."</div>
+      <div class="card-tags">
+        <span class="tag gold">Omega Seamaster 300</span>
+        <span class="tag green">$4,200</span>
+        <span class="tag">Chicago IL</span>
+        <span class="tag">$40 paid</span>
+      </div>
+      <a class="open-btn" href="ad2.html" target="_blank">Open Ad 2 →</a>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview warm">⌚</div>
+    <div class="card-body">
+      <div class="card-num">Ad 3 · Warm Elegant Theme</div>
+      <div class="card-title">Inherited Mystery — Rolex Datejust</div>
+      <div class="card-headline">"My grandpa left me his watch. I had no idea what it was."</div>
+      <div class="card-tags">
+        <span class="tag gold">Rolex Datejust</span>
+        <span class="tag gold">$6,800</span>
+        <span class="tag">No box / papers</span>
+        <span class="tag">Emotional</span>
+      </div>
+      <a class="open-btn" href="ad3.html" target="_blank">Open Ad 3 →</a>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview green">📊</div>
+    <div class="card-body">
+      <div class="card-num">Ad 4 · Professional Green Theme</div>
+      <div class="card-title">Collector Portfolio — 4 Watches</div>
+      <div class="card-headline">"I stopped using spreadsheets to track my watch collection."</div>
+      <div class="card-tags">
+        <span class="tag green">$72,800 portfolio</span>
+        <span class="tag green">Live values</span>
+        <span class="tag">4 watches</span>
+        <span class="tag">Collectors</span>
+      </div>
+      <a class="open-btn" href="ad4.html" target="_blank">Open Ad 4 →</a>
+    </div>
+  </div>
+
+  <div class="ad-card">
+    <div class="card-preview profit">💰</div>
+    <div class="card-body">
+      <div class="card-num">Ad 5 · Profit Green Theme</div>
+      <div class="card-title">Flipper's Secret — 3-Watch Comparison</div>
+      <div class="card-headline">"How I stopped losing money on bad flips."</div>
+      <div class="card-tags">
+        <span class="tag green">2× profit margins</span>
+        <span class="tag">Chrono24 + eBay</span>
+        <span class="tag">Dealers / Flippers</span>
+        <span class="tag">B2B</span>
+      </div>
+      <a class="open-btn" href="ad5.html" target="_blank">Open Ad 5 →</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="instructions">
+  <h2>📸 How to Export Each Ad as 1080×1080 PNG</h2>
+  <ol>
+    <li>Click <strong>"Open Ad"</strong> — each page is pre-sized at exactly <code>1080×1080px</code></li>
+    <li>In Chrome: open DevTools (<code>F12</code>) → Toggle Device Toolbar → set custom size <code>1080 × 1080</code></li>
+    <li>Press <code>Ctrl+Shift+P</code> → type <strong>"Capture screenshot"</strong> → select <strong>"Capture full size screenshot"</strong></li>
+    <li>Save as <code>.PNG</code> — avoid JPG (gradient quality loss)</li>
+    <li>Upload to Facebook Ads Manager as a <strong>Single Image Ad</strong> at 1:1 ratio</li>
+    <li>Set destination URL to <code>watchsnap.vercel.app</code> and CTA button to match each ad's copy</li>
+  </ol>
+  <div class="tip">
+    <strong>💡 Pro tip:</strong> Run A/B tests — pit Ad 1 (fear/scam) vs Ad 3 (emotional/inheritance) at identical budgets. The fear-based ad typically wins on CTR; the emotional ad often wins on conversion quality. Test both audiences: "Watch Collectors" interest + "Luxury Goods" interest targeting.
+  </div>
+</div>
+
+</body>
+</html>

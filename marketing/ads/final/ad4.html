@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — My Collection</title>
+<style>
+/* ── All values scaled at 1.7× from actual app Tailwind/CSS ── */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1080px; height:1080px; overflow:hidden;
+  background:#0A0A0A;
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:#fff;
+}
+
+/* ─────── Status bar ─────── */
+.status-bar {
+  height:44px; background:#0A0A0A;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px 0 36px; flex-shrink:0;
+}
+.sb-time { font-size:17px; font-weight:600; }
+.sb-icons { display:flex; align-items:center; gap:7px; }
+.sb-signal { display:flex; align-items:flex-end; gap:2px; }
+.sb-bar { width:4px; border-radius:1px; background:#fff; }
+.sb-battery { width:28px; height:14px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.6); position:relative; display:flex; align-items:center; }
+.sb-battery::after { content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:3px; height:7px; background:rgba(255,255,255,0.5); border-radius:0 2px 2px 0; }
+.sb-battery-fill { height:100%; width:78%; background:#fff; border-radius:1.5px 0 0 1.5px; margin:1.5px; }
+
+/* ─────── Navbar (Navbar.tsx exact) ─────── */
+.navbar {
+  height:95px; background:rgba(10,10,10,0.97);
+  border-bottom:1.5px solid #1E1E1E;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; flex-shrink:0;
+}
+.nav-logo { display:flex; align-items:center; gap:12px; }
+.nav-logo-circle {
+  width:51px; height:51px; border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.nav-brand { font-size:28px; font-weight:700; letter-spacing:-0.5px; color:#fff; }
+.nav-brand .snap {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.nav-links { display:flex; align-items:center; gap:36px; }
+.nav-link { font-size:21px; font-weight:500; color:#6b7280; }
+.nav-link.active { color:#C9A84C; }
+.nav-upgrade {
+  display:flex; align-items:center; gap:8px;
+  border-radius:9999px;
+  background:linear-gradient(to right,#C9A84C,#A8882F);
+  padding:10px 24px; font-size:18px; font-weight:700; color:#000;
+}
+
+/* ─────── Content wrapper ─────── */
+.content {
+  padding:0 60px;
+  display:flex; flex-direction:column;
+  padding-top:28px; padding-bottom:0;
+}
+
+/* ─────── Portfolio performance card (NEW — styled in app's language) ─────── */
+/* matches: rounded-2xl border border-[#1E1E1E] bg-[#111111] p-4 */
+.portfolio-card {
+  background:#111111; border:1.5px solid #1E1E1E; border-radius:27px;
+  padding:18px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+  box-shadow:0 0 48px rgba(212,175,55,0.06);
+}
+.pc-left { display:flex; flex-direction:column; gap:5px; }
+.pc-label { font-size:19px; text-transform:uppercase; letter-spacing:0.12em; color:#4b5563; font-weight:700; }
+.pc-total {
+  font-size:52px; font-weight:900; line-height:1; letter-spacing:-1.5px;
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.pc-gain { display:flex; align-items:center; gap:10px; margin-top:2px; }
+.pc-gain-num { font-size:22px; font-weight:800; color:#4ade80; }
+.pc-gain-pct {
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.28);
+  border-radius:9999px; padding:4px 14px;
+  font-size:19px; font-weight:800; color:#4ade80;
+}
+.pc-right { text-align:right; }
+.pc-r-label { font-size:17px; color:#4b5563; margin-bottom:5px; }
+.pc-sparkline { display:flex; align-items:flex-end; gap:4px; height:40px; }
+.pc-spark-bar { width:10px; border-radius:3px 3px 0 0; background:linear-gradient(180deg,#4ade80,#22c55e); }
+
+/* ─────── Page header ─────── */
+/* matches: mb-6 flex items-start justify-between */
+.page-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-top:22px; flex-shrink:0;
+}
+.ph-left {}
+.ph-title { font-size:44px; font-weight:900; line-height:1.15; }
+.ph-title .collection-word {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.ph-sub { font-size:21px; color:#6b7280; margin-top:4px; }
+/* New Scan button: rounded-xl border border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] */
+.ph-scan-btn {
+  display:flex; align-items:center; gap:10px;
+  border-radius:17px;
+  border:1.5px solid rgba(201,168,76,0.30);
+  background:rgba(201,168,76,0.10);
+  padding:14px 22px; font-size:21px; font-weight:700; color:#C9A84C;
+  flex-shrink:0;
+}
+
+/* ─────── Search bar ─────── */
+/* rounded-2xl border border-[#1E1E1E] bg-[#111111] py-3 pl-11 */
+.search-wrap {
+  position:relative; margin-top:18px; flex-shrink:0;
+}
+.search-icon {
+  position:absolute; left:20px; top:50%; transform:translateY(-50%);
+  color:#4b5563;
+}
+.search-input {
+  width:100%; border-radius:27px;
+  border:1.5px solid #1E1E1E; background:#111111;
+  padding:16px 20px 16px 58px;
+  font-size:22px; color:#4b5563;
+  font-family:inherit;
+}
+
+/* ─────── Watch grid ─────── */
+/* grid grid-cols-4 gap-3 */
+.watch-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:17px;
+  margin-top:20px; flex-shrink:0;
+}
+
+/* ─────── Watch card (WatchCard component) ─────── */
+/* rounded-2xl border bg-[#111111] border-[#1E1E1E] flex flex-col overflow-hidden */
+.watch-card {
+  background:#111111; border:1.5px solid #1E1E1E;
+  border-radius:24px; overflow:hidden;
+  display:flex; flex-direction:column;
+  flex-shrink:0;
+}
+
+/* Image area — aspect-square bg-[#0D0D0D] */
+.wc-img {
+  aspect-ratio:1/1; background:#0D0D0D;
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Gradient overlay: from-[#111111]/90 via-[#111111]/20 to-transparent */
+.wc-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(17,17,17,0.90) 0%, rgba(17,17,17,0.22) 45%, transparent 80%);
+  z-index:3;
+}
+
+/* Auth badge — absolute top-2 left-2, rounded-full, text-[10px] */
+.wc-auth {
+  position:absolute; top:12px; left:12px; z-index:5;
+  display:flex; align-items:center; gap:7px;
+  border-radius:9999px; border:1px solid; padding:5px 12px;
+  font-size:17px; font-weight:700;
+  backdrop-filter:blur(8px);
+}
+.wc-auth.authentic {
+  color:#4ade80; background:rgba(34,197,94,0.10); border-color:rgba(34,197,94,0.30);
+}
+.wc-auth-dot { width:9px; height:9px; border-radius:50%; background:#4ade80; }
+
+/* Gain % badge — absolute top-2 right-2 */
+.wc-gain {
+  position:absolute; top:12px; right:12px; z-index:5;
+  background:rgba(0,0,0,0.65);
+  border-radius:9999px; padding:5px 12px;
+  font-size:18px; font-weight:800; color:#4ade80;
+  backdrop-filter:blur(6px);
+}
+
+/* Confidence bar — absolute bottom-0, h-1 */
+.wc-bar {
+  position:absolute; bottom:0; left:0; right:0;
+  height:6px; background:rgba(0,0,0,0.40); z-index:4;
+}
+.wc-bar-fill {
+  height:100%;
+  background:linear-gradient(90deg, rgba(201,168,76,0.60), #C9A84C);
+}
+
+/* Card info — p-3 */
+.wc-info {
+  padding:17px 17px 20px; display:flex; flex-direction:column; gap:6px;
+}
+.wc-brand {
+  font-size:22px; font-weight:900; line-height:1.1;
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.wc-model { font-size:19px; font-weight:600; color:rgba(255,255,255,0.90); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wc-ref { font-size:17px; color:#4b5563; font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Value row: mt-1.5 flex items-center gap-1 text-[10px] text-[#C9A84C]/80 */
+.wc-value-row { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+.wc-value { display:flex; align-items:center; gap:6px; font-size:17px; color:rgba(201,168,76,0.82); font-weight:600; }
+.wc-gain-text { font-size:18px; font-weight:800; color:#4ade80; }
+
+/* ─────── Summary row (matches history/page.tsx) ─────── */
+/* mt-8 rounded-2xl border border-[#1E1E1E] bg-[#111111] p-4, grid grid-cols-3 */
+.summary-row {
+  background:#111111; border:1.5px solid #1E1E1E; border-radius:27px;
+  padding:22px 28px; margin-top:20px; flex-shrink:0;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+}
+.sr-item { text-align:center; padding:0 12px; }
+.sr-item:not(:last-child) { border-right:1px solid #1E1E1E; }
+.sr-val { font-size:32px; font-weight:900; line-height:1; }
+.sr-val.gold {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.sr-val.green { color:#4ade80; }
+.sr-val.gold2 { color:#C9A84C; }
+.sr-label { font-size:17px; color:#4b5563; text-transform:uppercase; letter-spacing:0.08em; margin-top:7px; font-weight:700; }
+
+/* ─────── Mobile bottom tab bar (Navbar.tsx) ─────── */
+.bottom-bar {
+  position:absolute; bottom:0; left:0; right:0; height:68px;
+  background:rgba(10,10,10,0.97); border-top:1.5px solid #1E1E1E;
+  display:flex; align-items:stretch;
+}
+.bb-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:#6b7280; }
+.bb-tab.active { color:#C9A84C; }
+.bb-tab svg { width:32px; height:32px; }
+.bb-tab-label { font-size:17px; font-weight:600; }
+
+/* ─── Tiny CSS watch illustrations ─── */
+/* GMT-Master II */
+.w-gmt { position:relative; width:100px; height:100px; }
+.w-gmt-bezel { position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(#1a2d6e 0 180deg,#1a1a1a 180deg 360deg); z-index:0; }
+.w-gmt-case { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#2a2a2a,#1a1a1a); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2.5px #1a1a1a, 0 0 0 5px rgba(74,144,226,0.4), 0 8px 20px rgba(0,0,0,0.85); position:relative; z-index:1; }
+.w-gmt-dial { width:80px; height:80px; border-radius:50%; background:radial-gradient(circle,#1a1816,#0c0a08); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.w-gmt-brand { position:absolute; top:15px; font-size:6px; font-weight:900; color:#D4AF37; letter-spacing:1.5px; text-align:center; width:100%; }
+.w-gmt-sub { position:absolute; top:24px; font-size:4px; color:#666; letter-spacing:1px; text-align:center; width:100%; }
+.w-gmt-hh { position:absolute; bottom:50%; left:calc(50% - 2px); width:4px; height:24px; background:#D4AF37; border-radius:2px; transform-origin:bottom center; transform:rotate(-20deg); z-index:3; }
+.w-gmt-mh { position:absolute; bottom:50%; left:calc(50% - 1.5px); width:3px; height:30px; background:#fff; border-radius:2px; transform-origin:bottom center; transform:rotate(75deg); z-index:3; }
+.w-gmt-c { position:absolute; width:6px; height:6px; border-radius:50%; background:#D4AF37; z-index:4; }
+
+/* Patek Philippe Calatrava */
+.w-pat { position:relative; width:100px; height:100px; }
+.w-pat-case { width:100px; height:100px; border-radius:50%; background:linear-gradient(140deg,#e2e2e2,#aaa,#d8d8d8,#909090); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2.5px #aaa, 0 0 0 5px #3a3a3a, 0 8px 20px rgba(0,0,0,0.85); }
+.w-pat-dial { width:80px; height:80px; border-radius:50%; background:radial-gradient(circle at 35% 28%,#faf6ea,#eee0be,#d8c898); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.w-pat-brand { position:absolute; top:22px; font-size:5px; font-weight:900; color:#1e1608; letter-spacing:1.5px; text-align:center; width:100%; }
+.w-pat-city { position:absolute; top:31px; font-size:3.5px; color:#8a7040; letter-spacing:1.5px; text-align:center; width:100%; }
+.w-pat-ring { position:absolute; inset:5px; border-radius:50%; border:0.5px solid rgba(100,80,38,0.25); }
+.w-pat-hh { position:absolute; bottom:50%; left:calc(50% - 2px); width:4px; height:23px; background:#1e1608; border-radius:2px; transform-origin:bottom center; transform:rotate(162deg); z-index:3; }
+.w-pat-mh { position:absolute; bottom:50%; left:calc(50% - 1.5px); width:3px; height:30px; background:#1e1608; border-radius:2px; transform-origin:bottom center; transform:rotate(43deg); z-index:3; }
+.w-pat-c { position:absolute; width:6px; height:6px; border-radius:50%; background:#1e1608; z-index:4; }
+
+/* AP Royal Oak */
+.w-ap { position:relative; width:100px; height:100px; }
+.w-ap-case { width:100px; height:100px; clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%); background:linear-gradient(135deg,#3a3a4a,#1a1a28,#2e2e3c); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2.5px #2a2a38, 0 8px 20px rgba(0,0,0,0.85); }
+.w-ap-dial { width:78px; height:78px; clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%); background:radial-gradient(circle,#0a1a40,#041030); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.w-ap-brand { position:absolute; top:18px; font-size:5px; font-weight:900; color:#4a9fff; letter-spacing:1px; text-align:center; width:100%; }
+.w-ap-sub { position:absolute; top:27px; font-size:3.5px; color:#3a7aaa; letter-spacing:1px; text-align:center; width:100%; }
+.w-ap-hh { position:absolute; bottom:50%; left:calc(50% - 2px); width:4px; height:22px; background:#4a9fff; border-radius:2px; transform-origin:bottom center; transform:rotate(70deg); z-index:3; }
+.w-ap-mh { position:absolute; bottom:50%; left:calc(50% - 1.5px); width:3px; height:28px; background:#fff; border-radius:2px; transform-origin:bottom center; transform:rotate(-30deg); z-index:3; }
+.w-ap-c { position:absolute; width:6px; height:6px; border-radius:50%; background:#4a9fff; z-index:4; }
+
+/* Tudor Black Bay */
+.w-tud { position:relative; width:100px; height:100px; }
+.w-tud-bezel { position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(#c4860e 0 2.5deg,#2a2010 2.5deg 30deg,#c4a010 30deg 32.5deg,#2a2010 32.5deg 60deg,#c4860e 60deg 62.5deg,#2a2010 62.5deg 90deg,#c4a010 90deg 92.5deg,#2a2010 92.5deg 120deg,#c4860e 120deg 122.5deg,#2a2010 122.5deg 150deg,#c4a010 150deg 152.5deg,#2a2010 152.5deg 180deg,#c4860e 180deg 182.5deg,#2a2010 182.5deg 210deg,#c4a010 210deg 212.5deg,#2a2010 212.5deg 240deg,#c4860e 240deg 242.5deg,#2a2010 242.5deg 270deg,#c4a010 270deg 272.5deg,#2a2010 272.5deg 300deg,#c4860e 300deg 302.5deg,#2a2010 302.5deg 330deg,#c4a010 330deg 332.5deg,#2a2010 332.5deg 360deg); z-index:0; }
+.w-tud-case { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#262014,#181008,#20180c); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2.5px #1a1206, 0 0 0 5px rgba(196,134,14,0.5), 0 8px 20px rgba(0,0,0,0.9); position:relative; z-index:1; }
+.w-tud-dial { width:80px; height:80px; border-radius:50%; background:radial-gradient(circle,#1a1004,#0c0802); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; z-index:2; }
+.w-tud-brand { position:absolute; top:20px; font-size:6px; font-weight:900; color:#c4860e; letter-spacing:1.5px; text-align:center; width:100%; }
+.w-tud-sub { position:absolute; top:30px; font-size:4px; color:#6a4010; letter-spacing:1px; text-align:center; width:100%; }
+.w-tud-rose { position:absolute; top:11px; font-size:8px; color:#c4860e; text-align:center; width:100%; }
+.w-tud-hh { position:absolute; bottom:50%; left:calc(50% - 2px); width:4px; height:24px; background:#c4860e; border-radius:2px; transform-origin:bottom center; transform:rotate(28deg); z-index:3; }
+.w-tud-mh { position:absolute; bottom:50%; left:calc(50% - 1.5px); width:3px; height:30px; background:#fff; border-radius:2px; transform-origin:bottom center; transform:rotate(-55deg); z-index:3; }
+.w-tud-c { position:absolute; width:6px; height:6px; border-radius:50%; background:#c4860e; z-index:4; }
+</style>
+</head>
+<body>
+
+<!-- ① Status bar -->
+<div class="status-bar">
+  <div class="sb-time">9:41</div>
+  <div class="sb-icons">
+    <div class="sb-signal">
+      <div class="sb-bar" style="height:5px"></div>
+      <div class="sb-bar" style="height:8px"></div>
+      <div class="sb-bar" style="height:11px"></div>
+      <div class="sb-bar" style="height:14px"></div>
+    </div>
+    <svg width="18" height="14" viewBox="0 0 24 18" fill="none" style="margin:0 1px">
+      <path d="M1 7.5C5.5 3 10.5 1 12 1s6.5 2 11 6.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M4.5 11C7 8.5 9.5 7 12 7s5 1.5 7.5 4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8 14.5C9.5 13 10.8 12.5 12 12.5s2.5.5 4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="17" r="1.5" fill="#fff"/>
+    </svg>
+    <div class="sb-battery"><div class="sb-battery-fill"></div></div>
+  </div>
+</div>
+
+<!-- ② Navbar -->
+<div class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-circle">
+      <svg width="28" height="28" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <span class="nav-brand">Watch<span class="snap">Snap</span></span>
+  </div>
+  <div class="nav-links">
+    <span class="nav-link">Home</span>
+    <span class="nav-link">Scan</span>
+    <span class="nav-link active">Collection</span>
+  </div>
+  <div class="nav-upgrade">
+    <svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+      <path d="M2 20h20M5 20 3 8l6.5 5L12 4l2.5 9L21 8l-2 12"/>
+    </svg>
+    Upgrade
+  </div>
+</div>
+
+<!-- ③ Content -->
+<div class="content">
+
+  <!-- Portfolio performance card -->
+  <div class="portfolio-card">
+    <div class="pc-left">
+      <div class="pc-label">Est. Portfolio Value</div>
+      <div class="pc-total">$86,900</div>
+      <div class="pc-gain">
+        <div class="pc-gain-num">↑ +$9,240</div>
+        <div class="pc-gain-pct">
+          <svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          +11.9%
+        </div>
+      </div>
+    </div>
+    <div class="pc-right">
+      <div class="pc-r-label">6-month performance</div>
+      <div class="pc-sparkline">
+        <div class="pc-spark-bar" style="height:14px;opacity:0.4"></div>
+        <div class="pc-spark-bar" style="height:18px;opacity:0.5"></div>
+        <div class="pc-spark-bar" style="height:22px;opacity:0.6"></div>
+        <div class="pc-spark-bar" style="height:20px;opacity:0.65"></div>
+        <div class="pc-spark-bar" style="height:28px;opacity:0.75"></div>
+        <div class="pc-spark-bar" style="height:26px;opacity:0.8"></div>
+        <div class="pc-spark-bar" style="height:34px;opacity:0.9"></div>
+        <div class="pc-spark-bar" style="height:40px;opacity:1.0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page header: "My Collection" + "New Scan" -->
+  <div class="page-header">
+    <div class="ph-left">
+      <div class="ph-title">My <span class="collection-word">Collection</span></div>
+      <div class="ph-sub">4 watches saved</div>
+    </div>
+    <div class="ph-scan-btn">
+      <svg width="22" height="22" fill="none" stroke="#C9A84C" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Scan
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-wrap">
+    <div class="search-icon">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="search-input">Search brand, model, reference...</div>
+  </div>
+
+  <!-- 4-column watch grid -->
+  <div class="watch-grid">
+
+    <!-- Card 1: Rolex GMT-Master II — +12.4% -->
+    <div class="watch-card">
+      <div class="wc-img">
+        <div class="w-gmt">
+          <div class="w-gmt-bezel"></div>
+          <div class="w-gmt-case">
+            <div class="w-gmt-dial">
+              <div class="w-gmt-brand">ROLEX</div>
+              <div class="w-gmt-sub">GMT-MASTER II</div>
+              <div class="w-gmt-hh"></div><div class="w-gmt-mh"></div><div class="w-gmt-c"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wc-overlay"></div>
+        <div class="wc-auth authentic"><div class="wc-auth-dot"></div> Authentic</div>
+        <div class="wc-gain">↑ +12.4%</div>
+        <div class="wc-bar"><div class="wc-bar-fill" style="width:91%"></div></div>
+      </div>
+      <div class="wc-info">
+        <div class="wc-brand">Rolex</div>
+        <div class="wc-model">GMT-Master II</div>
+        <div class="wc-ref">Ref. 126710BLNR</div>
+        <div class="wc-value-row">
+          <div class="wc-value">
+            <svg width="16" height="16" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            $15,200–$17,800
+          </div>
+          <div class="wc-gain-text">+12.4%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Patek Philippe Calatrava — +7.2% -->
+    <div class="watch-card">
+      <div class="wc-img">
+        <div class="w-pat">
+          <div class="w-pat-case">
+            <div class="w-pat-dial">
+              <div class="w-pat-ring"></div>
+              <div class="w-pat-brand">PATEK PHILIPPE</div>
+              <div class="w-pat-city">GENÈVE</div>
+              <div class="w-pat-hh"></div><div class="w-pat-mh"></div><div class="w-pat-c"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wc-overlay"></div>
+        <div class="wc-auth authentic"><div class="wc-auth-dot"></div> Authentic</div>
+        <div class="wc-gain">↑ +7.2%</div>
+        <div class="wc-bar"><div class="wc-bar-fill" style="width:88%"></div></div>
+      </div>
+      <div class="wc-info">
+        <div class="wc-brand">Patek Philippe</div>
+        <div class="wc-model">Calatrava 5227</div>
+        <div class="wc-ref">Ref. 5227G-001</div>
+        <div class="wc-value-row">
+          <div class="wc-value">
+            <svg width="16" height="16" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            $26,400–$30,600
+          </div>
+          <div class="wc-gain-text">+7.2%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: AP Royal Oak — +22.6% -->
+    <div class="watch-card" style="border-color:rgba(201,168,76,0.30);">
+      <div class="wc-img">
+        <div class="w-ap">
+          <div class="w-ap-case">
+            <div class="w-ap-dial">
+              <div class="w-ap-brand">AP</div>
+              <div class="w-ap-sub">ROYAL OAK</div>
+              <div class="w-ap-hh"></div><div class="w-ap-mh"></div><div class="w-ap-c"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wc-overlay"></div>
+        <div class="wc-auth authentic"><div class="wc-auth-dot"></div> Authentic</div>
+        <div class="wc-gain" style="color:#F0CC5A;">↑ +22.6%</div>
+        <div class="wc-bar"><div class="wc-bar-fill" style="width:94%"></div></div>
+      </div>
+      <div class="wc-info">
+        <div class="wc-brand">Audemars Piguet</div>
+        <div class="wc-model">Royal Oak 15500</div>
+        <div class="wc-ref">Ref. 15500ST.OO</div>
+        <div class="wc-value-row">
+          <div class="wc-value">
+            <svg width="16" height="16" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            $34,800–$42,000
+          </div>
+          <div class="wc-gain-text" style="color:#F0CC5A;">+22.6%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Tudor Black Bay — +5.8% -->
+    <div class="watch-card">
+      <div class="wc-img">
+        <div class="w-tud">
+          <div class="w-tud-bezel"></div>
+          <div class="w-tud-case">
+            <div class="w-tud-dial">
+              <div class="w-tud-rose">✦</div>
+              <div class="w-tud-brand">TUDOR</div>
+              <div class="w-tud-sub">BLACK BAY 58</div>
+              <div class="w-tud-hh"></div><div class="w-tud-mh"></div><div class="w-tud-c"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wc-overlay"></div>
+        <div class="wc-auth authentic"><div class="wc-auth-dot"></div> Authentic</div>
+        <div class="wc-gain">↑ +5.8%</div>
+        <div class="wc-bar"><div class="wc-bar-fill" style="width:85%"></div></div>
+      </div>
+      <div class="wc-info">
+        <div class="wc-brand">Tudor</div>
+        <div class="wc-model">Black Bay 58</div>
+        <div class="wc-ref">Ref. M79030B</div>
+        <div class="wc-value-row">
+          <div class="wc-value">
+            <svg width="16" height="16" fill="none" stroke="#C9A84C" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            $3,400–$4,200
+          </div>
+          <div class="wc-gain-text">+5.8%</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /watch-grid -->
+
+  <!-- Summary row (exact replica of history/page.tsx summary) -->
+  <div class="summary-row">
+    <div class="sr-item">
+      <div class="sr-val gold">4</div>
+      <div class="sr-label">Total Watches</div>
+    </div>
+    <div class="sr-item">
+      <div class="sr-val green">4</div>
+      <div class="sr-label">Authenticated</div>
+    </div>
+    <div class="sr-item">
+      <div class="sr-val gold2">$86,900</div>
+      <div class="sr-label">Est. Portfolio Value</div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ④ Bottom tab bar -->
+<div class="bottom-bar">
+  <div class="bb-tab">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="bb-tab-label">Home</span>
+  </div>
+  <div class="bb-tab">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+    <span class="bb-tab-label">Scan</span>
+  </div>
+  <div class="bb-tab active">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      <polyline points="15 7 17 9 21 5"/>
+    </svg>
+    <span class="bb-tab-label">Collection</span>
+  </div>
+</div>
+
+</body>
+</html>

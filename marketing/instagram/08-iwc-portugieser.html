@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    background:#070809;
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+    color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:44px 60px;
+  }
+  .bg{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 65% 50% at 50% 0%, rgba(201,168,76,0.14) 0%, transparent 58%),
+      radial-gradient(ellipse 45% 35% at 85% 85%, rgba(100,140,200,0.07) 0%, transparent 55%),
+      #070809;
+  }
+  .dots{
+    position:fixed;inset:0;
+    background-image:radial-gradient(circle,rgba(201,168,76,0.04) 1px,transparent 1px);
+    background-size:44px 44px;
+  }
+
+  .header{position:relative;z-index:10;width:100%;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-icon{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8882F);display:flex;align-items:center;justify-content:center;font-size:21px}
+  .logo-text{font-size:25px;font-weight:900}
+  .logo-text span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  /* Minimal large watch — IWC Portugieser style, large clean dial */
+  .watch-area{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;flex:1}
+  .watch-glow{position:absolute;inset:-60px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.16) 0%,transparent 60%)}
+  .bezel{
+    width:360px;height:360px;border-radius:50%;
+    background:linear-gradient(145deg,#888,#ccc,#888,#aaa,#777);
+    padding:10px;
+    box-shadow:0 0 80px rgba(201,168,76,0.12),0 30px 80px rgba(0,0,0,0.9);
+  }
+  .face{
+    width:100%;height:100%;border-radius:50%;
+    background:radial-gradient(ellipse at 40% 30%,#f5f0e8,#e8e2d8);
+    position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  }
+  /* Clean minimalist markers */
+  .mk{
+    position:absolute;background:#333;
+    top:14px;left:50%;margin-left:-1px;
+    transform-origin:50% 156px;
+  }
+  .mk.sm{width:1.5px;height:10px}
+  .mk.lg{width:2.5px;height:22px;top:8px;background:#111}
+  /* Arabic numerals */
+  .num{
+    position:absolute;font-size:16px;font-weight:800;color:#111;
+    transform-origin:50% 50%;
+  }
+  /* Hands */
+  .hand{position:absolute;bottom:50%;left:50%;transform-origin:50% 100%;border-radius:2px 2px 0 0}
+  .h-hr{width:7px;height:110px;margin-left:-3.5px;background:#111;transform:rotate(50deg)}
+  .h-mn{width:5px;height:142px;margin-left:-2.5px;background:#111;transform:rotate(210deg)}
+  .h-sc{width:2px;height:152px;margin-left:-1px;background:#C9A84C;transform:rotate(300deg)}
+  .center-dot{position:absolute;top:50%;left:50%;width:12px;height:12px;border-radius:50%;background:#C9A84C;transform:translate(-50%,-50%);z-index:5;box-shadow:0 0 8px rgba(201,168,76,0.9)}
+  .iwc-logo{position:absolute;top:28%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:900;letter-spacing:2px;color:#222;white-space:nowrap;text-align:center;line-height:1.5}
+  .small-seconds{
+    position:absolute;bottom:22%;left:50%;transform:translateX(-50%);
+    width:56px;height:56px;border-radius:50%;
+    background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.12);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ss-hand{
+    position:absolute;bottom:50%;left:50%;
+    width:1.5px;height:22px;margin-left:-0.75px;
+    background:#111;transform-origin:50% 100%;transform:rotate(170deg);
+    border-radius:1px;
+  }
+  .ss-dot{position:absolute;top:50%;left:50%;width:4px;height:4px;border-radius:50%;background:#C9A84C;transform:translate(-50%,-50%)}
+  .crown{position:absolute;right:-22px;top:50%;transform:translateY(-50%);width:20px;height:12px;background:linear-gradient(135deg,#aaa,#ddd,#999);border-radius:0 3px 3px 0}
+
+  /* Bottom info section */
+  .bottom{position:relative;z-index:10;width:100%}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+  .col-left{}
+  .cl-brand{
+    font-size:46px;font-weight:900;letter-spacing:-1.5px;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1;margin-bottom:6px;
+  }
+  .cl-model{font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.3px;margin-bottom:4px}
+  .cl-ref{font-size:14px;color:rgba(255,255,255,0.35);letter-spacing:0.5px}
+
+  .col-right{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;gap:6px}
+  .cr-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.5)}
+  .cr-value{
+    font-size:50px;font-weight:900;letter-spacing:-2px;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1;
+  }
+  .cr-range{font-size:13px;color:rgba(255,255,255,0.3)}
+
+  .footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(201,168,76,0.1);padding-top:18px}
+  .auth-pill{display:flex;align-items:center;gap:9px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:100px;padding:8px 18px}
+  .auth-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e}
+  .auth-text{font-size:13px;font-weight:800;color:#22c55e;letter-spacing:1px;text-transform:uppercase}
+  .cta{font-size:16px;font-weight:700;color:rgba(255,255,255,0.35)}
+  .cta span{color:#C9A84C;font-weight:900}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="dots"></div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">⌚</div>
+    <div class="logo-text">Watch<span>Snap</span></div>
+  </div>
+  <div style="font-size:13px;font-weight:700;letter-spacing:2px;color:rgba(201,168,76,0.6);border:1px solid rgba(201,168,76,0.2);border-radius:100px;padding:8px 18px;text-transform:uppercase">Dress Watch</div>
+</div>
+
+<div class="watch-area">
+  <div class="watch-glow"></div>
+  <div class="bezel">
+    <div class="face">
+      <!-- large markers at 12,3,6,9 -->
+      <div class="mk lg" style="transform:rotate(0deg)"></div>
+      <div class="mk sm" style="transform:rotate(30deg)"></div>
+      <div class="mk sm" style="transform:rotate(60deg)"></div>
+      <div class="mk lg" style="transform:rotate(90deg)"></div>
+      <div class="mk sm" style="transform:rotate(120deg)"></div>
+      <div class="mk sm" style="transform:rotate(150deg)"></div>
+      <div class="mk lg" style="transform:rotate(180deg)"></div>
+      <div class="mk sm" style="transform:rotate(210deg)"></div>
+      <div class="mk sm" style="transform:rotate(240deg)"></div>
+      <div class="mk lg" style="transform:rotate(270deg)"></div>
+      <div class="mk sm" style="transform:rotate(300deg)"></div>
+      <div class="mk sm" style="transform:rotate(330deg)"></div>
+      <div class="iwc-logo">IWC<br>SCHAFFHAUSEN</div>
+      <div class="small-seconds">
+        <div class="ss-hand"></div>
+        <div class="ss-dot"></div>
+      </div>
+      <div class="hand h-hr"></div>
+      <div class="hand h-mn"></div>
+      <div class="hand h-sc"></div>
+      <div class="center-dot"></div>
+    </div>
+  </div>
+  <div class="crown"></div>
+</div>
+
+<div class="bottom">
+  <div class="two-col">
+    <div class="col-left">
+      <div class="cl-brand">IWC</div>
+      <div class="cl-model">Portugieser Chronograph</div>
+      <div class="cl-ref">Ref. IW371491 &nbsp;·&nbsp; Cal. 89361 &nbsp;·&nbsp; 2018</div>
+    </div>
+    <div class="col-right">
+      <div class="cr-label">Market Value</div>
+      <div class="cr-value">$8,900</div>
+      <div class="cr-range">– $10,200 · AI Confidence: 95%</div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="auth-pill">
+      <div class="auth-dot"></div>
+      <div class="auth-text">Authentic · Verified</div>
+    </div>
+    <div class="cta">Try free · <span>watchsnap.vercel.app</span></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 3 · Slide 1 — Jake's Scam Setup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #0A0808; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 50%, rgba(239,68,68,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(212,175,55,0.04) 0%, transparent 60%),
+      #0A0808;
+  }
+  /* Warning stripes subtle */
+  .stripes {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg, transparent 0px, transparent 40px,
+      rgba(239,68,68,0.015) 40px, rgba(239,68,68,0.015) 42px
+    );
+  }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 88% 88% at 50% 50%, transparent 30%, rgba(0,0,0,0.72) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; padding: 52px 68px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #444; font-weight: 600; }
+
+  /* Scene tag */
+  .scene-tag {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.20);
+    border-radius: 30px; padding: 8px 18px;
+    font-size: 15px; color: #f87171;
+    margin-bottom: 42px;
+  }
+
+  /* The seller "dialogue" */
+  .dialogue-bubble {
+    background: #161010; border: 1px solid rgba(239,68,68,0.22);
+    border-radius: 20px 20px 20px 4px;
+    padding: 26px 32px;
+    margin-bottom: 24px;
+    position: relative;
+    max-width: 820px;
+  }
+  .db-speaker { font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .db-text { font-size: 36px; font-weight: 800; color: #fff; line-height: 1.25; }
+  .db-text .price { color: #f87171; }
+  .db-text .claim { color: #D4AF37; font-style: italic; }
+
+  /* Jake's reaction */
+  .reaction-row {
+    display: flex; align-items: center; gap: 18px;
+    margin-bottom: 40px;
+  }
+  .jake-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #fff; flex-shrink: 0; }
+  .jake-thought { font-size: 22px; color: #666; font-style: italic; }
+  .jake-thought strong { color: #fff; font-style: normal; }
+
+  /* Watch display */
+  .watch-on-table {
+    background: #111; border: 1px solid #1E1E1E;
+    border-radius: 18px; padding: 22px 28px;
+    display: flex; align-items: center; gap: 24px;
+    margin-bottom: 0;
+  }
+  .wot-watch { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #1a1a1a, #0e0e0e); border: 3px solid #2A2A2A; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .wot-face { width: 62px; height: 62px; border-radius: 50%; background: radial-gradient(circle, #1a1a1a, #0a0a0a); display: flex; align-items: center; justify-content: center; }
+  .wot-brand { font-size: 8px; color: #666; letter-spacing: 1.5px; }
+  .wot-info { flex: 1; }
+  .wot-claim { font-size: 14px; color: #888; margin-bottom: 4px; }
+  .wot-watch-name { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .wot-price { font-size: 22px; font-weight: 700; color: #f87171; }
+  .wot-guarantee { font-size: 13px; color: #555; margin-top: 4px; font-style: italic; }
+
+  .person-tag { margin-top: auto; display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .person-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #fff; flex-shrink: 0; }
+  .person-name { font-size: 17px; font-weight: 700; color: #fff; }
+  .person-loc { font-size: 14px; color: #555; margin-top: 2px; }
+
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; background: #1A1A1A; }
+  .dot.active { background: #f87171; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="stripes"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">1 OF 4</div>
+  </div>
+
+  <div class="scene-tag">⚠️ Melrose Trading Post · Los Angeles, CA</div>
+
+  <div class="dialogue-bubble">
+    <div class="db-speaker">🗣️ Seller at swap meet</div>
+    <div class="db-text">
+      "This is a <span class="claim">real Rolex</span>, bro.<br>
+      Grandfather's. Only asking <span class="price">$600</span>."
+    </div>
+  </div>
+
+  <div class="reaction-row">
+    <div class="jake-avatar">J</div>
+    <div class="jake-thought">"Something about it didn't feel <strong>right...</strong>"</div>
+  </div>
+
+  <div class="watch-on-table">
+    <div class="wot-watch">
+      <div class="wot-face"><div class="wot-brand">ROLEX</div></div>
+    </div>
+    <div class="wot-info">
+      <div class="wot-claim">Claimed to be</div>
+      <div class="wot-watch-name">Rolex Submariner</div>
+      <div class="wot-price">$600</div>
+      <div class="wot-guarantee">"100% authentic, grandfather bought it in Switzerland"</div>
+    </div>
+  </div>
+
+  <div class="person-tag" style="margin-top: auto;">
+    <div class="person-avatar">J</div>
+    <div>
+      <div class="person-name">Jake Martinez</div>
+      <div class="person-loc">Los Angeles, CA</div>
+    </div>
+  </div>
+
+  <div class="dots">
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+</body>
+</html>

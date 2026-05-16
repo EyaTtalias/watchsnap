@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    background:#070707;
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+    color:#fff;
+  }
+  .bg{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 80% 55% at 50% -10%, rgba(201,168,76,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 90% 90%, rgba(100,120,200,0.07) 0%, transparent 60%),
+      #070707;
+  }
+
+  /* Octagon pattern (Nautilus style) */
+  .pattern{
+    position:fixed;inset:0;
+    background-image:repeating-linear-gradient(
+      45deg,rgba(201,168,76,0.025) 0,rgba(201,168,76,0.025) 1px,
+      transparent 0,transparent 50%
+    );
+    background-size:30px 30px;
+  }
+
+  .wrap{
+    position:relative;z-index:10;
+    width:100%;height:100%;
+    display:flex;flex-direction:column;
+    padding:44px 60px;
+    gap:0;
+  }
+
+  /* Header */
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+  .logo{display:flex;align-items:center;gap:14px}
+  .logo-icon{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8882F);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .logo-text{font-size:26px;font-weight:900}
+  .logo-text span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .badge{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(34,197,94,0.1);border:1.5px solid rgba(34,197,94,0.3);
+    border-radius:100px;padding:10px 22px;
+  }
+  .badge-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e}
+  .badge span{font-size:14px;font-weight:800;color:#22c55e;letter-spacing:1.5px;text-transform:uppercase}
+
+  /* Hero area */
+  .hero{
+    flex:1;
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:50px;
+    align-items:center;
+  }
+
+  /* Left — info */
+  .left{}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:14px}
+  .brand-big{
+    font-size:62px;font-weight:900;letter-spacing:-2px;line-height:1;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:10px;
+  }
+  .model-big{font-size:38px;font-weight:900;letter-spacing:-1px;color:#fff;line-height:1.1;margin-bottom:6px}
+  .ref-line{font-size:15px;color:rgba(255,255,255,0.35);font-weight:500;letter-spacing:1px;margin-bottom:40px}
+
+  .sep{width:80px;height:2px;background:linear-gradient(90deg,#C9A84C,transparent);margin-bottom:30px}
+
+  .value-label{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:8px}
+  .value-main{
+    font-size:70px;font-weight:900;letter-spacing:-3px;line-height:1;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D,#fff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:6px;
+  }
+  .value-range{font-size:15px;color:rgba(255,255,255,0.3);font-weight:500}
+
+  /* Confidence */
+  .conf{display:flex;align-items:center;gap:14px;margin-top:30px}
+  .conf-label{font-size:12px;font-weight:700;color:rgba(201,168,76,0.5);letter-spacing:1.5px;white-space:nowrap;text-transform:uppercase}
+  .bar-wrap{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+  .bar{height:100%;background:linear-gradient(90deg,#C9A84C,#E2C06D);border-radius:3px;width:94%}
+  .pct{font-size:15px;font-weight:900;color:#C9A84C}
+
+  /* Right — Integrated bracelet style watch */
+  .right{display:flex;align-items:center;justify-content:center;position:relative}
+  .nautilus-wrap{position:relative}
+  .nautilus-glow{
+    position:absolute;inset:-40px;border-radius:50%;
+    background:radial-gradient(circle,rgba(201,168,76,0.2) 0%,transparent 65%);
+  }
+  .nautilus{
+    width:280px;height:340px;
+    border-radius:35% 35% 35% 35% / 25% 25% 35% 35%;
+    background:linear-gradient(155deg,#1a1f2e,#0a0d14);
+    border:2px solid rgba(201,168,76,0.5);
+    box-shadow:0 0 60px rgba(201,168,76,0.15),inset 0 0 30px rgba(0,0,0,0.8);
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  /* Horizontal grooves */
+  .nautilus::before{
+    content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(180deg,transparent,transparent 18px,rgba(201,168,76,0.06) 18px,rgba(201,168,76,0.06) 19px);
+  }
+  .nautilus-face{
+    width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(ellipse at 35% 35%,#1e2840,#080c14);
+    border:2px solid rgba(201,168,76,0.4);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .n-logo{
+    font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+    color:rgba(201,168,76,0.6);text-align:center;line-height:1.8;
+  }
+  /* Tick marks on nautilus face */
+  .n-tick{
+    position:absolute;width:1.5px;height:8px;background:rgba(201,168,76,0.5);
+    top:8px;left:50%;margin-left:-0.75px;
+    transform-origin:50% 82px;
+  }
+
+  /* Footer */
+  .footer{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:24px;
+    border-top:1px solid rgba(201,168,76,0.1);
+  }
+  .cta{font-size:17px;font-weight:700;color:rgba(255,255,255,0.45)}
+  .cta span{color:#C9A84C;font-weight:900}
+  .scans{font-size:13px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:1px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="pattern"></div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">⌚</div>
+      <div class="logo-text">Watch<span>Snap</span></div>
+    </div>
+    <div class="badge">
+      <div class="badge-dot"></div>
+      <span>Authentic</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="left">
+      <div class="eyebrow">AI Scan Result</div>
+      <div class="brand-big">Patek<br>Philippe</div>
+      <div class="model-big">Nautilus</div>
+      <div class="ref-line">Ref. 5711/1A-010 &nbsp;·&nbsp; Steel &nbsp;·&nbsp; 2021</div>
+
+      <div class="sep"></div>
+
+      <div class="value-label">Market Value</div>
+      <div class="value-main">$148K</div>
+      <div class="value-range">$148,000 – $165,000 secondary market</div>
+
+      <div class="conf">
+        <div class="conf-label">Confidence</div>
+        <div class="bar-wrap"><div class="bar"></div></div>
+        <div class="pct">94%</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="nautilus-glow"></div>
+      <div class="nautilus">
+        <div class="nautilus-face">
+          <!-- tick marks -->
+          <div class="n-tick" style="transform:rotate(0deg)"></div>
+          <div class="n-tick" style="transform:rotate(30deg)"></div>
+          <div class="n-tick" style="transform:rotate(60deg)"></div>
+          <div class="n-tick" style="transform:rotate(90deg)"></div>
+          <div class="n-tick" style="transform:rotate(120deg)"></div>
+          <div class="n-tick" style="transform:rotate(150deg)"></div>
+          <div class="n-tick" style="transform:rotate(180deg)"></div>
+          <div class="n-tick" style="transform:rotate(210deg)"></div>
+          <div class="n-tick" style="transform:rotate(240deg)"></div>
+          <div class="n-tick" style="transform:rotate(270deg)"></div>
+          <div class="n-tick" style="transform:rotate(300deg)"></div>
+          <div class="n-tick" style="transform:rotate(330deg)"></div>
+          <div class="n-logo">PATEK<br>PHILIPPE<br>GENÈVE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="cta">Try free at <span>watchsnap.vercel.app</span></div>
+    <div class="scans">3 Free Scans · No Sign-up</div>
+  </div>
+</div>
+</body>
+</html>

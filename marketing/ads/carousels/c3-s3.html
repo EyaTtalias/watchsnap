@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 3 · Slide 3 — REPLICA DETECTED</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #0C0505; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  /* Full red atmosphere */
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 65% 55% at 50% 50%, rgba(239,68,68,0.16) 0%, rgba(239,68,68,0.04) 45%, transparent 70%),
+      radial-gradient(ellipse 30% 30% at 50% 50%, rgba(239,68,68,0.10) 0%, transparent 50%),
+      #0C0505;
+  }
+  .rays { position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 50% 46%, rgba(239,68,68,0.02) 0deg 6deg, transparent 6deg 12deg); }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 88% 88% at 50% 50%, transparent 25%, rgba(0,0,0,0.78) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; padding: 52px 68px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 48px; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #555; font-weight: 600; }
+
+  /* Big REPLICA badge */
+  .replica-hero {
+    background: rgba(239,68,68,0.12);
+    border: 2px solid rgba(239,68,68,0.5);
+    border-radius: 24px;
+    padding: 28px 60px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    margin-bottom: 40px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 0 80px rgba(239,68,68,0.18), inset 0 0 40px rgba(239,68,68,0.04);
+  }
+  .replica-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #ef4444, transparent); }
+  .rh-icon {
+    width: 64px; height: 64px; background: rgba(239,68,68,0.18); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 24px rgba(239,68,68,0.3);
+  }
+  .rh-title { font-size: 52px; font-weight: 900; color: #ef4444; letter-spacing: -1px; line-height: 1; }
+  .rh-subtitle { font-size: 18px; font-weight: 700; color: rgba(239,68,68,0.7); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* Authentication flags list */
+  .flags-list {
+    width: 100%;
+    background: rgba(239,68,68,0.05);
+    border: 1px solid rgba(239,68,68,0.18);
+    border-radius: 18px;
+    padding: 20px 26px;
+    margin-bottom: 32px;
+  }
+  .fl-title { font-size: 13px; color: #f87171; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+  .flag-item { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid rgba(239,68,68,0.08); }
+  .flag-item:last-child { border-bottom: none; }
+  .fi-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #f87171; flex-shrink: 0; }
+  .fi-text { font-size: 16px; color: #ddd; font-weight: 500; }
+  .fi-text strong { color: #f87171; }
+
+  /* Saved money */
+  .saved-box {
+    background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 14px; padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+  }
+  .sb-label { font-size: 15px; color: #888; }
+  .sb-amount { font-size: 32px; font-weight: 900; color: #4ade80; }
+
+  .bottom-row { margin-top: auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; background: #1A1A1A; }
+  .dot.done { background: rgba(248,113,113,0.35); }
+  .dot.active { background: #f87171; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="rays"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">3 OF 4</div>
+  </div>
+
+  <div class="replica-hero">
+    <div class="rh-icon">
+      <svg width="32" height="32" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <div class="rh-title">REPLICA</div>
+    <div class="rh-subtitle">Counterfeit Detected</div>
+  </div>
+
+  <div class="flags-list">
+    <div class="fl-title">Authentication Flags — 3 of 5 Points Failed</div>
+    <div class="flag-item">
+      <div class="fi-num">1</div>
+      <div class="fi-text"><strong>Fake dial text</strong> — font weight and spacing incorrect</div>
+    </div>
+    <div class="flag-item">
+      <div class="fi-num">2</div>
+      <div class="fi-text"><strong>Wrong logo</strong> — crown proportions clearly off</div>
+    </div>
+    <div class="flag-item">
+      <div class="fi-num">3</div>
+      <div class="fi-text"><strong>Bezel misaligned</strong> — markings visibly shifted</div>
+    </div>
+  </div>
+
+  <div class="saved-box">
+    <div>
+      <div class="sb-label">Potential loss avoided</div>
+    </div>
+    <div class="sb-amount">$600 saved ✓</div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="dots">
+      <div class="dot done"></div>
+      <div class="dot done"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

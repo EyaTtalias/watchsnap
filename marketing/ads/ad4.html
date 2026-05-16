@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>Ad 4 - Chris - Watch Dealer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px; height: 1080px;
+    background: #0A0A0A;
+    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden; position: relative;
+  }
+
+  .glow-tl { position: absolute; top: -80px; left: -60px; width: 480px; height: 480px; background: radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 70%); pointer-events: none; }
+  .glow-br { position: absolute; bottom: -60px; right: -40px; width: 380px; height: 380px; background: radial-gradient(ellipse, rgba(212,175,55,0.05) 0%, transparent 70%); pointer-events: none; }
+
+  .canvas { width: 1080px; height: 1080px; position: relative; display: flex; flex-direction: column; padding: 48px 62px 38px; }
+
+  .platform-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .platform-logo { font-size: 22px; font-weight: 800; color: #fff; opacity: 0.85; letter-spacing: -0.5px; }
+  .platform-icons { display: flex; gap: 18px; }
+
+  .post-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, #D4AF37, #B8922A);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; color: #000;
+    flex-shrink: 0; border: 2px solid rgba(212,175,55,0.4);
+    box-shadow: 0 0 20px rgba(212,175,55,0.18);
+  }
+  .user-info { flex: 1; }
+  .user-name { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+  .user-meta { font-size: 14px; color: #666; }
+  .user-meta span { color: #D4AF37; font-weight: 600; }
+  .biz-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(212,175,55,0.09); border: 1px solid rgba(212,175,55,0.22);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 12px; color: #D4AF37; font-weight: 700; margin-right: 8px;
+  }
+  .more-dots { color: #444; font-size: 26px; letter-spacing: 3px; }
+
+  .pro-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.18);
+    border-radius: 30px; padding: 7px 18px;
+    font-size: 14px; color: #D4AF37; margin-bottom: 18px;
+  }
+
+  .post-text { font-size: 27px; line-height: 1.57; color: #DCDCDC; font-weight: 500; margin-bottom: 20px; }
+  .hl-gold { color: #D4AF37; font-weight: 800; }
+  .hl-white { font-weight: 800; color: #fff; }
+
+  /* 3 watch cards */
+  .watches-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .wc {
+    background: #141414; border: 1px solid #242424;
+    border-radius: 18px; padding: 16px 14px; position: relative; overflow: hidden;
+  }
+  .wc::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #D4AF37, transparent); }
+  .wc-brand { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3px; }
+  .wc-model { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+  .wc-val {
+    font-size: 22px; font-weight: 900;
+    background: linear-gradient(135deg, #D4AF37, #F0CC5A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .wc-ok { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #4ade80; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.22); border-radius: 10px; padding: 3px 8px; margin-top: 6px; }
+  .wc-bad { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #f87171; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.22); border-radius: 10px; padding: 3px 8px; margin-top: 6px; }
+  .wc-speed { position: absolute; bottom: 10px; right: 12px; font-size: 10px; color: #444; }
+
+  /* Stats */
+  .stats-row { display: flex; gap: 14px; margin-bottom: 16px; }
+  .stat-card { flex: 1; background: #141414; border: 1px solid #242424; border-radius: 14px; padding: 14px 16px; text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #D4AF37, #F0CC5A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px; }
+  .stat-lbl { font-size: 12px; color: #555; }
+
+  /* Pricing */
+  .price-row {
+    background: linear-gradient(135deg, rgba(212,175,55,0.07), rgba(212,175,55,0.02));
+    border: 1px solid rgba(212,175,55,0.22);
+    border-radius: 16px; padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .price-plan { font-size: 13px; color: #888; margin-bottom: 2px; }
+  .price-amt { font-size: 28px; font-weight: 900; color: #D4AF37; }
+  .price-per { font-size: 14px; color: #666; }
+  .roi-box { background: rgba(34,197,94,0.09); border: 1px solid rgba(34,197,94,0.22); border-radius: 10px; padding: 10px 18px; text-align: center; }
+  .roi-lbl { font-size: 11px; color: #4ade80; margin-bottom: 2px; }
+  .roi-num { font-size: 22px; font-weight: 900; color: #4ade80; }
+
+  .bottom-row { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+  .cta-btn { display: inline-block; background: linear-gradient(135deg, #D4AF37, #F0CC5A 50%, #B8922A); color: #000; font-size: 18px; font-weight: 900; padding: 14px 32px; border-radius: 50px; box-shadow: 0 8px 28px rgba(212,175,55,0.28); }
+  .cta-sub { font-size: 13px; color: #4A4A4A; margin-top: 6px; padding-left: 4px; }
+  .ws-brand { display: flex; align-items: center; gap: 8px; opacity: 0.45; }
+  .ws-dot { width: 7px; height: 7px; background: #D4AF37; border-radius: 50%; }
+  .ws-name { font-size: 13px; font-weight: 800; color: #D4AF37; letter-spacing: 1.5px; }
+
+  .engage-row { display: flex; gap: 26px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid #181818; }
+  .eng { display: flex; align-items: center; gap: 7px; font-size: 15px; color: #4A4A4A; }
+  .eng-n { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+
+<div class="canvas">
+
+  <div class="platform-bar">
+    <div class="platform-logo">Facebook</div>
+    <div class="platform-icons">
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+  </div>
+
+  <div class="post-header">
+    <div class="avatar">C</div>
+    <div class="user-info">
+      <div class="user-name">
+        <span class="biz-badge">✓ Business</span>chris.watchtrade.atx
+      </div>
+      <div class="user-meta">Chris Donovan · Austin, TX · <span>Watch Dealer</span></div>
+    </div>
+    <div class="more-dots">···</div>
+  </div>
+
+  <div class="pro-chip">⌚ 9 years buying & selling watches · Austin, TX</div>
+
+  <div class="post-text">
+    Been buying and selling watches for <span class="hl-gold">9 years</span>. WatchSnap has saved me
+    from buying fakes <span class="hl-white">twice this year alone.</span>
+    $9.99 a month is the best money I spend on tools. Not even close.
+  </div>
+
+  <div class="watches-grid">
+    <div class="wc">
+      <div class="wc-brand">ROLEX</div>
+      <div class="wc-model">GMT-Master II</div>
+      <div class="wc-val">$16,400</div>
+      <div class="wc-ok">✓ Authentic</div>
+      <div class="wc-speed">⚡ 8s</div>
+    </div>
+    <div class="wc">
+      <div class="wc-brand">PATEK (Claimed)</div>
+      <div class="wc-model">Calatrava</div>
+      <div class="wc-val">$120 replica</div>
+      <div class="wc-bad">⚠ Replica</div>
+      <div class="wc-speed">⚡ 11s</div>
+    </div>
+    <div class="wc">
+      <div class="wc-brand">OMEGA</div>
+      <div class="wc-model">Speedmaster</div>
+      <div class="wc-val">$5,400</div>
+      <div class="wc-ok">✓ Authentic</div>
+      <div class="wc-speed">⚡ 9s</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">2×</div>
+      <div class="stat-lbl">Fakes blocked this year</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">~$900</div>
+      <div class="stat-lbl">Avg. loss avoided</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">&lt;12s</div>
+      <div class="stat-lbl">Avg. scan time</div>
+    </div>
+  </div>
+
+  <div class="price-row">
+    <div>
+      <div class="price-plan">WatchSnap Pro</div>
+      <div><span class="price-amt">$9.99</span><span class="price-per"> / month</span></div>
+    </div>
+    <div class="roi-box">
+      <div class="roi-lbl">Return on investment</div>
+      <div class="roi-num">90× +</div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div>
+      <div class="cta-btn">Try 7 Days Free → watchsnap.vercel.app</div>
+      <div class="cta-sub">No commitment · Cancel anytime</div>
+    </div>
+    <div class="ws-brand"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+  </div>
+
+  <div class="engage-row">
+    <div class="eng"><svg width="17" height="17" fill="#e74c3c" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="eng-n">2.9K</span></div>
+    <div class="eng"><svg width="17" height="17" fill="none" stroke="#666" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="eng-n">447 comments</span></div>
+    <div class="eng"><svg width="17" height="17" fill="none" stroke="#666" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span class="eng-n">1.2K shares</span></div>
+  </div>
+
+</div>
+</body>
+</html>

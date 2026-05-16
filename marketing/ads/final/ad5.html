@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Flip Analyzer · Deal Detection</title>
+<style>
+/* ── All values at 1.7× from real app Tailwind ── */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1080px; height:1080px; overflow:hidden;
+  background:#0A0A0A;
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:#fff; position:relative;
+}
+
+/* ─── iOS Status Bar ─── */
+.status-bar {
+  height:44px; background:#0A0A0A;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px 0 36px; flex-shrink:0;
+}
+.sb-time { font-size:17px; font-weight:600; }
+.sb-icons { display:flex; align-items:center; gap:7px; }
+.sb-signal { display:flex; align-items:flex-end; gap:1.5px; }
+.sb-bar { width:4px; border-radius:1px; background:#fff; }
+.sb-battery {
+  width:28px; height:14px; border-radius:3px;
+  border:1.5px solid rgba(255,255,255,0.6);
+  position:relative; display:flex; align-items:center;
+}
+.sb-battery::after {
+  content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%);
+  width:3px; height:7px; background:rgba(255,255,255,0.5); border-radius:0 2px 2px 0;
+}
+.sb-battery-fill { height:100%; width:82%; background:#fff; border-radius:1.5px 0 0 1.5px; margin:1.5px; }
+
+/* ─── Navbar ─── */
+.navbar {
+  height:95px; background:rgba(10,10,10,0.97);
+  border-bottom:1.5px solid #1E1E1E;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; flex-shrink:0;
+}
+.nav-logo { display:flex; align-items:center; gap:12px; }
+.nav-logo-circle {
+  width:51px; height:51px; border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.nav-brand { font-size:28px; font-weight:700; letter-spacing:-0.5px; color:#fff; }
+.nav-brand .snap {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.nav-links { display:flex; align-items:center; gap:36px; }
+.nav-link { font-size:21px; font-weight:500; color:#6b7280; }
+.nav-link.active { color:#C9A84C; }
+.nav-upgrade {
+  display:flex; align-items:center; gap:8px; border-radius:9999px;
+  background:linear-gradient(to right,#C9A84C,#A8882F);
+  padding:10px 24px; font-size:18px; font-weight:700; color:#000; flex-shrink:0;
+}
+
+/* ─── Content area ─── */
+.content {
+  padding:22px 96px 0;
+  display:flex; flex-direction:column; gap:14px;
+}
+
+/* ─── Page header ─── */
+.page-header { flex-shrink:0; padding:0 2px; }
+.ph-title {
+  font-size:40px; font-weight:900; letter-spacing:-0.5px; line-height:1.1;
+  color:#fff; margin-bottom:5px;
+}
+.ph-title .gold {
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.ph-sub { font-size:19px; color:#4b5563; font-weight:500; }
+
+/* ─── Deal Card (horizontal layout) ─── */
+.deal-card {
+  border-radius:30px; border:2px solid #1E1E1E;
+  background:#111111; overflow:hidden;
+  display:flex; flex-direction:row;
+  height:310px; flex-shrink:0;
+}
+/* Amber variant for overpriced */
+.deal-card.amber { border-color:rgba(251,146,60,0.28); }
+/* Green variant for profit */
+.deal-card.green  { border-color:rgba(74,222,128,0.28); }
+
+/* ─── Left: Watch illustration column ─── */
+.watch-col {
+  width:164px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  border-right:1.5px solid #1E1E1E;
+  position:relative; overflow:hidden;
+}
+.watch-col.amber {
+  background:radial-gradient(ellipse 90% 80% at 50% 50%, rgba(251,146,60,0.07) 0%, transparent 70%);
+}
+.watch-col.green {
+  background:radial-gradient(ellipse 90% 80% at 50% 50%, rgba(74,222,128,0.06) 0%, transparent 70%);
+}
+
+/* ─── Tudor Black Bay 58 CSS (small, 134px) ─── */
+.watch-tb { position:relative; width:134px; height:134px;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,0.95)); }
+.tb-glow {
+  position:absolute; inset:-14px; border-radius:50%;
+  background:radial-gradient(circle, rgba(212,175,55,0.16) 0%, transparent 60%);
+}
+/* Gold fluted bezel */
+.tb-bezel {
+  position:absolute; inset:0; border-radius:50%; z-index:0;
+  background:repeating-conic-gradient(#D4AF37 0deg 5deg, #7a5810 5deg 10deg);
+}
+.tb-case {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:110px; height:110px; border-radius:50%;
+  background:linear-gradient(148deg,#262014,#181008,#20180c);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 2px #1a1206, 0 0 0 4.5px rgba(212,175,55,0.55), 0 10px 28px rgba(0,0,0,0.96), inset 0 1px 2px rgba(255,255,255,0.05);
+  z-index:1;
+}
+.tb-dial {
+  width:90px; height:90px; border-radius:50%;
+  background:radial-gradient(circle at 38% 30%, #1a1004 0%, #100a02 55%, #060402 100%);
+  position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+/* Tudor shield rose at 12 */
+.tb-rose { position:absolute; top:13px; font-size:5.5px; color:#D4AF37; text-align:center; width:100%; z-index:3; }
+.tb-brand { position:absolute; top:22px; font-size:5px; font-weight:900; color:#D4AF37; letter-spacing:2px; text-align:center; width:100%; z-index:3; }
+.tb-model { position:absolute; top:29px; font-size:3.5px; color:rgba(212,175,55,0.55); letter-spacing:1px; text-align:center; width:100%; z-index:3; }
+/* Lume plots */
+.tb-lp {
+  position:absolute; top:4px; left:calc(50% - 2.5px);
+  width:5px; height:9px;
+  background:rgba(235,215,140,0.88); border-radius:1.5px;
+  transform-origin:center 41px; z-index:2;
+}
+.tb-lp.tri {
+  width:0; height:0; background:transparent;
+  border-left:4px solid transparent; border-right:4px solid transparent;
+  border-bottom:9px solid rgba(235,215,140,0.9);
+  top:3px; left:calc(50% - 4px);
+  transform-origin:center 42px; border-radius:0;
+}
+/* Broad arrow hands */
+.tb-hh {
+  position:absolute; bottom:50%; left:calc(50% - 3.5px);
+  width:7px; height:29px;
+  background:rgba(235,215,140,0.92);
+  clip-path:polygon(20% 0%,80% 0%,100% 20%,100% 100%,0% 100%,0% 20%);
+  transform-origin:bottom center; transform:rotate(145deg); z-index:3;
+}
+.tb-mh {
+  position:absolute; bottom:50%; left:calc(50% - 2.5px);
+  width:5px; height:38px;
+  background:rgba(235,215,140,0.92);
+  clip-path:polygon(20% 0%,80% 0%,100% 15%,100% 100%,0% 100%,0% 15%);
+  transform-origin:bottom center; transform:rotate(-48deg); z-index:3;
+}
+.tb-sh {
+  position:absolute; bottom:50%; left:calc(50% - 0.75px);
+  width:1.5px; height:43px; background:#ef4444; border-radius:1px;
+  transform-origin:bottom center; transform:rotate(-78deg); z-index:4;
+}
+.tb-center { position:absolute; width:6px; height:6px; border-radius:50%; background:#D4AF37; z-index:5; }
+
+/* ─── Seiko Presage CSS (small, 130px) ─── */
+.watch-sk { position:relative; width:130px; height:130px;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,0.95)); }
+.sk-glow {
+  position:absolute; inset:-12px; border-radius:50%;
+  background:radial-gradient(circle, rgba(74,222,128,0.12) 0%, transparent 60%);
+}
+.sk-case {
+  width:130px; height:130px; border-radius:50%;
+  background:linear-gradient(148deg,#e0e0e0 0%,#b0b0b0 24%,#dcdcdc 46%,#8c8c8c 70%,#d0d0d0 100%);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 2px #888, 0 0 0 4px #222, 0 10px 28px rgba(0,0,0,0.92), inset 0 1px 3px rgba(255,255,255,0.5);
+  position:relative; z-index:1;
+}
+.sk-dial {
+  width:110px; height:110px; border-radius:50%;
+  /* Midnight cocktail-blue sunburst */
+  background:radial-gradient(circle at 38% 30%, #1c2f52 0%, #0e1c35 48%, #060e1e 100%);
+  position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+/* Sunburst pattern */
+.sk-dial::before {
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,255,255,0.025) 0deg 2deg, transparent 2deg 4deg);
+}
+.sk-dial::after {
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 62% 22%, rgba(255,255,255,0.14) 0%, transparent 48%);
+}
+/* Seiko text */
+.sk-brand { position:absolute; top:19px; font-size:5.5px; font-weight:900; color:rgba(255,255,255,0.88); letter-spacing:2.5px; text-align:center; width:100%; z-index:3; }
+.sk-model { position:absolute; top:28px; font-size:4px; color:rgba(255,255,255,0.45); letter-spacing:1.8px; text-align:center; width:100%; z-index:3; }
+/* Applied index markers */
+.sk-hm {
+  position:absolute; top:5px; left:calc(50% - 1.5px);
+  width:3px; height:8px;
+  background:rgba(255,255,255,0.78); border-radius:1px;
+  transform-origin:center 50px; z-index:2;
+}
+.sk-hm.lg {
+  width:4px; height:11px; top:4px; left:calc(50% - 2px);
+  transform-origin:center 51px;
+}
+/* Slim sword hands */
+.sk-hh {
+  position:absolute; bottom:50%; left:calc(50% - 2.5px);
+  width:5px; height:28px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(200,175,80,0.85));
+  border-radius:2.5px 2.5px 1px 1px;
+  transform-origin:bottom center; transform:rotate(158deg); z-index:3;
+}
+.sk-mh {
+  position:absolute; bottom:50%; left:calc(50% - 2px);
+  width:4px; height:40px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(200,175,80,0.85));
+  border-radius:2px 2px 1px 1px;
+  transform-origin:bottom center; transform:rotate(-38deg); z-index:3;
+}
+.sk-sh {
+  position:absolute; bottom:50%; left:calc(50% - 0.75px);
+  width:1.5px; height:46px; background:#ef4444; border-radius:1px;
+  transform-origin:bottom center; transform:rotate(-82deg); z-index:4;
+}
+.sk-sh::after {
+  content:''; position:absolute; bottom:-12px; left:-4px;
+  width:9px; height:9px; border-radius:50%; background:#ef4444;
+}
+.sk-center { position:absolute; width:5px; height:5px; border-radius:50%;
+  background:linear-gradient(135deg,#e0d080,#b89020); z-index:5; }
+
+/* ─── Right: Data column ─── */
+.data-col {
+  flex:1; padding:20px 22px 18px 22px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+
+/* Watch identity */
+.watch-brand {
+  font-size:36px; font-weight:900; letter-spacing:-0.5px; line-height:1;
+  background:linear-gradient(135deg,#D4AF37 0%,#F0CC5A 50%,#B8922A 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.watch-model { font-size:22px; font-weight:700; color:#fff; margin-top:3px; }
+.watch-ref { font-size:17px; color:#4b5563; font-family:monospace; font-weight:600; margin-top:2px; }
+
+/* Badge row */
+.badge-row { display:flex; align-items:center; gap:10px; }
+.badge {
+  display:flex; align-items:center; gap:7px;
+  border-radius:20px; padding:7px 16px;
+  font-size:16px; font-weight:700;
+}
+.badge.authentic {
+  background:rgba(34,197,94,0.14); border:1.5px solid rgba(34,197,94,0.42); color:#4ade80;
+}
+.badge.overpriced {
+  background:rgba(251,146,60,0.14); border:1.5px solid rgba(251,146,60,0.42); color:#fb923c;
+}
+.badge.profit {
+  background:rgba(74,222,128,0.14); border:1.5px solid rgba(74,222,128,0.42); color:#4ade80;
+}
+
+/* Price comparison row */
+.price-row {
+  display:flex; align-items:center; gap:14px;
+}
+.price-box {
+  flex:1; background:#0D0D0D; border-radius:16px; padding:12px 16px;
+  border:1.5px solid #1E1E1E;
+}
+.price-box-label { font-size:13px; color:#4b5563; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+.price-box-val { font-size:28px; font-weight:900; line-height:1; }
+.price-box-val.asking { color:#f87171; }  /* red — overpriced */
+.price-box-val.market { color:#D4AF37; }  /* gold — market */
+.price-box-val.paid   { color:#9ca3af; }  /* gray — cost */
+.price-box-val.sell   { color:#4ade80; }  /* green — can sell for */
+.price-arrow { font-size:26px; color:#374151; flex-shrink:0; }
+
+/* Action / verdict strip */
+.verdict-strip {
+  border-radius:16px; padding:14px 18px;
+  display:flex; align-items:center; gap:14px;
+}
+.verdict-strip.skip {
+  background:rgba(251,146,60,0.09); border:1.5px solid rgba(251,146,60,0.25);
+}
+.verdict-strip.buy {
+  background:rgba(74,222,128,0.09); border:1.5px solid rgba(74,222,128,0.25);
+}
+.verdict-icon { font-size:26px; flex-shrink:0; }
+.verdict-body { flex:1; }
+.verdict-title { font-size:20px; font-weight:900; margin-bottom:3px; }
+.verdict-title.skip { color:#fb923c; }
+.verdict-title.buy  { color:#4ade80; }
+.verdict-sub  { font-size:15px; color:#4b5563; line-height:1.4; }
+.verdict-big  { font-size:28px; font-weight:900; flex-shrink:0; text-align:right; line-height:1; }
+.verdict-big.skip  { color:#f87171; }
+.verdict-big.buy   { color:#4ade80; }
+.verdict-big-sub   { font-size:12px; color:#4b5563; text-align:right; margin-top:2px; }
+
+/* ─── Bottom Tab Bar ─── */
+.bottom-bar {
+  position:absolute; bottom:0; left:0; right:0; height:68px;
+  background:rgba(10,10,10,0.97); border-top:1.5px solid #1E1E1E;
+  display:flex; align-items:stretch;
+}
+.bb-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:#6b7280; }
+.bb-tab.active { color:#C9A84C; }
+.bb-tab-label { font-size:16px; font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <div class="sb-time">9:41</div>
+  <div class="sb-icons">
+    <div class="sb-signal">
+      <div class="sb-bar" style="height:5px"></div>
+      <div class="sb-bar" style="height:8px"></div>
+      <div class="sb-bar" style="height:11px"></div>
+      <div class="sb-bar" style="height:14px"></div>
+    </div>
+    <svg width="18" height="14" viewBox="0 0 24 18" fill="none">
+      <path d="M1 7.5C5.5 3 10.5 1 12 1s6.5 2 11 6.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M4.5 11C7 8.5 9.5 7 12 7s5 1.5 7.5 4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8 14.5C9.5 13 10.8 12.5 12 12.5s2.5.5 4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="17" r="1.5" fill="#fff"/>
+    </svg>
+    <div class="sb-battery"><div class="sb-battery-fill"></div></div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-circle">
+      <svg width="28" height="28" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <span class="nav-brand">Watch<span class="snap">Snap</span></span>
+  </div>
+  <div class="nav-links">
+    <span class="nav-link">Home</span>
+    <span class="nav-link active">Scan</span>
+    <span class="nav-link">Collection</span>
+  </div>
+  <div class="nav-upgrade">
+    <svg width="22" height="22" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24">
+      <path d="M2 20h20M5 20 3 8l6.5 5L12 4l2.5 9L21 8l-2 12"/>
+    </svg>
+    Upgrade
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="ph-title">Flip <span class="gold">Analyzer</span></div>
+    <div class="ph-sub">2 watches scanned · AI-powered deal detection</div>
+  </div>
+
+  <!-- ─── CARD 1: Tudor Black Bay 58 — OVERPRICED ─── -->
+  <div class="deal-card amber">
+
+    <!-- Left: watch illustration -->
+    <div class="watch-col amber">
+      <div class="watch-tb">
+        <div class="tb-glow"></div>
+        <div class="tb-bezel"></div>
+        <div class="tb-case">
+          <div class="tb-dial">
+            <!-- Lume plots -->
+            <div class="tb-lp tri" style="transform:rotate(0deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(30deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(60deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(90deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(120deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(150deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(180deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(210deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(240deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(270deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(300deg)"></div>
+            <div class="tb-lp"     style="transform:rotate(330deg)"></div>
+            <div class="tb-rose">✦</div>
+            <div class="tb-brand">TUDOR</div>
+            <div class="tb-model">BLACK BAY 58</div>
+            <div class="tb-hh"></div>
+            <div class="tb-mh"></div>
+            <div class="tb-sh"></div>
+            <div class="tb-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: data -->
+    <div class="data-col">
+      <!-- Identity -->
+      <div>
+        <div class="watch-brand">Tudor</div>
+        <div class="watch-model">Black Bay 58</div>
+        <div class="watch-ref">Ref. M79030B · Cal. MT5402</div>
+      </div>
+
+      <!-- Badges -->
+      <div class="badge-row">
+        <div class="badge authentic">
+          <svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Likely Authentic
+        </div>
+        <div class="badge overpriced">
+          <svg width="16" height="16" fill="none" stroke="#fb923c" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          Overpriced
+        </div>
+      </div>
+
+      <!-- Price comparison: Asking vs Market -->
+      <div class="price-row">
+        <div class="price-box">
+          <div class="price-box-label">Seller Asking</div>
+          <div class="price-box-val asking">$4,000</div>
+        </div>
+        <div class="price-arrow">→</div>
+        <div class="price-box">
+          <div class="price-box-label">Market Avg</div>
+          <div class="price-box-val market">$3,200</div>
+        </div>
+      </div>
+
+      <!-- Verdict: SKIP -->
+      <div class="verdict-strip skip">
+        <div class="verdict-icon">⚠️</div>
+        <div class="verdict-body">
+          <div class="verdict-title skip">Overpriced by $800 — Skip This Deal</div>
+          <div class="verdict-sub">Chrono24 · eBay sold avg · 90-day data · 28 comps</div>
+        </div>
+        <div>
+          <div class="verdict-big skip">−$800</div>
+          <div class="verdict-big-sub">overpay risk</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CARD 2: Seiko Presage — PROFIT OPPORTUNITY ─── -->
+  <div class="deal-card green">
+
+    <!-- Left: watch illustration -->
+    <div class="watch-col green">
+      <div class="watch-sk">
+        <div class="sk-glow"></div>
+        <div class="sk-case">
+          <div class="sk-dial">
+            <!-- Applied index markers -->
+            <div class="sk-hm lg" style="transform:rotate(0deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(30deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(60deg)"></div>
+            <div class="sk-hm lg" style="transform:rotate(90deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(120deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(150deg)"></div>
+            <div class="sk-hm lg" style="transform:rotate(180deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(210deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(240deg)"></div>
+            <div class="sk-hm lg" style="transform:rotate(270deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(300deg)"></div>
+            <div class="sk-hm"    style="transform:rotate(330deg)"></div>
+            <div class="sk-brand">SEIKO</div>
+            <div class="sk-model">PRESAGE</div>
+            <div class="sk-hh"></div>
+            <div class="sk-mh"></div>
+            <div class="sk-sh"></div>
+            <div class="sk-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: data -->
+    <div class="data-col">
+      <!-- Identity -->
+      <div>
+        <div class="watch-brand">Seiko</div>
+        <div class="watch-model">Presage Cocktail Time</div>
+        <div class="watch-ref">Ref. SSA343J1 · Cal. 4R35</div>
+      </div>
+
+      <!-- Badges -->
+      <div class="badge-row">
+        <div class="badge authentic">
+          <svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Likely Authentic
+        </div>
+        <div class="badge profit">
+          <svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+          </svg>
+          Underpriced
+        </div>
+      </div>
+
+      <!-- Price comparison: Paid vs Market -->
+      <div class="price-row">
+        <div class="price-box">
+          <div class="price-box-label">You Paid</div>
+          <div class="price-box-val paid">$380</div>
+        </div>
+        <div class="price-arrow">→</div>
+        <div class="price-box">
+          <div class="price-box-label">Market Value</div>
+          <div class="price-box-val sell">$920</div>
+        </div>
+      </div>
+
+      <!-- Verdict: BUY -->
+      <div class="verdict-strip buy">
+        <div class="verdict-icon">💰</div>
+        <div class="verdict-body">
+          <div class="verdict-title buy">+$540 Profit · 2.4× Return</div>
+          <div class="verdict-sub">Deal confidence: HIGH · Chrono24 + eBay · 19 comps</div>
+        </div>
+        <div>
+          <div class="verdict-big buy">+$540</div>
+          <div class="verdict-big-sub">net profit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Tab Bar -->
+<div class="bottom-bar">
+  <div class="bb-tab">
+    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="bb-tab-label">Home</span>
+  </div>
+  <div class="bb-tab active">
+    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+    <span class="bb-tab-label">Scan</span>
+  </div>
+  <div class="bb-tab">
+    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      <polyline points="15 7 17 9 21 5"/>
+    </svg>
+    <span class="bb-tab-label">Collection</span>
+  </div>
+</div>
+
+</body>
+</html>

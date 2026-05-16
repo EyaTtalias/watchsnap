@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>Ad 1 - Mike - Flea Market Find</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    background: #0A0A0A;
+    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .glow-top {
+    position: absolute; top: -100px; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(212,175,55,0.11) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .glow-br {
+    position: absolute; bottom: -80px; right: 60px;
+    width: 380px; height: 380px;
+    background: radial-gradient(ellipse, rgba(212,175,55,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .canvas {
+    width: 1080px; height: 1080px;
+    position: relative;
+    display: flex; flex-direction: column;
+    padding: 50px 62px 42px;
+  }
+
+  /* ── Platform bar ── */
+  .platform-bar {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 26px;
+  }
+  .platform-logo {
+    font-size: 22px; font-weight: 800; color: #fff;
+    letter-spacing: -0.5px; opacity: 0.85;
+  }
+  .platform-icons { display: flex; gap: 18px; align-items: center; }
+
+  /* ── Post header ── */
+  .post-header {
+    display: flex; align-items: center;
+    gap: 16px; margin-bottom: 24px;
+  }
+  .avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, #D4AF37 0%, #F0CC5A 50%, #B8922A 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; color: #000;
+    flex-shrink: 0;
+    border: 2px solid rgba(212,175,55,0.35);
+    box-shadow: 0 0 18px rgba(212,175,55,0.18);
+  }
+  .user-info { flex: 1; }
+  .user-name { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+  .user-meta { font-size: 14px; color: #666; }
+  .user-meta span { color: #D4AF37; font-weight: 600; }
+  .more-dots { color: #444; font-size: 26px; letter-spacing: 3px; line-height: 1; }
+
+  /* ── Post text ── */
+  .post-text {
+    font-size: 28px; line-height: 1.55;
+    color: #DCDCDC; font-weight: 500;
+    margin-bottom: 26px;
+  }
+  .hl-gold { color: #D4AF37; font-weight: 800; }
+  .hl-white { font-weight: 800; color: #fff; }
+
+  /* ── WatchSnap result card ── */
+  .result-card {
+    background: #131313;
+    border: 1px solid #252525;
+    border-radius: 22px;
+    padding: 26px 30px;
+    flex: 1;
+    position: relative; overflow: hidden;
+    box-shadow: 0 0 50px rgba(212,175,55,0.04);
+  }
+  .result-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  }
+
+  .result-header {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 20px;
+  }
+  .app-brand { display: flex; align-items: center; gap: 10px; }
+  .app-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #D4AF37, #B8922A);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .app-name { font-size: 15px; font-weight: 800; color: #D4AF37; letter-spacing: 1px; }
+  .scan-badge {
+    font-size: 13px; color: #555;
+    background: #1A1A1A; border: 1px solid #272727;
+    border-radius: 20px; padding: 5px 14px;
+  }
+
+  /* Watch identity */
+  .watch-id { margin-bottom: 18px; }
+  .watch-brand-label { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 4px; }
+  .watch-model-name { font-size: 34px; font-weight: 900; color: #fff; line-height: 1.05; margin-bottom: 8px; }
+  .watch-ref {
+    display: inline-block;
+    font-size: 13px; color: #D4AF37;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.22);
+    border-radius: 8px; padding: 3px 12px;
+    font-family: 'SF Mono', monospace; letter-spacing: 1px;
+  }
+
+  /* Result body */
+  .result-body { display: flex; gap: 18px; align-items: stretch; }
+
+  .auth-badge {
+    background: rgba(34,197,94,0.09);
+    border: 1.5px solid rgba(34,197,94,0.38);
+    border-radius: 16px; padding: 16px 18px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; min-width: 152px;
+  }
+  .auth-icon-circle {
+    width: 42px; height: 42px;
+    background: rgba(34,197,94,0.14);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .auth-text { font-size: 12px; font-weight: 800; color: #4ade80; text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.3; }
+  .auth-sub { font-size: 11px; color: rgba(74,222,128,0.5); }
+
+  .value-block {
+    flex: 1;
+    background: rgba(212,175,55,0.04);
+    border: 1px solid rgba(212,175,55,0.14);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .val-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
+  .val-number {
+    font-size: 48px; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, #D4AF37, #F0CC5A 50%, #B8922A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 5px;
+  }
+  .val-range { font-size: 13px; color: #555; }
+  .val-market {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #D4AF37;
+    background: rgba(212,175,55,0.07);
+    border: 1px solid rgba(212,175,55,0.18);
+    border-radius: 20px; padding: 3px 10px;
+  }
+
+  .confidence-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 16px;
+  }
+  .conf-lbl { font-size: 12px; color: #555; min-width: 80px; }
+  .conf-track { flex: 1; height: 6px; background: #1E1E1E; border-radius: 3px; overflow: hidden; }
+  .conf-fill { height: 100%; background: linear-gradient(90deg, #D4AF37, #F0CC5A); border-radius: 3px; width: 87%; }
+  .conf-num { font-size: 13px; font-weight: 700; color: #D4AF37; min-width: 36px; }
+
+  /* ── Bottom ── */
+  .bottom-row {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-top: 22px;
+  }
+  .cta-wrap { }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #D4AF37, #F0CC5A 50%, #B8922A);
+    color: #000; font-size: 19px; font-weight: 900;
+    padding: 15px 36px; border-radius: 50px;
+    box-shadow: 0 8px 28px rgba(212,175,55,0.28);
+    letter-spacing: 0.2px;
+  }
+  .cta-sub { font-size: 13px; color: #4A4A4A; margin-top: 6px; padding-left: 4px; }
+  .ws-brand { display: flex; align-items: center; gap: 8px; opacity: 0.45; }
+  .ws-dot { width: 7px; height: 7px; background: #D4AF37; border-radius: 50%; }
+  .ws-name { font-size: 13px; font-weight: 800; color: #D4AF37; letter-spacing: 1.5px; }
+
+  /* Engagement row */
+  .engage-row {
+    display: flex; gap: 26px; align-items: center;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid #181818;
+  }
+  .eng { display: flex; align-items: center; gap: 7px; font-size: 15px; color: #4A4A4A; }
+  .eng-n { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="glow-top"></div>
+<div class="glow-br"></div>
+
+<div class="canvas">
+
+  <!-- Platform chrome -->
+  <div class="platform-bar">
+    <div class="platform-logo">Facebook</div>
+    <div class="platform-icons">
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </div>
+  </div>
+
+  <!-- Post header -->
+  <div class="post-header">
+    <div class="avatar">M</div>
+    <div class="user-info">
+      <div class="user-name">mike.brooklyn.nyc</div>
+      <div class="user-meta">Mike Callahan · Brooklyn, NY · <span>Just now</span></div>
+    </div>
+    <div class="more-dots">···</div>
+  </div>
+
+  <!-- Post text -->
+  <div class="post-text">
+    Bro I'm not even joking. Found this watch at a flea market for <span class="hl-gold">$15</span>.
+    Something felt different about it. Ran it through WatchSnap...
+    <span class="hl-white">1987 Rolex Submariner. Worth $9,200.</span>
+    I literally stood there like an idiot. 🤯
+  </div>
+
+  <!-- Result card -->
+  <div class="result-card">
+    <div class="result-header">
+      <div class="app-brand">
+        <div class="app-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+            <circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/>
+            <path d="M16.5 4.5 A9 9 0 0 1 20 9.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="app-name">WATCHSNAP</div>
+      </div>
+      <div class="scan-badge">⚡ 9 seconds</div>
+    </div>
+
+    <div class="watch-id">
+      <div class="watch-brand-label">ROLEX</div>
+      <div class="watch-model-name">Submariner Date</div>
+      <div class="watch-ref">Ref. 16610 · 1987</div>
+    </div>
+
+    <div class="result-body">
+      <div class="auth-badge">
+        <div class="auth-icon-circle">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+        </div>
+        <div class="auth-text">Likely<br>Authentic</div>
+        <div class="auth-sub">30-pt check</div>
+      </div>
+
+      <div class="value-block">
+        <div class="val-label">Secondary Market Value</div>
+        <div class="val-number">$9,200</div>
+        <div class="val-range">Range: $8,500 – $13,500</div>
+        <div class="val-market">📈 Stable Market</div>
+      </div>
+    </div>
+
+    <div class="confidence-row">
+      <div class="conf-lbl">Confidence</div>
+      <div class="conf-track"><div class="conf-fill"></div></div>
+      <div class="conf-num">87%</div>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom-row">
+    <div class="cta-wrap">
+      <div class="cta-btn">Try Free → watchsnap.vercel.app</div>
+      <div class="cta-sub">No sign-up · 3 free scans · Results in seconds</div>
+    </div>
+    <div class="ws-brand">
+      <div class="ws-dot"></div>
+      <div class="ws-name">WATCHSNAP</div>
+    </div>
+  </div>
+
+  <!-- Engagement -->
+  <div class="engage-row">
+    <div class="eng">
+      <svg width="17" height="17" fill="#e74c3c" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="eng-n">4.2K</span>
+    </div>
+    <div class="eng">
+      <svg width="17" height="17" fill="none" stroke="#666" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="eng-n">618 comments</span>
+    </div>
+    <div class="eng">
+      <svg width="17" height="17" fill="none" stroke="#666" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      <span class="eng-n">2.1K shares</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

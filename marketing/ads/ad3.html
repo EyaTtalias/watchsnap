@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>Ad 3 - Sarah - Grandfather's Watch</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px; height: 1080px;
+    background: #0A0A0A;
+    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden; position: relative;
+  }
+
+  .glow-warm {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 650px; height: 650px;
+    background: radial-gradient(ellipse, rgba(212,175,55,0.055) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .glow-amber {
+    position: absolute; top: -60px; right: -40px;
+    width: 400px; height: 400px;
+    background: radial-gradient(ellipse, rgba(251,146,60,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .canvas {
+    width: 1080px; height: 1080px;
+    position: relative; display: flex; flex-direction: column;
+    padding: 50px 62px 40px;
+  }
+
+  .platform-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+  .platform-logo { font-size: 22px; font-weight: 800; color: #fff; opacity: 0.85; letter-spacing: -0.5px; }
+  .platform-icons { display: flex; gap: 18px; }
+
+  .post-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, #f97316, #dc2626);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; color: #fff;
+    flex-shrink: 0; border: 2px solid rgba(249,115,22,0.3);
+  }
+  .user-info { flex: 1; }
+  .user-name { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+  .user-meta { font-size: 14px; color: #666; }
+  .user-meta span { color: #D4AF37; font-weight: 600; }
+  .more-dots { color: #444; font-size: 26px; letter-spacing: 3px; }
+
+  .memory-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(251,146,60,0.08); border: 1px solid rgba(251,146,60,0.18);
+    border-radius: 30px; padding: 7px 18px;
+    font-size: 14px; color: #fb923c; margin-bottom: 18px;
+  }
+
+  .post-text {
+    font-size: 27px; line-height: 1.57;
+    color: #DCDCDC; font-weight: 500; margin-bottom: 22px;
+  }
+  .hl-gold { color: #D4AF37; font-weight: 800; }
+  .hl-white { font-weight: 800; color: #fff; }
+  .hl-amber { color: #fb923c; font-weight: 700; }
+
+  /* Card */
+  .result-card {
+    background: #111109;
+    border: 1px solid #252518;
+    border-radius: 22px; padding: 24px 28px;
+    flex: 1; position: relative; overflow: hidden;
+    box-shadow: 0 0 40px rgba(212,175,55,0.04);
+  }
+  .result-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.55), rgba(251,146,60,0.55), transparent);
+  }
+
+  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .app-brand { display: flex; align-items: center; gap: 10px; }
+  .app-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #D4AF37, #B8922A); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .app-name { font-size: 15px; font-weight: 800; color: #D4AF37; letter-spacing: 1px; }
+  .scan-badge { font-size: 13px; color: #555; background: #1A1A12; border: 1px solid #252518; border-radius: 20px; padding: 5px 14px; }
+
+  /* Two-col layout */
+  .card-body { display: flex; gap: 22px; }
+
+  /* Vintage watch */
+  .watch-col {
+    width: 190px; flex-shrink: 0;
+    background: #0E0E09; border: 1px solid #221E10;
+    border-radius: 18px; padding: 20px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .watch-outer {
+    width: 128px; height: 128px; border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      #2a2010 0deg, #5a4820 30deg, #2a2010 60deg,
+      #5a4820 90deg, #2a2010 120deg, #5a4820 150deg,
+      #2a2010 180deg, #5a4820 210deg, #2a2010 240deg,
+      #5a4820 270deg, #2a2010 300deg, #5a4820 330deg, #2a2010 360deg
+    );
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 28px rgba(212,175,55,0.12);
+    margin-bottom: 12px;
+  }
+  .watch-face {
+    width: 106px; height: 106px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 33%, #d0c068 0%, #8c7630 30%, #4a3c10 70%, #28200A 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .watch-face::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 62% 38%, rgba(255,255,255,0.09) 0%, transparent 55%);
+  }
+  .face-brand { font-size: 8px; font-weight: 900; color: #D4AF37; letter-spacing: 2px; text-align: center; position: absolute; top: 22px; }
+  .face-model { font-size: 6.5px; color: #9a8030; letter-spacing: 1px; position: absolute; top: 34px; }
+  .face-center { width: 7px; height: 7px; background: #D4AF37; border-radius: 50%; z-index: 2; }
+  .hand-h { position: absolute; bottom: 50%; left: calc(50% - 2px); width: 4px; height: 30px; background: #D4AF37; border-radius: 2px; transform-origin: bottom center; transform: rotate(-40deg); }
+  .hand-m { position: absolute; bottom: 50%; left: calc(50% - 1.5px); width: 3px; height: 38px; background: #fff; border-radius: 2px; transform-origin: bottom center; transform: rotate(55deg); }
+  .face-year { font-size: 8px; color: #7a6820; font-weight: 700; position: absolute; bottom: 25px; }
+
+  .watch-caption { font-size: 12px; color: #555; text-align: center; line-height: 1.4; }
+  .watch-caption strong { color: #888; }
+
+  /* Details */
+  .detail-col { flex: 1; }
+  .d-brand { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 4px; }
+  .d-model { font-size: 28px; font-weight: 900; color: #fff; line-height: 1.05; margin-bottom: 6px; }
+  .d-year-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: #fb923c;
+    background: rgba(251,146,60,0.08); border: 1px solid rgba(251,146,60,0.18);
+    border-radius: 20px; padding: 4px 12px; margin-bottom: 14px;
+  }
+  .auth-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(34,197,94,0.09); border: 1px solid rgba(34,197,94,0.32);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 13px; color: #4ade80; font-weight: 700;
+    width: fit-content; margin-bottom: 14px;
+  }
+  .value-box {
+    background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.16);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .v-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+  .v-num {
+    font-size: 44px; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, #D4AF37, #F0CC5A, #B8922A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .v-range { font-size: 13px; color: #555; margin-top: 4px; }
+  .specs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .spec { display: flex; align-items: center; gap: 5px; background: #181818; border: 1px solid #272727; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #777; }
+  .spec-dot { width: 5px; height: 5px; background: #D4AF37; border-radius: 50%; }
+
+  .bottom-row { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
+  .cta-btn { display: inline-block; background: linear-gradient(135deg, #D4AF37, #F0CC5A 50%, #B8922A); color: #000; font-size: 19px; font-weight: 900; padding: 15px 32px; border-radius: 50px; box-shadow: 0 8px 28px rgba(212,175,55,0.28); }
+  .cta-sub { font-size: 13px; color: #4A4A4A; margin-top: 6px; padding-left: 4px; }
+  .ws-brand { display: flex; align-items: center; gap: 8px; opacity: 0.45; }
+  .ws-dot { width: 7px; height: 7px; background: #D4AF37; border-radius: 50%; }
+  .ws-name { font-size: 13px; font-weight: 800; color: #D4AF37; letter-spacing: 1.5px; }
+
+  .engage-row { display: flex; gap: 26px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid #181818; }
+  .eng { display: flex; align-items: center; gap: 7px; font-size: 15px; color: #4A4A4A; }
+  .eng-n { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="glow-warm"></div>
+<div class="glow-amber"></div>
+
+<div class="canvas">
+
+  <div class="platform-bar">
+    <div class="platform-logo">Facebook</div>
+    <div class="platform-icons">
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" opacity=".6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+  </div>
+
+  <div class="post-header">
+    <div class="avatar">S</div>
+    <div class="user-info">
+      <div class="user-name">sarah.thompson.chi</div>
+      <div class="user-meta">Sarah Thompson · Chicago, IL · <span>Yesterday</span></div>
+    </div>
+    <div class="more-dots">···</div>
+  </div>
+
+  <div class="memory-tag">🕯️ In memory of Grandpa Harold · 1932–2019</div>
+
+  <div class="post-text">
+    Found my grandpa's old watch cleaning out his house.
+    Figured it was worth maybe <span class="hl-amber">$50</span>. Ran it through WatchSnap...
+    <span class="hl-white">1968 Omega Seamaster. Worth $4,800.</span>
+    He wore a $4,800 watch to his <span class="hl-gold">factory job</span> every single day. 🥹
+  </div>
+
+  <div class="result-card">
+    <div class="result-header">
+      <div class="app-brand">
+        <div class="app-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+            <circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/>
+          </svg>
+        </div>
+        <div class="app-name">WATCHSNAP</div>
+      </div>
+      <div class="scan-badge">⚡ 13 seconds</div>
+    </div>
+
+    <div class="card-body">
+      <div class="watch-col">
+        <div class="watch-outer">
+          <div class="watch-face">
+            <div class="face-brand">OMEGA</div>
+            <div class="face-model">Seamaster</div>
+            <div class="face-center"></div>
+            <div class="hand-h"></div>
+            <div class="hand-m"></div>
+            <div class="face-year">1968</div>
+          </div>
+        </div>
+        <div class="watch-caption"><strong>1968 Vintage</strong><br>Family heirloom</div>
+      </div>
+
+      <div class="detail-col">
+        <div class="d-brand">OMEGA</div>
+        <div class="d-model">Seamaster 300</div>
+        <div class="d-year-tag">📅 1968 · Vintage</div>
+        <div class="auth-pill">
+          <svg width="14" height="14" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Likely Authentic
+        </div>
+        <div class="value-box">
+          <div class="v-label">Secondary Market Value</div>
+          <div class="v-num">$4,800</div>
+          <div class="v-range">Range: $4,200 – $6,500</div>
+        </div>
+        <div class="specs">
+          <div class="spec"><div class="spec-dot"></div>Automatic</div>
+          <div class="spec"><div class="spec-dot"></div>Stainless Steel</div>
+          <div class="spec"><div class="spec-dot"></div>Cal. 565</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div>
+      <div class="cta-btn">Discover What Your Watch Is Worth →</div>
+      <div class="cta-sub">watchsnap.vercel.app · 3 free scans · No account needed</div>
+    </div>
+    <div class="ws-brand"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+  </div>
+
+  <div class="engage-row">
+    <div class="eng"><svg width="17" height="17" fill="#e74c3c" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="eng-n">9.1K</span></div>
+    <div class="eng"><span style="font-size:16px">😮</span><span class="eng-n">2.4K</span></div>
+    <div class="eng"><svg width="17" height="17" fill="none" stroke="#666" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="eng-n">1.3K comments</span></div>
+  </div>
+
+</div>
+</body>
+</html>

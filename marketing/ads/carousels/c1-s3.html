@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 1 · Slide 3 — The Reveal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #0A0800; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  /* Gold explosion background */
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 50%, rgba(212,175,55,0.18) 0%, rgba(184,146,42,0.06) 40%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(240,204,90,0.10) 0%, transparent 50%),
+      #0A0800;
+  }
+  /* Burst rays */
+  .rays {
+    position: absolute; inset: 0;
+    background: repeating-conic-gradient(from 0deg at 50% 48%, rgba(212,175,55,0.025) 0deg 6deg, transparent 6deg 12deg);
+  }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 35%, rgba(0,0,0,0.75) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; padding: 52px 68px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 56px; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; box-shadow: 0 0 12px rgba(212,175,55,0.8); }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #555; font-weight: 600; letter-spacing: 1px; }
+
+  /* Authentic badge */
+  .auth-tag {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.4);
+    border-radius: 40px; padding: 10px 22px;
+    font-size: 16px; font-weight: 800; color: #4ade80;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 36px;
+  }
+
+  /* Watch illustration */
+  .watch-hero {
+    width: 200px; height: 200px;
+    position: relative; margin-bottom: 42px;
+  }
+  .watch-bezel-outer {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: conic-gradient(from 0deg, #1a1400 0deg, #4a3a00 20deg, #1a1400 40deg, #6a5200 60deg, #1a1400 80deg, #4a3a00 100deg, #1a1400 120deg, #6a5200 140deg, #1a1400 160deg, #4a3a00 180deg, #1a1400 200deg, #6a5200 220deg, #1a1400 240deg, #4a3a00 260deg, #1a1400 280deg, #6a5200 300deg, #1a1400 320deg, #4a3a00 340deg, #1a1400 360deg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 60px rgba(212,175,55,0.35), 0 0 120px rgba(212,175,55,0.12), inset 0 0 20px rgba(0,0,0,0.6);
+  }
+  .watch-dial-face {
+    width: 162px; height: 162px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #1a1a1a 0%, #0e0e0e 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    border: 1px solid #252525;
+  }
+  .watch-dial-face::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 60% 30%, rgba(255,255,255,0.06) 0%, transparent 55%);
+  }
+  .dial-text-brand { font-size: 11px; font-weight: 900; color: #D4AF37; letter-spacing: 3px; text-align: center; position: absolute; top: 32px; }
+  .dial-text-model { font-size: 9px; color: #555; letter-spacing: 2px; position: absolute; top: 48px; }
+  .dial-center-dot { width: 8px; height: 8px; background: #D4AF37; border-radius: 50%; box-shadow: 0 0 6px rgba(212,175,55,0.8); }
+  .dial-hand-h { position: absolute; bottom: 50%; left: calc(50% - 2px); width: 4px; height: 46px; background: #D4AF37; border-radius: 2px; transform-origin: bottom center; transform: rotate(-60deg); }
+  .dial-hand-m { position: absolute; bottom: 50%; left: calc(50% - 2px); width: 3px; height: 58px; background: #fff; border-radius: 2px; transform-origin: bottom center; transform: rotate(30deg); }
+  /* Glow ring */
+  .watch-glow { position: absolute; inset: -24px; border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,0.22) 0%, transparent 70%); z-index: -1; }
+
+  /* Big reveal text */
+  .reveal-brand { font-size: 20px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; text-align: center; }
+  .reveal-model { font-size: 54px; font-weight: 900; color: #fff; line-height: 1.0; letter-spacing: -1px; text-align: center; margin-bottom: 10px; }
+  .reveal-year { font-size: 22px; color: #666; text-align: center; margin-bottom: 36px; }
+
+  /* The price — hero element */
+  .price-hero {
+    text-align: center;
+    padding: 22px 56px;
+    background: rgba(212,175,55,0.06);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 20px;
+    margin-bottom: 0;
+  }
+  .price-label { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .price-amount {
+    font-size: 88px; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, #B8922A 0%, #D4AF37 30%, #F0CC5A 60%, #D4AF37 80%, #B8922A 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    text-shadow: none; letter-spacing: -2px;
+  }
+  .price-range { font-size: 15px; color: #555; margin-top: 4px; }
+
+  .bottom-row { margin-top: auto; display: flex; align-items: center; justify-content: space-between; width: 100%; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; background: #1A1A1A; }
+  .dot.done { background: rgba(212,175,55,0.4); }
+  .dot.active { background: #D4AF37; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="rays"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">3 OF 4</div>
+  </div>
+
+  <div class="auth-tag">
+    <svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    Likely Authentic
+  </div>
+
+  <div class="watch-hero">
+    <div class="watch-glow"></div>
+    <div class="watch-bezel-outer">
+      <div class="watch-dial-face">
+        <div class="dial-text-brand">ROLEX</div>
+        <div class="dial-text-model">SUBMARINER</div>
+        <div class="dial-center-dot"></div>
+        <div class="dial-hand-h"></div>
+        <div class="dial-hand-m"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal-brand">Rolex</div>
+  <div class="reveal-model">Submariner Date</div>
+  <div class="reveal-year">Reference 16610 · 1987</div>
+
+  <div class="price-hero">
+    <div class="price-label">Secondary Market Value</div>
+    <div class="price-amount">$9,200</div>
+    <div class="price-range">Range: $8,500 – $13,500 · Stable market</div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="dots">
+      <div class="dot done"></div>
+      <div class="dot done"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

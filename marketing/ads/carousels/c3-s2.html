@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 3 · Slide 2 — Tension</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #080A0C; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 50% 55% at 50% 44%, rgba(59,130,246,0.05) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 30% at 70% 70%, rgba(239,68,68,0.04) 0%, transparent 55%),
+      #080A0C;
+  }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 82% 82% at 50% 50%, transparent 28%, rgba(0,0,0,0.76) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; padding: 52px 68px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 52px; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #444; font-weight: 600; }
+
+  /* Action caption */
+  .action-line { font-size: 26px; color: #888; text-align: center; margin-bottom: 40px; }
+  .action-line strong { color: #fff; }
+
+  /* Phone — big central element */
+  .phone-wrap { position: relative; margin-bottom: 48px; }
+  .phone-glow { position: absolute; inset: -24px; background: radial-gradient(ellipse, rgba(239,68,68,0.10) 0%, transparent 65%); z-index: -1; }
+  .phone-frame {
+    width: 300px; height: 390px;
+    background: #0d0d0d; border: 2px solid #2A2A2A;
+    border-radius: 36px; overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.7), 0 0 0 1px #333;
+    position: relative;
+  }
+  .phone-notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 74px; height: 5px; background: #1E1E1E; border-radius: 3px; z-index: 5; }
+  .phone-screen { width: 100%; height: 100%; background: #080808; padding: 28px 18px 18px; display: flex; flex-direction: column; align-items: center; }
+  .pheader { font-size: 11px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; margin-bottom: 14px; }
+  /* Viewfinder — red tint because something is off */
+  .vf { width: 218px; height: 180px; border: 2px solid rgba(239,68,68,0.4); border-radius: 10px; position: relative; background: rgba(239,68,68,0.02); margin-bottom: 12px; overflow: hidden; }
+  .vc { position: absolute; width: 18px; height: 18px; }
+  .vc.tl { top: -1px; left: -1px; border-top: 3px solid #f87171; border-left: 3px solid #f87171; border-radius: 2px 0 0 0; }
+  .vc.tr { top: -1px; right: -1px; border-top: 3px solid #f87171; border-right: 3px solid #f87171; border-radius: 0 2px 0 0; }
+  .vc.bl { bottom: -1px; left: -1px; border-bottom: 3px solid #f87171; border-left: 3px solid #f87171; border-radius: 0 0 0 2px; }
+  .vc.br { bottom: -1px; right: -1px; border-bottom: 3px solid #f87171; border-right: 3px solid #f87171; border-radius: 0 0 2px 0; }
+  .scan-line { position: absolute; left: 8px; right: 8px; height: 2px; background: linear-gradient(90deg, transparent, #f87171, transparent); box-shadow: 0 0 8px rgba(248,113,113,0.9); top: 48%; }
+  /* Red overlay hint */
+  .vf-red-overlay { position: absolute; inset: 0; background: rgba(239,68,68,0.04); }
+  .vf-watch { position: absolute; inset: 22px; border-radius: 50%; border: 1px solid rgba(239,68,68,0.18); display: flex; align-items: center; justify-content: center; }
+  .vf-watch-face { width: 58px; height: 58px; border-radius: 50%; background: radial-gradient(circle, #1a1a1a, #0a0a0a); opacity: 0.6; }
+  /* Progress bar */
+  .prog-area { width: 100%; }
+  .prog-top { display: flex; justify-content: space-between; font-size: 9px; color: #555; margin-bottom: 5px; }
+  .prog-top .pct { color: #f87171; }
+  .prog-track { height: 3px; background: #1E1E1E; border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; width: 55%; background: linear-gradient(90deg, #f87171, #ef4444); border-radius: 2px; }
+  .analyzing-row { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .arow { display: flex; align-items: center; gap: 7px; }
+  .arow-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .arow-dot.green { background: #4ade80; }
+  .arow-dot.yellow { background: #f87171; }
+  .arow-dot.pending { background: #333; }
+  .arow-text { font-size: 9px; color: #555; }
+  .arow-text.done { color: #4ade80; }
+  .arow-text.flag { color: #f87171; font-weight: 700; }
+
+  /* Text below */
+  .below-text { font-size: 40px; font-weight: 900; color: #fff; line-height: 1.2; text-align: center; margin-bottom: 14px; }
+  .below-text em { color: #f87171; font-style: normal; }
+  .below-sub { font-size: 20px; color: #555; text-align: center; }
+
+  .bottom-row { margin-top: auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; background: #1A1A1A; }
+  .dot.done { background: rgba(248,113,113,0.35); }
+  .dot.active { background: #f87171; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">2 OF 4</div>
+  </div>
+
+  <div class="action-line">"I pulled out <strong>WatchSnap</strong>. 10 seconds later..."</div>
+
+  <div class="phone-wrap">
+    <div class="phone-glow"></div>
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="pheader">WATCHSNAP AI</div>
+        <div class="vf">
+          <div class="vc tl"></div><div class="vc tr"></div><div class="vc bl"></div><div class="vc br"></div>
+          <div class="vf-red-overlay"></div>
+          <div class="scan-line"></div>
+          <div class="vf-watch"><div class="vf-watch-face"></div></div>
+        </div>
+        <div class="prog-area">
+          <div class="prog-top"><span>Authenticating...</span><span class="pct">55%</span></div>
+          <div class="prog-track"><div class="prog-fill"></div></div>
+        </div>
+        <div class="analyzing-row">
+          <div class="arow"><div class="arow-dot green"></div><div class="arow-text done">Brand recognized: Rolex</div></div>
+          <div class="arow"><div class="arow-dot yellow"></div><div class="arow-text flag">⚑ Logo anomaly detected</div></div>
+          <div class="arow"><div class="arow-dot yellow"></div><div class="arow-text flag">⚑ Dial font inconsistency</div></div>
+          <div class="arow"><div class="arow-dot pending"></div><div class="arow-text">Bezel check...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="below-text">"Something's <em>wrong.</em>"</div>
+  <div class="below-sub">The flags are starting to pile up...</div>
+
+  <div class="bottom-row">
+    <div class="dots">
+      <div class="dot done"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    background:#060a0d;
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+    color:#fff;
+    display:flex;flex-direction:column;align-items:center;
+    padding:44px 60px;gap:28px;
+  }
+  .bg{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(0,120,160,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.13) 0%, transparent 60%),
+      #060a0d;
+  }
+  .dots{
+    position:fixed;inset:0;
+    background-image:radial-gradient(circle,rgba(201,168,76,0.06) 1px,transparent 1px);
+    background-size:36px 36px;
+  }
+
+  /* Header */
+  .header{position:relative;z-index:10;width:100%;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8882F);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .logo-text{font-size:24px;font-weight:900}
+  .logo-text span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .year-badge{
+    font-size:13px;font-weight:700;letter-spacing:2px;color:rgba(201,168,76,0.7);
+    border:1px solid rgba(201,168,76,0.25);border-radius:100px;padding:8px 20px;
+    text-transform:uppercase;
+  }
+
+  /* Vintage label */
+  .vintage-label{
+    position:relative;z-index:10;
+    display:flex;align-items:center;gap:16px;
+  }
+  .vl-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3))}
+  .vl-text{font-size:11px;font-weight:800;letter-spacing:4px;color:rgba(201,168,76,0.5);text-transform:uppercase;white-space:nowrap}
+  .vl-line2{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,0.3),transparent)}
+
+  /* Watch + Info row */
+  .main-row{
+    position:relative;z-index:10;
+    display:flex;align-items:center;gap:56px;
+    flex:1;
+  }
+
+  /* Vintage watch */
+  .watch-outer{
+    position:relative;flex-shrink:0;
+    width:260px;height:260px;
+  }
+  .watch-glow{
+    position:absolute;inset:-30px;border-radius:50%;
+    background:radial-gradient(circle,rgba(0,150,200,0.2) 0%,transparent 65%);
+  }
+  .bezel{
+    width:260px;height:260px;border-radius:50%;
+    background:conic-gradient(from 0deg,#7a5c20,#C9A84C,#d4aa50,#8B6c28,#C9A84C,#7a5c20);
+    padding:12px;
+    box-shadow:0 0 50px rgba(0,120,180,0.2),0 20px 60px rgba(0,0,0,0.8);
+  }
+  .face{
+    width:100%;height:100%;border-radius:50%;
+    background:radial-gradient(ellipse at 40% 30%,#0d1a20,#020a0e);
+    position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .mk{position:absolute;background:rgba(201,168,76,0.8);width:2px;height:10px;top:12px;left:50%;margin-left:-1px;transform-origin:50% calc(106px)}
+  .mk.lg{width:3px;height:16px;top:8px;background:#C9A84C}
+  .hand{position:absolute;bottom:50%;left:50%;transform-origin:50% 100%;border-radius:3px 3px 0 0}
+  .h-hour{width:6px;height:72px;margin-left:-3px;background:#fff;transform:rotate(60deg)}
+  .h-min{width:4px;height:90px;margin-left:-2px;background:#fff;transform:rotate(170deg)}
+  .h-sec{width:2px;height:96px;margin-left:-1px;background:#C9A84C;transform:rotate(260deg)}
+  .center-dot{position:absolute;top:50%;left:50%;width:11px;height:11px;border-radius:50%;background:#C9A84C;transform:translate(-50%,-50%);z-index:5;box-shadow:0 0 10px rgba(201,168,76,0.8)}
+  .omega-text{
+    position:absolute;top:35%;left:50%;transform:translateX(-50%);
+    font-size:9px;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,0.5);
+    text-transform:uppercase;white-space:nowrap;text-align:center;
+  }
+  .crown{position:absolute;right:-20px;top:50%;transform:translateY(-50%);width:18px;height:11px;background:linear-gradient(135deg,#C9A84C,#A8882F);border-radius:0 3px 3px 0}
+
+  /* Info right */
+  .info-right{flex:1}
+  .ir-brand{font-size:17px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#C9A84C;margin-bottom:8px}
+  .ir-model{font-size:48px;font-weight:900;letter-spacing:-1.5px;line-height:1.05;color:#fff;margin-bottom:4px}
+  .ir-sub{font-size:18px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:4px}
+  .ir-ref{font-size:14px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:32px}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+  .stat{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:16px 20px}
+  .stat-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:6px}
+  .stat-val{font-size:22px;font-weight:900;color:#fff}
+  .stat-val.gold{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  .auth-row{display:flex;align-items:center;gap:12px}
+  .auth-icon{width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,0.15);border:1.5px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .auth-text{font-size:14px;font-weight:700;color:#22c55e;letter-spacing:0.5px}
+
+  /* Footer */
+  .footer{
+    position:relative;z-index:10;
+    width:100%;display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid rgba(201,168,76,0.1);padding-top:22px;
+  }
+  .cta{font-size:16px;font-weight:700;color:rgba(255,255,255,0.4)}
+  .cta span{color:#C9A84C;font-weight:900}
+  .conf-pill{
+    background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);
+    border-radius:100px;padding:8px 20px;
+    font-size:13px;font-weight:800;color:#C9A84C;letter-spacing:1px;
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="dots"></div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">⌚</div>
+    <div class="logo-text">Watch<span>Snap</span></div>
+  </div>
+  <div class="year-badge">Vintage · 1969</div>
+</div>
+
+<div class="vintage-label">
+  <div class="vl-line"></div>
+  <div class="vl-text">AI Scan Result</div>
+  <div class="vl-line2"></div>
+</div>
+
+<div class="main-row">
+  <div class="watch-outer">
+    <div class="watch-glow"></div>
+    <div class="bezel">
+      <div class="face">
+        <div class="mk lg" style="transform:rotate(0deg)"></div>
+        <div class="mk" style="transform:rotate(30deg)"></div>
+        <div class="mk" style="transform:rotate(60deg)"></div>
+        <div class="mk lg" style="transform:rotate(90deg)"></div>
+        <div class="mk" style="transform:rotate(120deg)"></div>
+        <div class="mk" style="transform:rotate(150deg)"></div>
+        <div class="mk lg" style="transform:rotate(180deg)"></div>
+        <div class="mk" style="transform:rotate(210deg)"></div>
+        <div class="mk" style="transform:rotate(240deg)"></div>
+        <div class="mk lg" style="transform:rotate(270deg)"></div>
+        <div class="mk" style="transform:rotate(300deg)"></div>
+        <div class="mk" style="transform:rotate(330deg)"></div>
+        <div class="omega-text">OMEGA<br>Seamaster</div>
+        <div class="hand h-hour"></div>
+        <div class="hand h-min"></div>
+        <div class="hand h-sec"></div>
+        <div class="center-dot"></div>
+      </div>
+    </div>
+    <div class="crown"></div>
+  </div>
+
+  <div class="info-right">
+    <div class="ir-brand">Omega</div>
+    <div class="ir-model">Seamaster</div>
+    <div class="ir-sub">300 "Big Triangle"</div>
+    <div class="ir-ref">Ref. 166.024 &nbsp;·&nbsp; Cal. 565</div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Market Value</div>
+        <div class="stat-val gold">$4,200</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Value Range</div>
+        <div class="stat-val" style="font-size:18px;color:rgba(255,255,255,0.6)">–&nbsp;$5,800</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Production</div>
+        <div class="stat-val" style="font-size:18px">1969</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">AI Confidence</div>
+        <div class="stat-val gold">91%</div>
+      </div>
+    </div>
+
+    <div class="auth-row">
+      <div class="auth-icon">✓</div>
+      <div class="auth-text">Authentic — Dial &amp; movement verified</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="cta">Try free · <span>watchsnap.vercel.app</span></div>
+  <div class="conf-pill">97% Accuracy Rate</div>
+</div>
+</body>
+</html>

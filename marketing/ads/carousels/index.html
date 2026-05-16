@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WatchSnap — Facebook Carousel Ad Sets</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #060606; color: #fff; font-family: -apple-system, 'Segoe UI', sans-serif; min-height: 100vh; padding: 40px; }
+
+  .header { text-align: center; margin-bottom: 56px; }
+  .header h1 { font-size: 34px; font-weight: 900; background: linear-gradient(135deg, #D4AF37, #F0CC5A, #B8922A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+  .header p { color: #555; font-size: 15px; }
+
+  .carousels { display: flex; flex-direction: column; gap: 40px; max-width: 1300px; margin: 0 auto; }
+
+  .carousel-set { background: #0E0E0E; border: 1px solid #1E1E1E; border-radius: 22px; padding: 28px 32px; }
+  .cs-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .cs-title { font-size: 20px; font-weight: 800; }
+  .cs-meta { font-size: 13px; color: #555; }
+  .cs-slides { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+  .cs-slides::-webkit-scrollbar { height: 4px; }
+  .cs-slides::-webkit-scrollbar-track { background: #111; }
+  .cs-slides::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 2px; }
+
+  .slide-thumb {
+    flex-shrink: 0;
+    width: 220px;
+    background: #141414; border: 1px solid #252525;
+    border-radius: 14px; overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .slide-thumb:hover { border-color: #D4AF37; transform: translateY(-3px); }
+  .thumb-preview { height: 120px; background: #0A0A0A; display: flex; align-items: center; justify-content: center; font-size: 44px; }
+  .thumb-info { padding: 12px 14px; }
+  .thumb-num { font-size: 10px; color: #D4AF37; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+  .thumb-label { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .thumb-desc { font-size: 12px; color: #666; line-height: 1.4; }
+  .thumb-open { display: block; margin: 10px 14px 12px; background: linear-gradient(135deg, #D4AF37, #B8922A); color: #000; font-size: 12px; font-weight: 800; padding: 7px 12px; border-radius: 8px; text-align: center; }
+
+  /* Tags */
+  .cs-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .tag { background: #1A1A1A; border: 1px solid #252525; border-radius: 20px; padding: 4px 10px; font-size: 11px; color: #777; }
+
+  .instructions { max-width: 900px; margin: 50px auto 0; background: #0E0E0E; border: 1px solid #1E1E1E; border-radius: 20px; padding: 28px 34px; }
+  .instructions h2 { font-size: 20px; font-weight: 800; color: #D4AF37; margin-bottom: 16px; }
+  .instructions ol { padding-left: 20px; }
+  .instructions li { font-size: 14px; color: #888; margin-bottom: 10px; line-height: 1.6; }
+  code { background: #1A1A1A; border: 1px solid #252525; border-radius: 5px; padding: 2px 7px; font-size: 12px; color: #D4AF37; }
+  .tip { background: rgba(212,175,55,0.04); border: 1px solid rgba(212,175,55,0.14); border-radius: 10px; padding: 14px 18px; margin-top: 18px; font-size: 14px; color: #888; line-height: 1.6; }
+  .tip strong { color: #D4AF37; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>WatchSnap · Carousel Ad Sets</h1>
+  <p>5 Facebook carousel ad sets · 3–4 slides each · 1080×1080px per slide · English</p>
+</div>
+
+<div class="carousels">
+
+  <!-- Carousel 1 -->
+  <div class="carousel-set">
+    <div class="cs-header">
+      <div class="cs-title">🏷️ Carousel 1 — Mike's $15 Flea Market Rolex</div>
+      <div class="cs-meta">4 slides · Gold theme · Facebook</div>
+    </div>
+    <div class="cs-slides">
+      <a class="slide-thumb" href="c1-s1.html" target="_blank"><div class="thumb-preview">🏷️</div><div class="thumb-info"><div class="thumb-num">Slide 1 of 4</div><div class="thumb-label">The Hook</div><div class="thumb-desc">Found a watch for $15 at a Brooklyn flea market</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c1-s2.html" target="_blank"><div class="thumb-preview">📱</div><div class="thumb-info"><div class="thumb-num">Slide 2 of 4</div><div class="thumb-label">The Scan</div><div class="thumb-desc">WatchSnap phone UI · analyzing · tension builds</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c1-s3.html" target="_blank"><div class="thumb-preview">✨</div><div class="thumb-info"><div class="thumb-num">Slide 3 of 4</div><div class="thumb-label">The Reveal</div><div class="thumb-desc">Rolex Submariner 1987 · $9,200 · gold explosion</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c1-s4.html" target="_blank"><div class="thumb-preview">🎯</div><div class="thumb-info"><div class="thumb-num">Slide 4 of 4</div><div class="thumb-label">CTA</div><div class="thumb-desc">"What's hiding in YOUR drawer?" · free trial</div><div class="thumb-open">Open →</div></div></a>
+    </div>
+    <div class="cs-tags"><span class="tag">Rolex Submariner</span><span class="tag">$9,200</span><span class="tag">Brooklyn NY</span><span class="tag">Flea market</span><span class="tag">Authentic</span></div>
+  </div>
+
+  <!-- Carousel 2 -->
+  <div class="carousel-set">
+    <div class="cs-header">
+      <div class="cs-title">🕯️ Carousel 2 — Sarah's Grandpa's Omega</div>
+      <div class="cs-meta">4 slides · Warm amber theme · Facebook</div>
+    </div>
+    <div class="cs-slides">
+      <a class="slide-thumb" href="c2-s1.html" target="_blank"><div class="thumb-preview">🕯️</div><div class="thumb-info"><div class="thumb-num">Slide 1 of 4</div><div class="thumb-label">The Memory</div><div class="thumb-desc">Grandpa's old watch · worn, no papers · Chicago</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c2-s2.html" target="_blank"><div class="thumb-preview">🔍</div><div class="thumb-info"><div class="thumb-num">Slide 2 of 4</div><div class="thumb-label">The Suspense</div><div class="thumb-desc">"Mom said worth nothing. I scanned anyway."</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c2-s3.html" target="_blank"><div class="thumb-preview">💛</div><div class="thumb-info"><div class="thumb-num">Slide 3 of 4</div><div class="thumb-label">The Reveal</div><div class="thumb-desc">1968 Omega Seamaster · $4,800 · vintage</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c2-s4.html" target="_blank"><div class="thumb-preview">🎯</div><div class="thumb-info"><div class="thumb-num">Slide 4 of 4</div><div class="thumb-label">CTA</div><div class="thumb-desc">"Discover what your watch is worth"</div><div class="thumb-open">Open →</div></div></a>
+    </div>
+    <div class="cs-tags"><span class="tag">Omega Seamaster</span><span class="tag">$4,800</span><span class="tag">1968 Vintage</span><span class="tag">Chicago IL</span><span class="tag">Emotional</span></div>
+  </div>
+
+  <!-- Carousel 3 -->
+  <div class="carousel-set">
+    <div class="cs-header">
+      <div class="cs-title">⚠️ Carousel 3 — Jake Almost Scammed</div>
+      <div class="cs-meta">4 slides · Red alert theme · Instagram</div>
+    </div>
+    <div class="cs-slides">
+      <a class="slide-thumb" href="c3-s1.html" target="_blank"><div class="thumb-preview">🗣️</div><div class="thumb-info"><div class="thumb-num">Slide 1 of 4</div><div class="thumb-label">The Setup</div><div class="thumb-desc">"Real Rolex bro, $600" at LA swap meet</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c3-s2.html" target="_blank"><div class="thumb-preview">📱</div><div class="thumb-info"><div class="thumb-num">Slide 2 of 4</div><div class="thumb-label">The Tension</div><div class="thumb-desc">WatchSnap scanning · flags appearing · red UI</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c3-s3.html" target="_blank"><div class="thumb-preview">🚨</div><div class="thumb-info"><div class="thumb-num">Slide 3 of 4</div><div class="thumb-label">REPLICA DETECTED</div><div class="thumb-desc">Full red screen · 3 authentication flags · $600 saved</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c3-s4.html" target="_blank"><div class="thumb-preview">🎯</div><div class="thumb-info"><div class="thumb-num">Slide 4 of 4</div><div class="thumb-label">CTA</div><div class="thumb-desc">"Scan before you buy. Free."</div><div class="thumb-open">Open →</div></div></a>
+    </div>
+    <div class="cs-tags"><span class="tag">Replica Detected</span><span class="tag">$600 saved</span><span class="tag">Los Angeles CA</span><span class="tag">Swap meet</span><span class="tag">High urgency</span></div>
+  </div>
+
+  <!-- Carousel 4 -->
+  <div class="carousel-set">
+    <div class="cs-header">
+      <div class="cs-title">💼 Carousel 4 — Chris the Watch Dealer</div>
+      <div class="cs-meta">3 slides · Professional gold theme · Facebook</div>
+    </div>
+    <div class="cs-slides">
+      <a class="slide-thumb" href="c4-s1.html" target="_blank"><div class="thumb-preview">⌚</div><div class="thumb-info"><div class="thumb-num">Slide 1 of 3</div><div class="thumb-label">The Pro</div><div class="thumb-desc">9-year dealer · 3 watches on display · Austin TX</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c4-s2.html" target="_blank"><div class="thumb-preview">📊</div><div class="thumb-info"><div class="thumb-num">Slide 2 of 3</div><div class="thumb-label">ROI Stats</div><div class="thumb-desc">2 fakes avoided · $9.99/mo · 90× ROI</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c4-s3.html" target="_blank"><div class="thumb-preview">🎯</div><div class="thumb-info"><div class="thumb-num">Slide 3 of 3</div><div class="thumb-label">CTA (Pro)</div><div class="thumb-desc">Pricing plans · "Try 3 scans free"</div><div class="thumb-open">Open →</div></div></a>
+    </div>
+    <div class="cs-tags"><span class="tag">B2B / Dealers</span><span class="tag">$9.99/mo</span><span class="tag">Austin TX</span><span class="tag">ROI focus</span><span class="tag">Professional</span></div>
+  </div>
+
+  <!-- Carousel 5 -->
+  <div class="carousel-set">
+    <div class="cs-header">
+      <div class="cs-title">🖤 Carousel 5 — Tyler's Dad's IWC</div>
+      <div class="cs-meta">3 slides · Purple/dark theme · Instagram</div>
+    </div>
+    <div class="cs-slides">
+      <a class="slide-thumb" href="c5-s1.html" target="_blank"><div class="thumb-preview">🖤</div><div class="thumb-info"><div class="thumb-num">Slide 1 of 3</div><div class="thumb-label">The Intro</div><div class="thumb-desc">Mom gave dad's watch · "just an old thing" · Nashville</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c5-s2.html" target="_blank"><div class="thumb-preview">⌚</div><div class="thumb-info"><div class="thumb-num">Slide 2 of 3</div><div class="thumb-label">The Reveal</div><div class="thumb-desc">IWC Portugieser 1989 · $7,200 · gold explosion</div><div class="thumb-open">Open →</div></div></a>
+      <a class="slide-thumb" href="c5-s3.html" target="_blank"><div class="thumb-preview">🎯</div><div class="thumb-info"><div class="thumb-num">Slide 3 of 3</div><div class="thumb-label">CTA</div><div class="thumb-desc">"What's hiding in your drawer?" · emotional hook</div><div class="thumb-open">Open →</div></div></a>
+    </div>
+    <div class="cs-tags"><span class="tag">IWC Portugieser</span><span class="tag">$7,200</span><span class="tag">Nashville TN</span><span class="tag">Inheritance</span><span class="tag">Emotional/Humor</span></div>
+  </div>
+
+</div>
+
+<div class="instructions">
+  <h2>📸 How to Screenshot Each Slide</h2>
+  <ol>
+    <li>Open any slide by clicking <strong>"Open →"</strong> — it opens at exactly 1080px wide</li>
+    <li>In Chrome: open DevTools (<code>F12</code>) → Toggle Device Toolbar → set <code>1080 × 1080</code></li>
+    <li>Press <code>Ctrl+Shift+P</code> → type <strong>"Capture screenshot"</strong> → select "Capture full size screenshot"</li>
+    <li>Save as <code>.PNG</code> — do not use JPG (quality loss on gradients)</li>
+    <li>Upload all slides for one carousel as a <strong>Facebook Carousel Ad</strong> in Ads Manager</li>
+    <li>Set each slide's CTA to link to <code>watchsnap.vercel.app</code></li>
+  </ol>
+  <div class="tip">
+    <strong>💡 Facebook Carousel tip:</strong> Upload slides in order (1→4). Facebook shows them left-to-right, so the story flows naturally as users swipe. Add the CTA button "Learn More" or "Try Now" pointing to <code>watchsnap.vercel.app</code> on each card.
+  </div>
+</div>
+
+</body>
+</html>

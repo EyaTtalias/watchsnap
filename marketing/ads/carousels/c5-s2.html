@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Carousel 5 · Slide 2 — IWC Reveal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #090808; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif; position: relative; }
+
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 52% at 50% 50%, rgba(212,175,55,0.13) 0%, rgba(167,139,250,0.05) 45%, transparent 70%),
+      #090808;
+  }
+  .rays { position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 50% 46%, rgba(167,139,250,0.015) 0deg 9deg, transparent 9deg 18deg); }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 86% 86% at 50% 50%, transparent 28%, rgba(0,0,0,0.78) 100%); }
+
+  .canvas { position: relative; width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; padding: 48px 68px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 38px; }
+  .ws-logo { display: flex; align-items: center; gap: 9px; }
+  .ws-dot { width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; box-shadow: 0 0 10px rgba(212,175,55,0.7); }
+  .ws-name { font-size: 14px; font-weight: 800; color: #D4AF37; letter-spacing: 2px; }
+  .slide-count { font-size: 13px; color: #555; font-weight: 600; }
+
+  .auth-tag { display: inline-flex; align-items: center; gap: 9px; background: rgba(34,197,94,0.10); border: 1.5px solid rgba(34,197,94,0.38); border-radius: 40px; padding: 9px 22px; font-size: 15px; font-weight: 800; color: #4ade80; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 30px; }
+
+  /* IWC watch */
+  .watch-hero { position: relative; width: 188px; height: 188px; margin-bottom: 34px; }
+  .wh-glow { position: absolute; inset: -22px; border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,0.18) 0%, rgba(167,139,250,0.06) 40%, transparent 68%); }
+  .wh-case {
+    width: 188px; height: 188px; border-radius: 50%;
+    background: linear-gradient(135deg, #3c3c48, #1c1c26, #2c2c38);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 3px #111, 0 0 0 6px #282830, 0 0 60px rgba(212,175,55,0.22), 0 0 120px rgba(212,175,55,0.08);
+    position: relative; z-index: 1;
+  }
+  .wh-dial {
+    width: 152px; height: 152px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #f8f4e4 0%, #e4dcc8 40%, #c8bca0 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .wh-dial::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 65% 30%, rgba(255,255,255,0.20) 0%, transparent 50%); }
+  .whd-brand { font-size: 11px; font-weight: 900; color: #1a1a1a; letter-spacing: 2.5px; position: absolute; top: 30px; }
+  .whd-city { font-size: 7.5px; color: #666; letter-spacing: 1px; position: absolute; top: 46px; }
+  .whd-center { width: 8px; height: 8px; background: #1a1a1a; border-radius: 50%; z-index: 2; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
+  .whd-h { position: absolute; bottom: 50%; left: calc(50% - 2.5px); width: 5px; height: 44px; background: #1a1a1a; border-radius: 2px; transform-origin: bottom center; transform: rotate(-38deg); }
+  .whd-m { position: absolute; bottom: 50%; left: calc(50% - 2px); width: 4px; height: 56px; background: #2a2a2a; border-radius: 2px; transform-origin: bottom center; transform: rotate(56deg); }
+  .whd-year { font-size: 9px; color: #777; font-weight: 700; position: absolute; bottom: 30px; }
+
+  /* Result text */
+  .res-brand { font-size: 18px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px; text-align: center; }
+  .res-model { font-size: 52px; font-weight: 900; color: #fff; line-height: 1.0; letter-spacing: -1px; text-align: center; margin-bottom: 8px; }
+  .res-year { font-size: 20px; color: #666; text-align: center; margin-bottom: 30px; }
+
+  /* Price */
+  .price-box { text-align: center; padding: 20px 52px; background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.22); border-radius: 20px; }
+  .pb-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+  .pb-num { font-size: 84px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, #B8922A 0%, #D4AF37 35%, #F0CC5A 60%, #D4AF37 80%, #B8922A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -2px; }
+  .pb-sub { font-size: 14px; color: #555; margin-top: 4px; }
+
+  .bottom-row { margin-top: auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 32px; height: 5px; border-radius: 3px; background: #1A1A1A; }
+  .dot.done { background: rgba(167,139,250,0.4); }
+  .dot.active { background: #D4AF37; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="rays"></div>
+<div class="vignette"></div>
+
+<div class="canvas">
+  <div class="top-bar">
+    <div class="ws-logo"><div class="ws-dot"></div><div class="ws-name">WATCHSNAP</div></div>
+    <div class="slide-count">2 OF 3</div>
+  </div>
+
+  <div class="auth-tag">
+    <svg width="15" height="15" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    Likely Authentic
+  </div>
+
+  <div class="watch-hero">
+    <div class="wh-glow"></div>
+    <div class="wh-case">
+      <div class="wh-dial">
+        <div class="whd-brand">IWC</div>
+        <div class="whd-city">SCHAFFHAUSEN</div>
+        <div class="whd-center"></div>
+        <div class="whd-h"></div>
+        <div class="whd-m"></div>
+        <div class="whd-year">1989</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-brand">IWC Schaffhausen</div>
+  <div class="res-model">Portugieser</div>
+  <div class="res-year">Cal. 854 · Manual Wind · 1989 Reference</div>
+
+  <div class="price-box">
+    <div class="pb-label">Collector Market Value</div>
+    <div class="pb-num">$7,200</div>
+    <div class="pb-sub">Range: $5,800 – $9,400 · Classic dress watch</div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="dots">
+      <div class="dot done"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

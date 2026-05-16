@@ -1,0 +1,181 @@
+  ▲ Next.js 14.2.29
+  - Local:        http://localhost:3001
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1899ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1591ms (536 modules)
+ GET / 200 in 1787ms
+ ✓ Compiled in 333ms (275 modules)
+ ✓ Compiled /scan in 449ms (574 modules)
+ GET /scan 200 in 613ms
+ ✓ Compiled /paywall in 362ms (586 modules)
+ GET /paywall 200 in 473ms
+ GET /paywall 200 in 70ms
+ GET /scan 200 in 57ms
+ ✓ Compiled / in 247ms (261 modules)
+ GET / 200 in 533ms
+ ✓ Compiled /scan in 184ms (291 modules)
+ ○ Compiling /api/identify ...
+ ✓ Compiled /api/identify in 1612ms (404 modules)
+ POST /api/identify 500 in 1877ms
+ ✓ Compiled in 523ms (309 modules)
+ ✓ Compiled in 202ms (309 modules)
+ ✓ Compiled in 910ms (600 modules)
+ ✓ Compiled in 749ms (600 modules)
+ ✓ Compiled in 641ms (600 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development\7.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development\7.pack.gz'
+ ✓ Compiled in 811ms (603 modules)
+ ✓ Compiled in 524ms (603 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\3.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\3.pack.gz'
+ ✓ Compiled in 678ms (603 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 892ms (603 modules)
+ ✓ Compiled in 300ms (603 modules)
+ ✓ Compiled in 655ms (603 modules)
+ ✓ Compiled in 574ms (603 modules)
+ ✓ Compiled in 605ms (604 modules)
+ ✓ Compiled in 2.1s (606 modules)
+ ✓ Compiled in 787ms (313 modules)
+ ✓ Compiled in 730ms (606 modules)
+ ✓ Compiled in 1706ms (606 modules)
+ ✓ Compiled in 1341ms (606 modules)
+ ✓ Compiled in 1459ms (606 modules)
+ ✓ Compiled in 792ms (313 modules)
+ ✓ Compiled in 440ms (313 modules)
+ ✓ Compiled in 1555ms (606 modules)
+ ✓ Compiled in 1017ms (314 modules)
+ ✓ Compiled in 550ms (314 modules)
+ ✓ Compiled in 1289ms (607 modules)
+ ✓ Compiled in 1531ms (607 modules)
+ ✓ Compiled in 1000ms (603 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\3.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\3.pack.gz'
+ ✓ Compiled in 1674ms (599 modules)
+ ✓ Compiled in 393ms (311 modules)
+ ✓ Compiled in 417ms (311 modules)
+ ✓ Compiled in 1228ms (607 modules)
+ ✓ Compiled in 384ms (314 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 1211ms (593 modules)
+ ✓ Compiled in 1163ms (609 modules)
+ ✓ Compiled in 552ms (315 modules)
+ ✓ Compiled in 457ms (315 modules)
+ ✓ Compiled in 1158ms (595 modules)
+ ✓ Compiled in 766ms (609 modules)
+ ✓ Compiled in 659ms (315 modules)
+ ✓ Compiled in 1443ms (609 modules)
+ ✓ Compiled in 740ms (315 modules)
+ ✓ Compiled in 408ms (315 modules)
+ ✓ Compiled in 361ms (315 modules)
+ ✓ Compiled in 919ms (315 modules)
+ ✓ Compiled in 508ms (315 modules)
+ ✓ Compiled in 541ms (315 modules)
+ ✓ Compiled in 420ms (315 modules)
+ ✓ Compiled in 491ms (315 modules)
+ ✓ Compiled in 1500ms (609 modules)
+   Reload env: .env.local
+ ✓ Compiled in 1277ms (609 modules)
+ ✓ Compiled in 442ms (315 modules)
+ ✓ Compiled in 458ms (315 modules)
+ ✓ Compiled in 757ms (315 modules)
+ ✓ Compiled in 1415ms (609 modules)
+ ✓ Compiled in 692ms (315 modules)
+ ✓ Compiled in 1351ms (609 modules)
+ ✓ Compiled in 1535ms (315 modules)
+ ✓ Compiled in 1110ms (317 modules)
+ ✓ Compiled in 583ms (317 modules)
+ ✓ Compiled in 530ms (317 modules)
+   Reload env: .env.local
+ ✓ Compiled in 15s (611 modules)
+   Reload env: .env.local
+ ✓ Compiled in 5.1s (611 modules)
+ ✓ Compiled in 123ms (303 modules)
+ ✓ Compiled in 467ms (317 modules)
+   Reload env: .env.local
+ ✓ Compiled in 759ms (597 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack failed from C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\client-development.pack.gz: Error: unexpected end of file
+ ✓ Compiled in 2.2s (619 modules)
+ ✓ Compiled in 767ms (319 modules)
+ ✓ Compiled in 421ms (319 modules)
+ ✓ Compiled in 381ms (319 modules)
+ ✓ Compiled in 403ms (319 modules)
+   Reload env: .env.local
+ ✓ Compiled in 823ms (619 modules)
+   Reload env: .env.local
+ ✓ Compiled in 1044ms (619 modules)
+ ✓ Compiled in 1212ms (319 modules)
+ ✓ Compiled in 552ms (319 modules)
+ ✓ Compiled in 1319ms (619 modules)
+ ✓ Compiled in 990ms (605 modules)
+ ✓ Compiled in 1304ms (619 modules)
+ ✓ Compiled in 685ms (319 modules)
+ ✓ Compiled in 1438ms (623 modules)
+ ✓ Compiled in 566ms (321 modules)
+ ✓ Compiled in 791ms (623 modules)
+ ✓ Compiled in 590ms (632 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\2.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\2.pack.gz'
+ ✓ Compiled in 630ms (321 modules)
+ ✓ Compiled in 393ms (321 modules)
+ ✓ Compiled in 379ms (321 modules)
+ ✓ Compiled in 338ms (321 modules)
+ ✓ Compiled in 359ms (321 modules)
+ ✓ Compiled in 411ms (321 modules)
+ ✓ Compiled in 306ms (321 modules)
+ ✓ Compiled in 356ms (321 modules)
+ ✓ Compiled in 321ms (321 modules)
+ ✓ Compiled in 563ms (321 modules)
+ ✓ Compiled in 432ms (321 modules)
+ ✓ Compiled in 362ms (321 modules)
+ ✓ Compiled in 383ms (321 modules)
+ ✓ Compiled in 343ms (321 modules)
+ ✓ Compiled in 361ms (321 modules)
+ ✓ Compiled in 1325ms (632 modules)
+ ✓ Compiled in 928ms (618 modules)
+ ✓ Compiled in 435ms (321 modules)
+ ✓ Compiled in 430ms (321 modules)
+ ✓ Compiled in 845ms (635 modules)
+ ✓ Compiled in 757ms (635 modules)
+ ✓ Compiled in 676ms (635 modules)
+ ✓ Compiled in 521ms (635 modules)
+ ✓ Compiled in 794ms (645 modules)
+ ✓ Compiled in 1171ms (645 modules)
+ ✓ Compiled in 938ms (645 modules)
+ ✓ Compiled in 980ms (647 modules)
+ ✓ Compiled in 1734ms (649 modules)
+ ✓ Compiled in 1029ms (649 modules)
+ ⨯ ./src/app/page.tsx:5:1
+Module not found: Can't resolve '@/components/HomeInstallBanner'
+[0m [90m 3 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mCamera[39m[33m,[39m [33mShield[39m[33m,[39m [33mTrendingUp[39m[33m,[39m [33mClock[39m[33m,[39m [33mStar[39m[33m,[39m [33mZap[39m[33m,[39m [33mCheckCircle[39m[33m,[39m [33mArrowRight[39m[33m,[39m [33mChevronRight[39m[33m,[39m [33mDownload[39m[33m,[39m [33mSmartphone[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mHomeInstallBanner[39m } [36mfrom[39m [32m"@/components/HomeInstallBanner"[39m[33m;[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 6 |[39m[0m
+[0m [90m 7 |[39m [36mconst[39m testimonials [33m=[39m [[0m
+[0m [90m 8 |[39m   {[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ✓ Compiled in 896ms (651 modules)
+ ✓ Compiled in 905ms (330 modules)
+ ✓ Compiled in 798ms (651 modules)
+ ✓ Compiled in 1107ms (654 modules)
+ ✓ Compiled in 623ms (331 modules)
+ ✓ Compiled in 448ms (331 modules)
+ ✓ Compiled in 475ms (331 modules)
+ ✓ Compiled in 669ms (331 modules)
+ ✓ Compiled in 546ms (331 modules)
+ ✓ Compiled in 423ms (331 modules)
+ ✓ Compiled in 542ms (331 modules)
+ ✓ Compiled in 1743ms (654 modules)
+ ✓ Compiled in 629ms (331 modules)
+ ✓ Compiled in 432ms (331 modules)
+ ✓ Compiled in 524ms (331 modules)
+ ✓ Compiled in 443ms (331 modules)
+ ✓ Compiled in 513ms (331 modules)
+ ✓ Compiled in 1399ms (654 modules)
+ ✓ Compiled in 595ms (331 modules)
+ ✓ Compiled in 3s (654 modules)
+ ✓ Compiled in 748ms (331 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\5.pack.gz_' -> 'C:\Users\eyalt\Desktop\MyApp\watchsnap\.next\cache\webpack\server-development\5.pack.gz'
+ ✓ Compiled in 1218ms (654 modules)
+ ✓ Compiled in 580ms (331 modules)

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    background:#0a0705;
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+    color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:44px 60px;
+  }
+  .bg{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -5%, rgba(201,168,76,0.17) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 90%, rgba(180,100,30,0.06) 0%, transparent 60%),
+      #0a0705;
+  }
+  /* Racing flag pattern subtle */
+  .checker{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(45deg,rgba(201,168,76,0.02) 25%,transparent 25%),
+      linear-gradient(-45deg,rgba(201,168,76,0.02) 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,rgba(201,168,76,0.02) 75%),
+      linear-gradient(-45deg,transparent 75%,rgba(201,168,76,0.02) 75%);
+    background-size:80px 80px;
+    background-position:0 0,0 40px,40px -40px,-40px 0;
+  }
+
+  .header{position:relative;z-index:10;width:100%;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-icon{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A8882F);display:flex;align-items:center;justify-content:center;font-size:21px}
+  .logo-text{font-size:25px;font-weight:900}
+  .logo-text span{background:linear-gradient(135deg,#C9A84C,#E2C06D);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .vintage-tag{font-size:12px;font-weight:800;letter-spacing:3px;color:rgba(201,168,76,0.65);border:1px solid rgba(201,168,76,0.25);border-radius:6px;padding:8px 16px;text-transform:uppercase}
+
+  /* Dial art - Panda style */
+  .dial-wrap{position:relative;z-index:10}
+  .dial-glow{position:absolute;inset:-50px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.18) 0%,transparent 65%)}
+  .watch-body{
+    width:300px;height:300px;border-radius:50%;
+    background:conic-gradient(from 0deg,#6a4c1a,#C9A84C,#d4aa50,#9a6c22,#C9A84C,#6a4c1a);
+    padding:14px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.9),0 0 40px rgba(201,168,76,0.15);
+    position:relative;
+  }
+  .dial-face{
+    width:100%;height:100%;border-radius:50%;
+    background:radial-gradient(ellipse at 40% 35%,#181210,#050302);
+    position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  /* Sub-dials (chronograph) */
+  .subdial{
+    position:absolute;
+    width:60px;height:60px;border-radius:50%;
+    background:rgba(255,255,255,0.92);
+    border:1px solid rgba(0,0,0,0.15);
+    display:flex;align-items:center;justify-content:center;
+    font-size:7px;font-weight:800;color:#333;letter-spacing:0.5px;
+  }
+  .sd-top{top:50%;left:50%;transform:translate(-50%,-130%)}
+  .sd-left{top:50%;left:50%;transform:translate(-190%,-50%)}
+  .sd-right{top:50%;left:50%;transform:translate(90%,-50%)}
+  .mk-small{position:absolute;background:#C9A84C;width:1.5px;height:8px;top:12px;left:50%;margin-left:-0.75px;transform-origin:50% 122px}
+  .mk-sm-lg{background:#E2C06D;width:2px;height:13px;top:8px}
+  .hand-c{position:absolute;bottom:50%;left:50%;transform-origin:50% 100%;border-radius:2px 2px 0 0}
+  .hc-hr{width:5px;height:78px;margin-left:-2.5px;background:#fff;transform:rotate(120deg)}
+  .hc-mn{width:3px;height:100px;margin-left:-1.5px;background:#fff;transform:rotate(40deg)}
+  .hc-sc{width:2px;height:108px;margin-left:-1px;background:#e74c3c;transform:rotate(220deg)}
+  .center-c{position:absolute;top:50%;left:50%;width:12px;height:12px;border-radius:50%;background:#C9A84C;transform:translate(-50%,-50%);z-index:10;box-shadow:0 0 8px rgba(201,168,76,0.9)}
+  .heuer-logo{position:absolute;top:25%;left:50%;transform:translateX(-50%);font-size:9px;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,0.6);white-space:nowrap}
+  .carrera-text{position:absolute;bottom:28%;left:50%;transform:translateX(-50%);font-size:7px;font-weight:700;letter-spacing:2.5px;color:rgba(255,255,255,0.4);white-space:nowrap}
+
+  /* Info strip at bottom */
+  .info-main{position:relative;z-index:10;width:100%}
+  .brand-row{
+    display:flex;align-items:baseline;gap:16px;margin-bottom:6px;
+  }
+  .b-brand{
+    font-size:54px;font-weight:900;letter-spacing:-1.5px;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .b-model{font-size:32px;font-weight:900;color:rgba(255,255,255,0.9);letter-spacing:-0.5px}
+  .meta-row{display:flex;align-items:center;gap:20px;margin-bottom:20px}
+  .meta-chip{
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+    border-radius:8px;padding:7px 14px;
+    font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);
+  }
+
+  .value-conf-row{display:flex;align-items:center;justify-content:space-between}
+  .val-block{}
+  .vb-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:4px}
+  .vb-val{
+    font-size:56px;font-weight:900;letter-spacing:-2.5px;
+    background:linear-gradient(135deg,#C9A84C,#E2C06D,#fff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1;
+  }
+  .vb-range{font-size:14px;color:rgba(255,255,255,0.3);margin-top:3px}
+
+  .right-block{text-align:right}
+  .rb-auth{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-bottom:10px}
+  .rb-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e}
+  .rb-text{font-size:14px;font-weight:800;color:#22c55e;letter-spacing:1px;text-transform:uppercase}
+  .rb-cta{font-size:15px;font-weight:700;color:rgba(255,255,255,0.35)}
+  .rb-cta span{color:#C9A84C;font-weight:900}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="checker"></div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">⌚</div>
+    <div class="logo-text">Watch<span>Snap</span></div>
+  </div>
+  <div class="vintage-tag">Vintage Chrono · 1969</div>
+</div>
+
+<div class="dial-wrap">
+  <div class="dial-glow"></div>
+  <div class="watch-body">
+    <div class="dial-face">
+      <div class="mk-small mk-sm-lg" style="transform:rotate(0deg)"></div>
+      <div class="mk-small" style="transform:rotate(30deg)"></div>
+      <div class="mk-small" style="transform:rotate(60deg)"></div>
+      <div class="mk-small mk-sm-lg" style="transform:rotate(90deg)"></div>
+      <div class="mk-small" style="transform:rotate(120deg)"></div>
+      <div class="mk-small" style="transform:rotate(150deg)"></div>
+      <div class="mk-small mk-sm-lg" style="transform:rotate(180deg)"></div>
+      <div class="mk-small" style="transform:rotate(210deg)"></div>
+      <div class="mk-small" style="transform:rotate(240deg)"></div>
+      <div class="mk-small mk-sm-lg" style="transform:rotate(270deg)"></div>
+      <div class="mk-small" style="transform:rotate(300deg)"></div>
+      <div class="mk-small" style="transform:rotate(330deg)"></div>
+      <div class="subdial sd-top">30<br><span style="font-size:6px">MIN</span></div>
+      <div class="subdial sd-left">12<br><span style="font-size:6px">HR</span></div>
+      <div class="subdial sd-right">60<br><span style="font-size:6px">SEC</span></div>
+      <div class="heuer-logo">HEUER</div>
+      <div class="carrera-text">CARRERA</div>
+      <div class="hand-c hc-hr"></div>
+      <div class="hand-c hc-mn"></div>
+      <div class="hand-c hc-sc"></div>
+      <div class="center-c"></div>
+    </div>
+  </div>
+</div>
+
+<div class="info-main">
+  <div class="brand-row">
+    <div class="b-brand">Heuer</div>
+    <div class="b-model">Carrera</div>
+  </div>
+  <div class="meta-row">
+    <div class="meta-chip">Ref. 2447 S</div>
+    <div class="meta-chip">Valjoux 72</div>
+    <div class="meta-chip">1969 – 1974</div>
+    <div class="meta-chip">AI Confidence: 88%</div>
+  </div>
+  <div class="value-conf-row">
+    <div class="val-block">
+      <div class="vb-label">Market Value</div>
+      <div class="vb-val">$14,600</div>
+      <div class="vb-range">Range: $14,600 – $18,000</div>
+    </div>
+    <div class="right-block">
+      <div class="rb-auth"><div class="rb-dot"></div><div class="rb-text">Authentic</div></div>
+      <div class="rb-cta">Try free · <span>watchsnap.vercel.app</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
