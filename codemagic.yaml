@@ -18,7 +18,9 @@ workflows:
       - name: Install dependencies
         script: npm install
       - name: Capacitor sync
-        script: npx cap sync ios
+        script: |
+          npm run build
+          npx cap sync ios
       - name: Build iOS
         script: |
           xcode-project use-profiles
