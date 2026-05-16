@@ -1,13 +1,10 @@
 workflows:
-
   ios-app-store:
-    name: WatchSnap iOS — App Store
-    max_build_duration: 60
+    name: WatchSnap iOS App Store
+    max_build_duration: 120
     instance_type: mac_mini_m2
-
     integrations:
-      app_store_connect: codemagic   # App Store Connect API key configured in Codemagic UI
-
+      app_store_connect: codemagic
     environment:
       ios_signing:
         distribution_type: app_store
@@ -17,67 +14,26 @@ workflows:
         XCODE_PROJECT: ios/App/App.xcodeproj
         XCODE_SCHEME: App
       node: 20.11.0
-      xcode: latest
-      cocoapods: default
-
-    cache:
-      cache_paths:
-        - $HOME/.npm
-        - $FCI_BUILD_DIR/node_modules
-        - $HOME/Library/Caches/CocoaPods
-
     scripts:
-
-      # ── 1. Install JS dependencies ──────────────────────────────────
-      - name: Install Node dependencies
-        script: npm ci
-
-      # ── 2. Build Next.js (static export for Capacitor) ──────────────
-      - name: Build Next.js app
-        script: |
-          export BUILD_TARGET=capacitor
-          npm run build
-
-      # ── 3. Install CocoaPods ─────────────────────────────────────────
-      - name: Install CocoaPods
-        script: |
-          cd ios/App
-          pod install
-
-      # ── 4. Sync Capacitor → iOS ──────────────────────────────────────
+      - name: Install dependencies
+        script: npm install
       - name: Capacitor sync
         script: npx cap sync ios
-
-      # ── 5. Set bundle version from Codemagic build number ───────────
-      - name: Set build number
-        script: |
-          agvtool new-version -all $BUILD_NUMBER
-        working_directory: ios/App
-
-      # ── 6. Build & archive for App Store ────────────────────────────
-      - name: Build iOS IPA
+      - name: Build iOS
         script: |
           xcode-project use-profiles
-          xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
-            --scheme  "$XCODE_SCHEME"
-
+          xcodebuild -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath build/App.xcarchive \
+            archive
+          xcodebuild -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportOptionsPlist /Users/builder/export_options.plist \
+            -exportPath build/ipa
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-
+      - build/ipa/*.ipa
     publishing:
       app_store_connect:
-        auth: integration          # uses the App Store Connect API key above
+        auth: integration
         submit_to_testflight: true
-        beta_groups:
-          - Internal Testers
-        submit_to_app_store: false  # set to true when ready for production release
-
-      email:
-        recipients:
-          - eyaltalias@gmail.com
-        notify:
-          success: true
-          failure: true
