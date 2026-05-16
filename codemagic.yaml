@@ -22,10 +22,15 @@ workflows:
           export BUILD_TARGET=capacitor
           npm run build
           npx cap sync ios
+      - name: Resolve SPM dependencies
+        script: |
+          xcodebuild -resolvePackageDependencies \
+            -project ios/App/App.xcodeproj \
+            -scheme App
       - name: Build iOS
         script: |
           xcode-project use-profiles
-          xcodebuild -workspace ios/App/App.xcworkspace \
+          xcodebuild -workspace ios/App/App.xcodeproj/project.xcworkspace \
             -scheme App \
             -configuration Release \
             -archivePath build/App.xcarchive \
