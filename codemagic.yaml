@@ -19,6 +19,7 @@ workflows:
         script: npm install
       - name: Capacitor sync
         script: |
+          export BUILD_TARGET=capacitor
           npm run build
           npx cap sync ios
       - name: Build iOS

@@ -5,7 +5,7 @@ const isCapacitorBuild = process.env.BUILD_TARGET === "capacitor";
 const nextConfig = {
   // Static export only when building for Capacitor (Android/iOS).
   // Normal `npm run build` keeps server-side API routes alive on Vercel.
-  ...(isCapacitorBuild ? { output: "export", trailingSlash: true } : {}),
+  ...(isCapacitorBuild ? { output: "export", distDir: "out", trailingSlash: true } : {}),
 
   images: {
     remotePatterns: [],
