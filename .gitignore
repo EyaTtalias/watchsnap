@@ -11,9 +11,17 @@ build/
 # ── Environment variables (NEVER commit secrets) ──────────────
 .env
 .env.local
+.env.production
+.env.development
+.env.test
+.env*.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# ── Scripts containing secrets ────────────────────────────────
+set-env.js
+vercel-deploy.js
 
 # ── Vercel ────────────────────────────────────────────────────
 .vercel
