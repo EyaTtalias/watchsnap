@@ -22,6 +22,17 @@ workflows:
           export BUILD_TARGET=capacitor
           npm run build
           npx cap sync ios
+      - name: Restore WatchSnap app icon
+        # cap sync can reset the icon to the Capacitor placeholder.
+        # This step regenerates the production icon from the committed
+        # SVG script immediately after sync, so the correct icon is
+        # always present when Xcode archives the project.
+        script: |
+          node scripts/generate-icon.mjs
+          echo "✅ App icon verified:"
+          file ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
+          sips -g pixelWidth -g pixelHeight \
+            ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
       - name: Increment build number
         script: |
           # Use Codemagic's sequential $BUILD_NUMBER so every upload to
