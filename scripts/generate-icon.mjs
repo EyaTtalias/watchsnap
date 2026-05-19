@@ -49,36 +49,51 @@ function makeSVG(size) {
   const bezelR    = size * 0.46;
   const bezelW    = size * 0.012;
 
+  // ── NOTE: NO clipPath / rounded corners here. ──────────────────────────
+  // Apple applies its own squircle mask at render time. The submitted PNG
+  // must be a full 1024×1024 square with ZERO transparent pixels — any
+  // alpha channel causes App Store error 90717.
+  //
+  // Transparency-free strategy:
+  //   • Every gradient uses solid stop-colors (no stop-opacity < 1).
+  //   • The ambient glow is baked as a blended solid colour, not semi-transparent.
+  //   • sharp's .flatten({ background:'#000000' }) below is a final safety net
+  //     that composites everything onto black and strips the alpha channel.
+
+  // Pre-blend glow colour onto #0A0905 background so we get a solid hex:
+  // rgba(201,168,76,0.18) over #0A0905  ≈  #201d0e
+  // rgba(201,168,76,0.22) over #111010  ≈  #252011
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <defs>
-    <!-- Background: rich near-black with very subtle warm undertone -->
+    <!-- Background: rich near-black, fully opaque -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#111010"/>
+      <stop offset="0%"   stop-color="#131210"/>
       <stop offset="100%" stop-color="#0A0905"/>
     </linearGradient>
 
-    <!-- Ambient gold glow behind the star -->
+    <!-- Ambient glow: pre-blended onto background — NO stop-opacity -->
     <radialGradient id="glowGrad" cx="50%" cy="50%" r="52%">
-      <stop offset="0%"   stop-color="#C9A84C" stop-opacity="0.22"/>
-      <stop offset="55%"  stop-color="#C9A84C" stop-opacity="0.06"/>
-      <stop offset="100%" stop-color="#C9A84C" stop-opacity="0"/>
+      <stop offset="0%"   stop-color="#252011"/>
+      <stop offset="55%"  stop-color="#161410"/>
+      <stop offset="100%" stop-color="#0A0905"/>
     </radialGradient>
 
-    <!-- Star fill: warm gold gradient top-to-bottom -->
+    <!-- Star fill: warm gold gradient, fully opaque -->
     <linearGradient id="starGrad" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%"   stop-color="#F0D080"/>
       <stop offset="40%"  stop-color="#D4A940"/>
       <stop offset="100%" stop-color="#9A6E1A"/>
     </linearGradient>
 
-    <!-- Star inner highlight (top-left sheen) -->
+    <!-- Star sheen: pre-blended highlight — NO stop-opacity -->
     <radialGradient id="starSheen" cx="36%" cy="28%" r="55%">
-      <stop offset="0%"   stop-color="#FFF4C2" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#FFF4C2" stop-opacity="0"/>
+      <stop offset="0%"   stop-color="#F8EDA0"/>
+      <stop offset="100%" stop-color="#D4A940"/>
     </radialGradient>
 
-    <!-- Bezel ring gradient -->
+    <!-- Bezel ring gradient, fully opaque -->
     <linearGradient id="bezelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%"   stop-color="#888070"/>
       <stop offset="30%"  stop-color="#D4B86A"/>
@@ -86,56 +101,52 @@ function makeSVG(size) {
       <stop offset="100%" stop-color="#C0A050"/>
     </linearGradient>
 
-    <!-- Soft drop-shadow for the star -->
+    <!-- Drop-shadow: flood-opacity kept as SVG attribute (not PNG alpha) -->
     <filter id="starShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="${(size * 0.012).toFixed(1)}" stdDeviation="${(size * 0.025).toFixed(1)}"
+      <feDropShadow dx="0" dy="${(size * 0.012).toFixed(1)}"
+        stdDeviation="${(size * 0.025).toFixed(1)}"
         flood-color="#000000" flood-opacity="0.7"/>
     </filter>
     <filter id="starGlow" x="-15%" y="-15%" width="130%" height="130%">
       <feGaussianBlur stdDeviation="${(size * 0.018).toFixed(1)}" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
-
-    <!-- Clip to rounded square (iOS icon shape, r ≈ 22.5%) -->
-    <clipPath id="roundedRect">
-      <rect x="0" y="0" width="${size}" height="${size}"
-        rx="${(size * 0.225).toFixed(1)}" ry="${(size * 0.225).toFixed(1)}"/>
-    </clipPath>
   </defs>
 
-  <g clip-path="url(#roundedRect)">
-    <!-- Background -->
-    <rect x="0" y="0" width="${size}" height="${size}" fill="url(#bgGrad)"/>
+  <!-- Solid black base — guarantees no transparent corner pixels -->
+  <rect x="0" y="0" width="${size}" height="${size}" fill="#000000"/>
 
-    <!-- Ambient glow -->
-    <rect x="0" y="0" width="${size}" height="${size}" fill="url(#glowGrad)"/>
+  <!-- Background gradient over solid base -->
+  <rect x="0" y="0" width="${size}" height="${size}" fill="url(#bgGrad)"/>
 
-    <!-- Watch bezel ring (outer) -->
-    <circle cx="${cx}" cy="${cy}" r="${bezelR}"
-      fill="none" stroke="url(#bezelGrad)"
-      stroke-width="${bezelW}" opacity="0.55"/>
+  <!-- Ambient glow (solid pre-blended colours) -->
+  <rect x="0" y="0" width="${size}" height="${size}" fill="url(#glowGrad)"/>
 
-    <!-- Inner bezel accent (subtle) -->
-    <circle cx="${cx}" cy="${cy}" r="${(bezelR - bezelW * 1.8).toFixed(1)}"
-      fill="none" stroke="#C9A84C"
-      stroke-width="${(bezelW * 0.35).toFixed(1)}" opacity="0.18"/>
+  <!-- Watch bezel ring -->
+  <circle cx="${cx}" cy="${cy}" r="${bezelR}"
+    fill="none" stroke="url(#bezelGrad)"
+    stroke-width="${bezelW}" opacity="0.55"/>
 
-    <!-- Star shadow layer -->
-    <path d="${starD}" fill="#000000" opacity="0.45"
-      filter="url(#starShadow)"
-      transform="translate(0,${(size * 0.018).toFixed(1)})"/>
+  <!-- Inner bezel accent -->
+  <circle cx="${cx}" cy="${cy}" r="${(bezelR - bezelW * 1.8).toFixed(1)}"
+    fill="none" stroke="#C9A84C"
+    stroke-width="${(bezelW * 0.35).toFixed(1)}" opacity="0.18"/>
 
-    <!-- Star gold fill -->
-    <path d="${starD}" fill="url(#starGrad)" filter="url(#starGlow)"/>
+  <!-- Star shadow -->
+  <path d="${starD}" fill="#000000" opacity="0.45"
+    filter="url(#starShadow)"
+    transform="translate(0,${(size * 0.018).toFixed(1)})"/>
 
-    <!-- Star top-sheen overlay -->
-    <path d="${starD}" fill="url(#starSheen)"/>
+  <!-- Star gold fill -->
+  <path d="${starD}" fill="url(#starGrad)" filter="url(#starGlow)"/>
 
-    <!-- Thin outer stroke on the star for crispness -->
-    <path d="${starD}" fill="none"
-      stroke="#C9A84C" stroke-width="${(size * 0.004).toFixed(1)}"
-      opacity="0.6"/>
-  </g>
+  <!-- Star sheen (opaque highlight, looks like light catching the surface) -->
+  <path d="${starD}" fill="url(#starSheen)" opacity="0.28"/>
+
+  <!-- Star crisp edge -->
+  <path d="${starD}" fill="none"
+    stroke="#C9A84C" stroke-width="${(size * 0.004).toFixed(1)}"
+    opacity="0.6"/>
 </svg>`;
 }
 
@@ -149,19 +160,21 @@ async function generateIcon() {
   const destPath = path.join(iconDir, 'AppIcon-512@2x.png');
   const deskPath = 'C:\\Users\\eyalt\\Desktop\\watchsnap_icon_1024.png';
 
-  // Render SVG → PNG at 1024×1024
-  await sharp(svgBuffer)
+  // Render SVG → PNG at 1024×1024.
+  // .flatten() composites every semi-transparent pixel onto solid black
+  // and converts RGBA → RGB, eliminating the alpha channel entirely.
+  // Apple rejects icons with alpha (error 90717).
+  const rendered = await sharp(svgBuffer)
     .resize(SIZE, SIZE)
+    .flatten({ background: { r: 0, g: 0, b: 0 } })   // ← removes alpha
     .png({ compressionLevel: 9 })
-    .toFile(destPath);
+    .toBuffer();
 
+  await sharp(rendered).toFile(destPath);
   console.log(`✅ Saved to Xcode assets: ${destPath}`);
 
   // Also save a copy to Desktop for App Store Connect upload
-  await sharp(svgBuffer)
-    .resize(SIZE, SIZE)
-    .png({ compressionLevel: 9 })
-    .toFile(deskPath);
+  await sharp(rendered).toFile(deskPath);
 
   console.log(`✅ Saved to Desktop:      ${deskPath}`);
 
