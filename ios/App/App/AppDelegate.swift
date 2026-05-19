@@ -1,6 +1,39 @@
 import UIKit
 import Capacitor
 
+// MARK: - ViewController
+// Subclass of CAPBridgeViewController referenced by Main.storyboard.
+// The override below fixes a hard crash on iPad where UIKit requires every
+// popover to have a non-nil sourceView/barButtonItem before presentation.
+// Capacitor's file-input / PHPickerViewController path omits this on iPad,
+// causing:  "UIPopoverPresentationController … must have a non-nil sourceView"
+class ViewController: CAPBridgeViewController {
+
+    override func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
+        // Only fix popovers that have no anchor — let everything else pass through.
+        if UIDevice.current.userInterfaceIdiom == .pad,
+           let popover = viewControllerToPresent.popoverPresentationController,
+           popover.sourceView == nil,
+           popover.barButtonItem == nil
+        {
+            popover.sourceView = self.view
+            // Anchor near the bottom-centre of the screen (natural thumb reach).
+            popover.sourceRect = CGRect(
+                x: self.view.bounds.midX,
+                y: self.view.bounds.maxY - 120,
+                width: 1, height: 1
+            )
+            popover.permittedArrowDirections = []
+        }
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
+}
+
+// MARK: - AppDelegate
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

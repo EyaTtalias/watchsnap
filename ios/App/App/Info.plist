@@ -24,13 +24,22 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
+	<!-- ─── Privacy usage descriptions — required by iOS or app crashes ─── -->
+	<key>NSCameraUsageDescription</key>
+	<string>WatchSnap uses your camera to photograph and authenticate watches.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>WatchSnap needs access to your photos so you can select a watch image for authentication.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>WatchSnap may save watch photos to your library for your records.</string>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

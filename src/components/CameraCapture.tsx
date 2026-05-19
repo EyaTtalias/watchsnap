@@ -82,6 +82,14 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
 
   /* ─── Camera initialisation — 4K → 1080p → 720p fallback ─── */
   const startCamera = useCallback(async () => {
+    // Guard: WKWebView (Capacitor) exposes getUserMedia on iOS 14.3+.
+    // If it is absent the app is running in an insecure context or on a very
+    // old OS — fall back to the gallery picker gracefully instead of crashing.
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError("Live camera is not available in this context. Please choose a photo from your gallery.");
+      return;
+    }
+
     const resolutions = [
       { width: { ideal: 4096 }, height: { ideal: 2160 } },
       { width: { ideal: 1920 }, height: { ideal: 1080 } },
@@ -103,17 +111,29 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
     }
 
     if (!stream) {
-      // Last-resort: no constraints
+      // Last-resort: no resolution constraints
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       } catch (err) {
-        const msg = (err instanceof Error ? err.message : "").toLowerCase();
-        if (msg.includes("permission") || msg.includes("denied") || msg.includes("notallowed")) {
-          setError("Camera permission denied. Please allow camera access in your device settings.");
-        } else if (msg.includes("notfound") || msg.includes("devices")) {
-          setError("No camera found on this device.");
+        // Normalise both DOMException.name and message for cross-platform matching
+        const name = (err instanceof DOMException ? err.name : "").toLowerCase();
+        const msg  = (err instanceof Error ? err.message : "").toLowerCase();
+        const isDenied = name === "notallowederror"
+          || msg.includes("permission")
+          || msg.includes("denied")
+          || msg.includes("notallowed");
+        const isNotFound = name === "notfounderror"
+          || msg.includes("notfound")
+          || msg.includes("devices");
+
+        if (isDenied) {
+          setError(
+            "Camera access was denied. To fix this: go to Settings → Privacy & Security → Camera and enable WatchSnap."
+          );
+        } else if (isNotFound) {
+          setError("No camera was found on this device.");
         } else {
-          setError("Camera unavailable. Please choose a photo from your gallery.");
+          setError("Camera is unavailable right now. Please choose a photo from your gallery instead.");
         }
         return;
       }
