@@ -109,9 +109,19 @@ export async function createCheckoutUrl(opts: {
   const rawUrl = json?.data?.attributes?.url;
   if (!rawUrl) throw new Error("LemonSqueezy did not return a checkout URL");
 
-  // Append ?locale=en as a URL query parameter to force English
-  // regardless of store default or browser language
-  const checkoutUrl = new URL(rawUrl);
-  checkoutUrl.searchParams.set("locale", "en");
-  return checkoutUrl.toString();
+  // Append ?locale=en to force English regardless of store default / browser language.
+  // Uses URLSearchParams so it is encoded correctly and never duplicated.
+  let finalUrl: string;
+  try {
+    const u = new URL(rawUrl);
+    u.searchParams.set("locale", "en");
+    finalUrl = u.toString();
+  } catch {
+    // Fallback: rawUrl already has params → append with & or ?
+    const sep = rawUrl.includes("?") ? "&" : "?";
+    finalUrl = `${rawUrl}${sep}locale=en`;
+  }
+
+  console.log("[checkout] final URL →", finalUrl);
+  return finalUrl;
 }
