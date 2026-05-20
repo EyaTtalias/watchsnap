@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { getCollection, removeFromCollection, CollectionItem, isPro } from "@/lib/collection";
-import { Copy, Share2 } from "lucide-react";
 import WatchDetailClient from "./WatchDetailClient";
 
 const AUTH_CFG: Record<string, { label: string; Icon: React.ElementType; className: string; dot: string }> = {
@@ -15,64 +14,6 @@ const AUTH_CFG: Record<string, { label: string; Icon: React.ElementType; classNa
   replica:          { label: "Replica",       Icon: AlertTriangle, className: "text-red-400 bg-red-500/10 border-red-500/30",             dot: "bg-red-400"     },
   indeterminate:    { label: "Indeterminate", Icon: HelpCircle,    className: "text-gray-400 bg-gray-500/10 border-gray-500/20",           dot: "bg-gray-400"    },
 };
-
-function ReferralBanner() {
-  const [copied, setCopied] = useState(false);
-  const [code] = useState(() => {
-    if (typeof window === "undefined") return "FRIEND";
-    try {
-      let c = localStorage.getItem("ws_referral_code");
-      if (!c) {
-        c = "WS-" + Math.random().toString(36).slice(2, 8).toUpperCase();
-        localStorage.setItem("ws_referral_code", c);
-      }
-      return c;
-    } catch { return "FRIEND"; }
-  });
-
-  const link = `https://watchsnap.vercel.app/?ref=${code}`;
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(link);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div
-      className="mb-6 rounded-2xl border border-[#C9A84C]/25 bg-[#111111] p-5 overflow-hidden relative"
-      style={{ boxShadow: "0 0 40px rgba(201,168,76,0.06)" }}
-    >
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 60% 50% at 100% 0%, rgba(201,168,76,0.07) 0%, transparent 60%)" }}
-      />
-      <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#C9A84C]/12 border border-[#C9A84C]/20">
-          <Share2 className="h-5 w-5 text-[#C9A84C]" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-black text-white text-sm">Share &amp; Earn — 1 Free Scan Per Referral</p>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Share your link · when a friend signs up, you both get a free extra scan.
-          </p>
-          <div className="mt-2.5 flex items-center gap-2">
-            <div className="flex-1 truncate rounded-xl border border-[#2A2A2A] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-gray-400">
-              {link}
-            </div>
-            <button
-              onClick={copy}
-              className="flex flex-shrink-0 items-center gap-1.5 rounded-xl border border-[#C9A84C]/30 bg-[#C9A84C]/10 px-3 py-2 text-xs font-bold text-[#C9A84C] hover:bg-[#C9A84C]/20 transition-all active:scale-95"
-            >
-              <Copy className="h-3.5 w-3.5" />
-              {copied ? "Copied!" : "Copy"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function formatValue(low: number, high: number, currency = "USD") {
   const fmt = (v: number) =>
@@ -254,8 +195,6 @@ export default function CollectionPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] pt-20 pb-24 sm:pb-12">
       <div className="mx-auto max-w-5xl px-4">
-
-        <ReferralBanner />
 
         {/* Header */}
         <div className="mb-6 flex items-start justify-between gap-4">
