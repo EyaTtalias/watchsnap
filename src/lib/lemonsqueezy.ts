@@ -44,10 +44,13 @@ export async function createCheckoutUrl(opts: {
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? "https://watchsnap.vercel.app";
   const successUrl = opts.successUrl ?? `${appUrl}/paywall?upgraded=true`;
 
+  const testMode = process.env.LEMONSQUEEZY_TEST_MODE === "true";
+
   const body = {
     data: {
       type: "checkouts",
       attributes: {
+        ...(testMode ? { test_mode: true } : {}),
         checkout_options: {
           dark:         true,
           embed:        false,
