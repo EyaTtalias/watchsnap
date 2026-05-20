@@ -11,9 +11,11 @@ import { CameraCapture } from "@/components/CameraCapture";
 import { InstallBanner } from "@/components/InstallBanner";
 import {
   saveToCollection, compressToThumbnail,
+  saveToCollectionRemote,
   isPro, getScanCount, incrementScanCount, PRO_KEY,
 } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
+import { supabase } from "@/lib/supabase";
 
 type Phase = "idle" | "camera" | "preview" | "scanning" | "result" | "error";
 
@@ -63,6 +65,8 @@ export default function ScanPage() {
   const [saved,             setSaved]             = useState(false);
   const [saving,            setSaving]            = useState(false);
   const [showPaywall,       setShowPaywall]       = useState(false);
+  const [isLoggedIn,        setIsLoggedIn]        = useState(false);
+  const [userId,            setUserId]            = useState<string | null>(null);
   const [userIsPro,         setUserIsPro]         = useState(false);
   const [scansUsed,         setScansUsed]         = useState(0);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -76,57 +80,72 @@ export default function ScanPage() {
     if (params.get("upgraded") === "true") {
       window.history.replaceState({}, "", "/scan");
     }
+
     const pro = isPro();
     const dev = localStorage.getItem("watchsnap_dev") === "1";
     setUserIsPro(pro);
     setScansUsed(getScanCount());
 
-    // Hard gate: show paywall immediately if not pro and not in dev mode
-    if (!pro && !dev) {
-      setShowPaywall(true);
-    }
-
-    /* ── Server-side subscription verification ──
-       If watchsnap_email is stored in localStorage (set at checkout or restore),
-       verify against Supabase on every cold load (60-min cache).
-       This allows Pro to unlock automatically on any device where the email is saved.
-    ── */
-    const verifySubscription = async () => {
+    /* ── Verify subscription against Supabase (with 60-min cache) ── */
+    const verifySubscription = async (email: string): Promise<boolean> => {
       try {
-        const storedEmail = localStorage.getItem("watchsnap_email");
-        if (!storedEmail) return; // no email → localStorage-only mode
-
         const cachedAt = parseInt(localStorage.getItem("watchsnap_verified_at") ?? "0", 10);
         const ONE_HOUR = 60 * 60 * 1000;
-        if (Date.now() - cachedAt < ONE_HOUR) return; // cache still fresh
+        if (Date.now() - cachedAt < ONE_HOUR) return isPro(); // still fresh
 
-        const res = await fetch(getApiUrl("/api/verify-subscription"), {
+        const res  = await fetch(getApiUrl("/api/verify-subscription"), {
           method:  "POST",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ email: storedEmail }),
+          body:    JSON.stringify({ email }),
         });
-        if (!res.ok) return;
+        if (!res.ok) return isPro();
 
         const data = await res.json() as { isPro?: boolean | null; status?: string };
-
-        if (data.isPro === null) return; // unknown → keep cache
+        if (data.isPro === null) return isPro();
 
         if (data.isPro === true) {
           localStorage.setItem(PRO_KEY, "1");
+          localStorage.setItem("watchsnap_verified_at", String(Date.now()));
           setUserIsPro(true);
-          setShowPaywall(false); // auto-unlock: email was saved at checkout on another device
+          setShowPaywall(false);
+          return true;
         } else if (data.isPro === false && data.status !== "unknown") {
           localStorage.removeItem(PRO_KEY);
+          localStorage.setItem("watchsnap_verified_at", String(Date.now()));
           setUserIsPro(false);
+          return false;
         }
-
-        localStorage.setItem("watchsnap_verified_at", String(Date.now()));
-      } catch {
-        // Network error — keep existing localStorage state
-      }
+      } catch { /* network error — keep localStorage value */ }
+      return isPro();
     };
 
-    verifySubscription();
+    /* ── Main access check ── */
+    const checkAccess = async () => {
+      /* 1. Check Supabase session (set by Google OAuth) */
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        const email = session.user.email ?? "";
+        const uid   = session.user.id;
+        setIsLoggedIn(true);
+        setUserId(uid);
+        try { if (email) localStorage.setItem("watchsnap_email", email); } catch { /* ignore */ }
+
+        if (pro || dev) return; // already unlocked locally
+
+        const nowPro = await verifySubscription(email);
+        if (!nowPro) setShowPaywall(true);
+        return;
+      }
+
+      /* 2. No session — already Pro in localStorage? */
+      if (pro || dev) return;
+
+      /* 3. Not logged in, not Pro → show paywall (with Google sign-in button) */
+      setShowPaywall(true);
+    };
+
+    checkAccess().catch(() => setShowPaywall(true));
   }, []);
 
   const isDevOverride = typeof window !== "undefined" &&
@@ -209,8 +228,12 @@ export default function ScanPage() {
     if (!result || saved || saving) return;
     setSaving(true);
     const thumbnail = imageUrl ? await compressToThumbnail(imageUrl) : "";
-    saveToCollection({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    // Use UUID for Supabase compatibility
+    const id = (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const item = {
+      id,
       brand:             result.brand,
       model:             result.model,
       reference_number:  result.reference_number,
@@ -222,7 +245,10 @@ export default function ScanPage() {
       confidence:        result.confidence,
       thumbnail,
       savedAt:           Date.now(),
-    });
+    };
+    saveToCollection(item);
+    // Sync to Supabase if logged in
+    if (userId) saveToCollectionRemote(item, userId);
     setSaving(false);
     setSaved(true);
   };
@@ -469,6 +495,7 @@ export default function ScanPage() {
 
       {showPaywall && (
         <PaywallModal
+          isLoggedIn={isLoggedIn}
           onProRestored={() => {
             setUserIsPro(true);
             setShowPaywall(false);

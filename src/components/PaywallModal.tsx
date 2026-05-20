@@ -1,27 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Crown, Check, CreditCard, Loader2, Mail } from "lucide-react";
+import { Crown, Check, CreditCard, Loader2 } from "lucide-react";
 import { getApiUrl } from "@/lib/apiUrl";
-import { PRO_KEY } from "@/lib/collection";
+import { supabase } from "@/lib/supabase";
 
 interface PaywallModalProps {
-  /** Called after server confirms Pro (email restore path) */
+  /** Set when user already has a Supabase session (don't show Google button) */
+  isLoggedIn?: boolean;
+  /** Called after Pro is confirmed and paywall should close */
   onProRestored?: () => void;
 }
 
-export function PaywallModal({ onProRestored }: PaywallModalProps) {
+export function PaywallModal({ isLoggedIn = false, onProRestored: _onProRestored }: PaywallModalProps) {
   const router = useRouter();
 
-  const [visible,        setVisible]        = useState(false);
-  const [loading,        setLoading]        = useState<"monthly" | "annual" | null>(null);
-  const [restoreEmail,   setRestoreEmail]   = useState(() => {
-    try { return localStorage.getItem("watchsnap_email") ?? ""; } catch { return ""; }
-  });
-  const [restoreLoading, setRestoreLoading] = useState(false);
-  const [restoreMsg,     setRestoreMsg]     = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [visible,       setVisible]       = useState(false);
+  const [loading,       setLoading]       = useState<"monthly" | "annual" | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 50);
@@ -29,18 +26,30 @@ export function PaywallModal({ onProRestored }: PaywallModalProps) {
     return () => { clearTimeout(t); document.body.style.overflow = ""; };
   }, []);
 
-  /* ── Open LemonSqueezy checkout ── */
+  /* ── Google OAuth ── */
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options:  { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      // Browser will navigate away — no finally() needed
+    } catch {
+      setGoogleLoading(false);
+    }
+  };
+
+  /* ── LemonSqueezy checkout ── */
   const handleUpgrade = async (plan: "monthly" | "annual") => {
     setLoading(plan);
     try {
-      const email = restoreEmail.trim().toLowerCase();
-      if (email) {
-        try { localStorage.setItem("watchsnap_email", email); } catch { /* ignore */ }
-      }
+      let email = "";
+      try { email = localStorage.getItem("watchsnap_email") ?? ""; } catch { /* ignore */ }
       const res = await fetch(getApiUrl("/api/checkout"), {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, email: email || undefined }),
+        body:    JSON.stringify({ plan, email: email || undefined }),
       });
       if (!res.ok) throw new Error("checkout_failed");
       const { url } = await res.json();
@@ -52,60 +61,12 @@ export function PaywallModal({ onProRestored }: PaywallModalProps) {
     }
   };
 
-  /* ── Restore Pro by email ── */
-  const handleRestore = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const email = restoreEmail.trim().toLowerCase();
-    if (!email || !email.includes("@")) {
-      setRestoreMsg({ type: "error", text: "Enter a valid email address." });
-      return;
-    }
-    setRestoreLoading(true);
-    setRestoreMsg(null);
-    try {
-      const res  = await fetch(getApiUrl("/api/verify-subscription"), {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email }),
-      });
-      const data = await res.json() as { isPro?: boolean; status?: string };
-
-      if (data.isPro === true) {
-        try {
-          localStorage.setItem(PRO_KEY, "1");
-          localStorage.setItem("watchsnap_email", email);
-          localStorage.removeItem("watchsnap_verified_at");
-        } catch { /* ignore */ }
-        setRestoreMsg({ type: "success", text: "✓ Pro access restored!" });
-        setTimeout(() => {
-          setVisible(false);
-          setTimeout(() => onProRestored?.(), 300);
-        }, 1000);
-      } else {
-        setRestoreMsg({
-          type: "error",
-          text: data.status === "unknown"
-            ? "Could not reach server. Please try again."
-            : "No active subscription found for this email.",
-        });
-      }
-    } catch {
-      setRestoreMsg({ type: "error", text: "Connection error. Please try again." });
-    } finally {
-      setRestoreLoading(false);
-    }
-  };
-
   return (
+    /* No backdrop onClick — modal cannot be dismissed */
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-
-      {/* Backdrop — no onClick, modal cannot be dismissed */}
       <div className={`absolute inset-0 z-0 bg-black/85 backdrop-blur-sm transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`} />
 
-      {/* Modal */}
-      <div
-        className={`relative z-10 w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#C9A84C]/20 bg-[#0D0D0D] transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      >
+      <div className={`relative z-10 w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#C9A84C]/20 bg-[#0D0D0D] transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
         {/* Gold accent bar */}
         <div className="h-1.5 w-full rounded-t-3xl sm:rounded-t-3xl bg-gradient-to-r from-[#A8882F] via-[#E2C06D] to-[#A8882F]" />
 
@@ -117,13 +78,50 @@ export function PaywallModal({ onProRestored }: PaywallModalProps) {
               <Crown className="h-7 w-7 text-black" />
             </div>
             <p className="text-xs font-bold uppercase tracking-widest text-[#C9A84C]">
-              Unlock Pro to start scanning
+              {isLoggedIn ? "Choose a plan to unlock Pro" : "Sign in to get started"}
             </p>
-            <h2 className="mt-1 text-xl font-black">Choose Your Plan</h2>
-            <p className="mt-0.5 text-xs text-gray-400">Credit card required for both options</p>
+            <h2 className="mt-1 text-xl font-black">
+              {isLoggedIn ? "Choose Your Plan" : "Welcome to WatchSnap"}
+            </h2>
+            <p className="mt-0.5 text-xs text-gray-400">
+              {isLoggedIn ? "Credit card required for both options" : "Sign in with Google, then choose a plan"}
+            </p>
           </div>
 
-          {/* Plans grid */}
+          {/* ── Google sign-in (only when not logged in) ── */}
+          {!isLoggedIn && (
+            <>
+              <button
+                onClick={handleGoogle}
+                disabled={googleLoading}
+                className="w-full flex items-center justify-center gap-3 rounded-2xl border border-[#2A2A2A] bg-white py-3.5 text-sm font-bold text-gray-900 min-h-[52px] disabled:opacity-60 transition-all active:scale-[0.98] mb-4"
+                style={{ touchAction: "manipulation" }}
+              >
+                {googleLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+                ) : (
+                  <>
+                    {/* Google "G" logo */}
+                    <svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Continue with Google
+                  </>
+                )}
+              </button>
+
+              <div className="relative flex items-center gap-3 mb-4">
+                <div className="flex-1 h-px bg-[#2A2A2A]" />
+                <span className="text-[10px] text-gray-600 uppercase tracking-widest">or subscribe now</span>
+                <div className="flex-1 h-px bg-[#2A2A2A]" />
+              </div>
+            </>
+          )}
+
+          {/* ── Plan cards ── */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             {/* Monthly */}
             <div className="rounded-2xl border border-[#C9A84C]/30 bg-[#111111] p-4 flex flex-col gap-3">
@@ -141,7 +139,7 @@ export function PaywallModal({ onProRestored }: PaywallModalProps) {
               </ul>
               <button
                 onClick={() => handleUpgrade("monthly")}
-                disabled={loading !== null}
+                disabled={loading !== null || googleLoading}
                 className="w-full rounded-xl py-2.5 text-xs font-black text-black min-h-[44px] disabled:opacity-60 transition-all active:scale-95"
                 style={{ background: "linear-gradient(135deg, #C9A84C, #A8882F)", touchAction: "manipulation" }}
               >
@@ -167,7 +165,7 @@ export function PaywallModal({ onProRestored }: PaywallModalProps) {
               </ul>
               <button
                 onClick={() => handleUpgrade("annual")}
-                disabled={loading !== null}
+                disabled={loading !== null || googleLoading}
                 className="w-full rounded-xl py-2.5 text-xs font-black text-emerald-400 min-h-[44px] border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-60 transition-all active:scale-95"
                 style={{ touchAction: "manipulation" }}
               >
@@ -178,45 +176,9 @@ export function PaywallModal({ onProRestored }: PaywallModalProps) {
             </div>
           </div>
 
-          <p className="text-center text-[10px] text-gray-600 mb-4">
+          <p className="text-center text-[10px] text-gray-600">
             Cancel anytime · 30-day money-back guarantee
           </p>
-
-          {/* ── Inline restore section ── */}
-          <div className="border-t border-[#1E1E1E] pt-4">
-            <p className="text-center text-[11px] text-gray-500 mb-2.5">
-              Already subscribed? Enter your email to restore access.
-            </p>
-            <form onSubmit={handleRestore} className="flex gap-2">
-              <input
-                ref={inputRef}
-                type="email"
-                inputMode="email"
-                autoCapitalize="none"
-                autoCorrect="off"
-                value={restoreEmail}
-                onChange={(e) => { setRestoreEmail(e.target.value); setRestoreMsg(null); }}
-                placeholder="your@email.com"
-                className="flex-1 min-w-0 rounded-xl bg-[#111111] border border-[#2A2A2A] px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
-              />
-              <button
-                type="submit"
-                disabled={restoreLoading}
-                className="flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-black text-[#C9A84C] border border-[#C9A84C]/30 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 disabled:opacity-50 transition-all flex-shrink-0"
-                style={{ touchAction: "manipulation" }}
-              >
-                {restoreLoading
-                  ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  : <><Mail className="h-3.5 w-3.5" /> Restore</>
-                }
-              </button>
-            </form>
-            {restoreMsg && (
-              <p className={`mt-2 text-center text-xs font-semibold ${restoreMsg.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
-                {restoreMsg.text}
-              </p>
-            )}
-          </div>
         </div>
       </div>
     </div>

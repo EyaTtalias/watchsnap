@@ -1,3 +1,5 @@
+import { supabase } from "./supabase";
+
 export interface CollectionItem {
   id: string;
   brand: string;
@@ -33,6 +35,8 @@ export function isPro(): boolean {
   return localStorage.getItem(PRO_KEY) === "1";
 }
 
+/* ── localStorage helpers (unchanged) ── */
+
 export function getCollection(): CollectionItem[] {
   if (typeof window === "undefined") return [];
   try {
@@ -44,7 +48,6 @@ export function getCollection(): CollectionItem[] {
 
 export function saveToCollection(item: CollectionItem): void {
   const existing = getCollection();
-  // Deduplicate by brand+model+reference
   const filtered = existing.filter(
     (e) => !(e.brand === item.brand && e.model === item.model && e.reference_number === item.reference_number)
   );
@@ -74,4 +77,101 @@ export async function compressToThumbnail(imageUrl: string): Promise<string> {
     };
     img.onerror = () => resolve("");
   });
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Supabase sync helpers
+   All functions are fire-and-forget — they silently fall back to
+   localStorage on any error (RLS not configured, network failure, etc.)
+───────────────────────────────────────────────────────────────── */
+
+/** Map Supabase DB row → CollectionItem */
+function dbRowToItem(row: Record<string, unknown>): CollectionItem {
+  return {
+    id:               String(row.id),
+    brand:            String(row.brand ?? ""),
+    model:            String(row.model ?? ""),
+    reference_number: String(row.reference_number ?? ""),
+    production_years: String(row.production_years ?? ""),
+    value_low:        Number(row.value_low  ?? 0),
+    value_high:       Number(row.value_high ?? 0),
+    currency:         String(row.currency   ?? "USD"),
+    authenticity:     String(row.authenticity ?? "indeterminate"),
+    confidence:       Number(row.confidence ?? 0),
+    thumbnail:        String(row.thumbnail  ?? ""),
+    savedAt:          row.created_at
+      ? new Date(String(row.created_at)).getTime()
+      : Date.now(),
+  };
+}
+
+/**
+ * Load the user's collection from Supabase and merge it with
+ * whatever is in localStorage (Supabase wins on conflict).
+ */
+export async function syncCollectionFromSupabase(userId: string): Promise<CollectionItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from("collection")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error || !data) return getCollection();
+
+    const remote: CollectionItem[] = data.map(dbRowToItem);
+
+    // Merge: remote items are authoritative; add local-only items that don't exist remotely
+    const remoteIds = new Set(remote.map((i) => i.id));
+    const localOnly = getCollection().filter((i) => !remoteIds.has(i.id));
+    const merged    = [...remote, ...localOnly];
+
+    // Write back to localStorage so the app works offline too
+    localStorage.setItem(COLLECTION_KEY, JSON.stringify(merged));
+    return merged;
+  } catch {
+    return getCollection();
+  }
+}
+
+/** Save a single item to Supabase (called right after saveToCollection) */
+export async function saveToCollectionRemote(
+  item:   CollectionItem,
+  userId: string,
+): Promise<void> {
+  try {
+    await supabase.from("collection").upsert(
+      {
+        id:               item.id,
+        user_id:          userId,
+        scan_id:          null,
+        brand:            item.brand,
+        model:            item.model,
+        reference_number: item.reference_number,
+        production_years: item.production_years,
+        value_low:        item.value_low,
+        value_high:       item.value_high,
+        currency:         item.currency,
+        authenticity:     item.authenticity,
+        confidence:       item.confidence,
+        thumbnail:        item.thumbnail,
+        created_at:       new Date(item.savedAt).toISOString(),
+      },
+      { onConflict: "id" },
+    );
+  } catch {
+    /* silently ignore — item is already in localStorage */
+  }
+}
+
+/** Delete a single item from Supabase */
+export async function removeFromCollectionRemote(
+  id:     string,
+  userId: string,
+): Promise<void> {
+  try {
+    await supabase.from("collection").delete().eq("id", id).eq("user_id", userId);
+  } catch {
+    /* silently ignore */
+  }
 }
