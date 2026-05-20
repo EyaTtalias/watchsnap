@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>WatchSnap — TikTok Ad</title>
+<style>
+/* ═══════════════════════════════════════════════
+   RESET & GLOBALS
+═══════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  width:100%;min-height:100vh;
+  background:#111;
+  display:flex;align-items:center;justify-content:center;
+  font-family:-apple-system,'SF Pro Display','Segoe UI',Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══════════════════════════════════════════════
+   PHONE STAGE  390 × 844
+═══════════════════════════════════════════════ */
+#stage{
+  width:390px;height:844px;
+  position:relative;overflow:hidden;
+  background:#000;
+  border-radius:44px;
+  box-shadow:0 0 0 1px #2a2a2a, 0 50px 150px rgba(0,0,0,0.95);
+  cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* ═══════════════════════════════════════════════
+   SCENE SYSTEM
+═══════════════════════════════════════════════ */
+.scene{
+  position:absolute;inset:0;
+  opacity:0;pointer-events:none;
+  transition:opacity .12s linear;
+}
+.scene.active{opacity:1;pointer-events:auto;}
+
+/* ═══════════════════════════════════════════════
+   ── SCENE 1  THE HOOK ──
+   0.0s → 2.5s
+═══════════════════════════════════════════════ */
+#s1{
+  background:#000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:0;
+  padding:40px 28px;
+}
+
+/* TikTok-native caption box */
+#pov-box{
+  background:#000;
+  padding:14px 18px 14px;
+  border-radius:6px;
+  text-align:center;
+  line-height:1.5;
+  max-width:340px;
+}
+
+.pov-word{
+  display:inline-block;
+  font-size:30px;font-weight:900;color:#fff;
+  opacity:0;
+  transform:translateY(10px) scale(.88);
+  transition:opacity .10s ease,transform .12s cubic-bezier(.22,1,.36,1);
+  margin:0 4px;
+  letter-spacing:-0.3px;
+}
+.pov-word.show{opacity:1;transform:none;}
+
+/* Yellow "POV:" prefix */
+.pov-word.pov-prefix{
+  color:#ffe600;
+  font-size:32px;
+}
+
+/* sub-badge below text */
+#hook-sub{
+  margin-top:18px;
+  background:#ffe600;
+  color:#000;
+  font-size:21px;font-weight:900;
+  padding:9px 18px;border-radius:8px;
+  text-align:center;
+  opacity:0;transform:scale(.8) rotate(-2deg);
+  transition:opacity .2s,transform .28s cubic-bezier(.34,1.56,.64,1);
+  letter-spacing:-0.2px;
+}
+#hook-sub.show{opacity:1;transform:scale(1) rotate(-1deg);}
+
+/* ═══════════════════════════════════════════════
+   ── SCENE 2  IMMERSIVE SCAN ──
+   2.5s → 6.0s
+═══════════════════════════════════════════════ */
+#s2{background:#080808;}
+
+/* camera grain texture */
+#s2::before{
+  content:'';position:absolute;inset:0;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  pointer-events:none;opacity:.6;
+}
+
+/* ── CSS Rolex Submariner ── */
+.watch-stage{
+  position:absolute;inset:0;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+}
+.w-case{
+  width:230px;height:230px;border-radius:44px;
+  background:linear-gradient(145deg,#1c1c1c 0%,#3a3a3a 28%,#272727 50%,#111 72%,#2a2a2a 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 4px #0a0a0a,0 0 0 8px #222,0 30px 80px rgba(0,0,0,.98),inset 0 2px 4px rgba(255,255,255,.12);
+  position:relative;
+}
+.w-bezel{
+  width:206px;height:206px;border-radius:40px;
+  background:conic-gradient(
+    #000 0deg 30deg,#444 30deg 60deg,#111 60deg 90deg,#555 90deg 120deg,
+    #111 120deg 150deg,#444 150deg 180deg,#000 180deg 210deg,#444 210deg 240deg,
+    #111 240deg 270deg,#555 270deg 300deg,#111 300deg 330deg,#444 330deg 360deg
+  );
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.w-dial{
+  width:172px;height:172px;border-radius:34px;
+  background:radial-gradient(ellipse at 38% 30%,#1a1a1a 0%,#050505 100%);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.9);
+}
+.w-dial::before{
+  content:'';position:absolute;inset:0;border-radius:34px;
+  background:radial-gradient(ellipse 50% 40% at 30% 22%,rgba(255,255,255,.08) 0%,transparent 55%);
+}
+/* hour indices */
+.w-index{
+  position:absolute;top:8px;left:calc(50% - 2px);
+  width:4px;height:12px;background:rgba(255,255,255,.7);border-radius:2px;
+  transform-origin:center 78px;
+}
+.w-brand{
+  position:absolute;top:38px;width:100%;
+  text-align:center;font-size:10px;font-weight:900;
+  color:rgba(255,255,255,.85);letter-spacing:3.5px;
+}
+.w-model{
+  position:absolute;top:52px;width:100%;
+  text-align:center;font-size:7px;color:rgba(255,255,255,.4);
+  letter-spacing:1.5px;
+}
+.w-crown-logo{
+  position:absolute;top:66px;width:100%;
+  text-align:center;font-size:9px;color:#C9A84C;
+}
+/* hands */
+.h-hour{
+  position:absolute;bottom:50%;left:calc(50% - 3px);
+  width:6px;height:56px;
+  background:linear-gradient(180deg,#fff 0%,#bbb 100%);
+  border-radius:3px 3px 1px 1px;
+  transform-origin:bottom center;transform:rotate(120deg);
+  box-shadow:0 0 6px rgba(255,255,255,.3);
+}
+.h-min{
+  position:absolute;bottom:50%;left:calc(50% - 2.5px);
+  width:5px;height:74px;
+  background:linear-gradient(180deg,#fff 0%,#aaa 100%);
+  border-radius:2.5px 2.5px 1px 1px;
+  transform-origin:bottom center;transform:rotate(280deg);
+  box-shadow:0 0 6px rgba(255,255,255,.3);
+}
+.h-sec{
+  position:absolute;bottom:50%;left:calc(50% - 1px);
+  width:2px;height:80px;
+  background:#e74c3c;
+  border-radius:1px;
+  transform-origin:bottom center;transform:rotate(210deg);
+}
+.h-center{
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:#C9A84C;
+  box-shadow:0 0 8px rgba(201,168,76,.8);z-index:5;
+}
+/* date window */
+.w-date{
+  position:absolute;right:28px;top:calc(50% - 8px);
+  width:18px;height:16px;
+  background:#fff;border:1px solid #999;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:900;color:#000;
+}
+
+/* ── Viewfinder HUD ── */
+.vf-hud{position:absolute;inset:0;z-index:3;pointer-events:none;}
+
+.vf-corner{position:absolute;width:36px;height:36px;border-color:#00ff88;border-style:solid;}
+.vf-corner.tl{top:108px;left:72px;border-width:3px 0 0 3px;border-radius:5px 0 0 0;}
+.vf-corner.tr{top:108px;right:72px;border-width:3px 3px 0 0;border-radius:0 5px 0 0;}
+.vf-corner.bl{bottom:192px;left:72px;border-width:0 0 3px 3px;border-radius:0 0 0 5px;}
+.vf-corner.br{bottom:192px;right:72px;border-width:0 3px 3px 0;border-radius:0 0 5px 0;}
+
+/* Laser — wide, bright, fast */
+.laser{
+  position:absolute;left:0;right:0;z-index:4;
+  height:5px;
+  background:linear-gradient(90deg,transparent 0%,rgba(0,255,136,.3) 10%,#00ffaa 30%,#00ffff 50%,#00ffaa 70%,rgba(0,255,136,.3) 90%,transparent 100%);
+  box-shadow:0 0 16px 6px rgba(0,255,170,.55),0 0 50px 12px rgba(0,255,170,.22),0 0 80px 20px rgba(0,255,170,.08);
+  top:20%;
+  animation:laser 0.55s ease-in-out infinite alternate;
+}
+@keyframes laser{
+  0%  {top:16%;opacity:1;}
+  100%{top:76%;opacity:.85;}
+}
+
+/* AI badge */
+.ai-strip{
+  position:absolute;left:0;right:0;bottom:140px;z-index:5;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.ai-badge{
+  background:rgba(0,0,0,.88);
+  border:1.5px solid rgba(0,255,136,.45);
+  border-radius:10px;
+  padding:11px 22px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 0 24px rgba(0,255,136,.15);
+}
+.ai-spin{
+  width:22px;height:22px;
+  border:2.5px solid rgba(0,255,136,.25);
+  border-top-color:#00ff88;
+  border-radius:50%;
+  animation:spin .65s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-txt{font-size:15px;font-weight:800;color:#00ff88;letter-spacing:.4px;}
+
+/* ═══════════════════════════════════════════════
+   ── SCENE 3  REPLICA JUMP-SCARE ──
+   6.0s → 10.0s
+═══════════════════════════════════════════════ */
+#s3{background:#08000a;}
+
+/* Full red-screen flash */
+#s3-flash{
+  position:absolute;inset:0;z-index:1;
+  background:rgba(220,0,0,0);pointer-events:none;
+}
+#s3-flash.boom{animation:red-boom .45s ease-out forwards;}
+@keyframes red-boom{
+  0%  {background:rgba(255,20,20,.95);}
+  40% {background:rgba(200,0,0,.6);}
+  100%{background:rgba(100,0,0,0);}
+}
+
+/* Stage-shake keyframe */
+@keyframes shake{
+  0%  {transform:translate(0,0) rotate(0);}
+  8%  {transform:translate(-10px,-6px) rotate(-1.8deg);}
+  16% {transform:translate(11px, 7px) rotate(1.4deg);}
+  24% {transform:translate(-12px, 5px) rotate(-2.2deg);}
+  32% {transform:translate(10px,-8px) rotate(1.6deg);}
+  40% {transform:translate(-6px, 9px) rotate(-.8deg);}
+  50% {transform:translate(8px,-5px) rotate(1.2deg);}
+  60% {transform:translate(-5px, 6px) rotate(-.6deg);}
+  72% {transform:translate(4px,-3px) rotate(.5deg);}
+  84% {transform:translate(-2px, 2px) rotate(-.2deg);}
+  100%{transform:translate(0,0) rotate(0);}
+}
+.do-shake{animation:shake .5s cubic-bezier(.36,.07,.19,.97) both;}
+
+/* REPLICA stamp */
+#stamp{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0) rotate(-10deg);
+  z-index:10;
+  text-align:center;
+  transition:transform .32s cubic-bezier(.34,1.56,.64,1);
+}
+#stamp.show{transform:translate(-50%,-50%) scale(1) rotate(-8deg);}
+
+.stamp-main{
+  display:block;
+  font-size:56px;font-weight:900;letter-spacing:5px;
+  color:#ff1010;
+  text-shadow:0 0 30px rgba(255,16,16,.8),0 0 70px rgba(255,16,16,.35);
+  border:5px solid #ff1010;
+  padding:12px 22px;border-radius:10px;
+  background:rgba(0,0,0,.75);
+  white-space:nowrap;
+  line-height:1.1;
+}
+.stamp-sub{
+  display:block;margin-top:8px;
+  font-size:17px;font-weight:900;color:#ff5555;
+  letter-spacing:3px;text-transform:uppercase;
+  text-shadow:0 0 14px rgba(255,85,85,.5);
+}
+
+/* Value comparison */
+#vals{
+  position:absolute;bottom:185px;left:24px;right:24px;
+  display:flex;flex-direction:column;gap:12px;
+  opacity:0;transform:translateY(18px);
+  transition:opacity .3s,transform .3s;
+  z-index:9;
+}
+#vals.show{opacity:1;transform:none;}
+
+.val-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-radius:12px;
+}
+.val-row.real{
+  background:rgba(0,220,80,.12);
+  border:2px solid rgba(0,220,80,.45);
+}
+.val-row.fake{
+  background:rgba(255,20,20,.12);
+  border:2px solid rgba(255,20,20,.45);
+}
+.val-lbl{font-size:15px;font-weight:700;}
+.val-amt{font-size:26px;font-weight:900;}
+.val-row.real .val-lbl,.val-row.real .val-amt{color:#3ddc84;}
+.val-row.fake .val-lbl,.val-row.fake .val-amt{color:#ff4444;}
+
+/* TikTok testimonial sticker */
+#sticker{
+  position:absolute;bottom:80px;left:20px;right:20px;z-index:9;
+  background:#fff;color:#000;
+  font-size:21px;font-weight:900;line-height:1.38;
+  padding:14px 18px;border-radius:12px;
+  text-align:center;
+  border:3px solid #000;
+  box-shadow:4px 4px 0 #000;
+  opacity:0;transform:scale(.78) rotate(2deg);
+  transition:opacity .22s,transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+#sticker.show{opacity:1;transform:scale(1) rotate(1.5deg);}
+
+/* ═══════════════════════════════════════════════
+   ── SCENE 4  HIGH-CONVERTING CTA ──
+   10.0s → 14.0s
+═══════════════════════════════════════════════ */
+#s4{
+  background:linear-gradient(180deg,#070707 0%,#040404 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:50px 28px 40px;
+}
+/* ambient glow */
+#s4::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 75% 45% at 50% 20%,rgba(201,168,76,.12) 0%,transparent 65%);
+}
+
+.s4-logo{
+  width:88px;height:88px;border-radius:24px;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;
+  box-shadow:0 0 48px rgba(201,168,76,.45),0 0 90px rgba(201,168,76,.18);
+  margin-bottom:20px;position:relative;z-index:1;
+}
+.s4-name{
+  font-size:36px;font-weight:900;letter-spacing:-1.5px;
+  color:#fff;margin-bottom:8px;position:relative;z-index:1;
+}
+.s4-name span{
+  background:linear-gradient(135deg,#D4AF37,#F0CC5A,#B8922A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.s4-tag{
+  font-size:16px;color:#666;text-align:center;line-height:1.55;
+  margin-bottom:36px;position:relative;z-index:1;
+}
+.s4-tag strong{color:#C9A84C;}
+
+.store-btns{
+  display:flex;flex-direction:column;gap:14px;
+  width:100%;position:relative;z-index:1;
+}
+
+.sbtn{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 24px;border-radius:18px;
+  text-decoration:none;border:none;cursor:pointer;
+  animation:btn-pulse 1.8s ease-in-out infinite;
+  transition:transform .15s;
+}
+.sbtn:active{transform:scale(.96);}
+
+.sbtn.apple{
+  background:#181818;
+  border:1.5px solid rgba(255,255,255,.14);
+  box-shadow:0 6px 28px rgba(0,0,0,.55);
+}
+.sbtn.gplay{
+  background:linear-gradient(135deg,#C9A84C 0%,#E2C06D 50%,#A8882F 100%);
+  box-shadow:0 10px 36px rgba(201,168,76,.4);
+  animation-delay:.4s;
+}
+
+@keyframes btn-pulse{
+  0%,100%{transform:scale(1);}
+  50%    {transform:scale(1.045);}
+}
+/* apple keeps scale but changes shadow */
+.sbtn.apple{animation:btn-pulse-dark 1.8s ease-in-out infinite;}
+@keyframes btn-pulse-dark{
+  0%,100%{transform:scale(1);box-shadow:0 6px 28px rgba(0,0,0,.55);}
+  50%    {transform:scale(1.045);box-shadow:0 10px 40px rgba(255,255,255,.08);}
+}
+
+.sbtn-icon{font-size:32px;flex-shrink:0;}
+.sbtn-info{text-align:left;}
+.sbtn-sub{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:2px;}
+.sbtn.gplay .sbtn-sub{color:rgba(0,0,0,.55);}
+.sbtn-name{font-size:19px;font-weight:900;color:#fff;}
+.sbtn.gplay .sbtn-name{color:#000;}
+
+.s4-footer{
+  margin-top:28px;
+  display:flex;align-items:center;gap:18px;position:relative;z-index:1;
+}
+.ft-item{font-size:12px;color:#444;display:flex;align-items:center;gap:6px;}
+.ft-sep{width:3px;height:3px;border-radius:50%;background:#333;}
+
+/* ═══════════════════════════════════════════════
+   TIKTOK UI CHROME  (always on top, z-index 100+)
+═══════════════════════════════════════════════ */
+#tt-ui{
+  position:absolute;inset:0;z-index:100;
+  pointer-events:none;
+}
+
+/* Status bar */
+#tt-status{
+  position:absolute;top:0;left:0;right:0;height:48px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px 0 24px;
+  background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,transparent 100%);
+}
+.tt-time{font-size:17px;font-weight:700;color:#fff;letter-spacing:.2px;}
+.tt-sys{display:flex;align-items:center;gap:7px;}
+.tt-sig{display:flex;align-items:flex-end;gap:2px;}
+.tt-sig span{width:3.5px;background:#fff;border-radius:1px;}
+.tt-bat{
+  width:24px;height:12px;border-radius:2.5px;
+  border:1.5px solid rgba(255,255,255,.65);
+  position:relative;display:flex;align-items:center;
+}
+.tt-bat::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2px;height:6px;background:rgba(255,255,255,.5);border-radius:1px;}
+.tt-bat-fill{height:100%;width:70%;background:#fff;border-radius:1.5px 0 0 1.5px;margin:1.5px;}
+
+/* Right sidebar */
+#tt-side{
+  position:absolute;right:10px;bottom:110px;
+  display:flex;flex-direction:column;align-items:center;gap:22px;
+}
+.tt-av{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  border:2px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:19px;font-weight:900;color:#000;
+}
+.tt-plus{
+  width:20px;height:20px;border-radius:50%;background:#fe2c55;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;color:#fff;
+  margin-top:-16px;
+}
+.tt-act{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.tt-act-ic{
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(0,0,0,.38);
+  display:flex;align-items:center;justify-content:center;
+  font-size:23px;
+}
+.tt-act-n{font-size:12px;font-weight:700;color:#fff;}
+
+/* Bottom info */
+#tt-bottom{
+  position:absolute;bottom:0;left:0;right:68px;
+  padding:0 16px 20px;
+  background:linear-gradient(0deg,rgba(0,0,0,.65) 0%,transparent 100%);
+}
+.tt-user{font-size:16px;font-weight:800;color:#fff;margin-bottom:5px;}
+.tt-cap{font-size:13px;color:#fff;line-height:1.48;margin-bottom:9px;}
+.tt-cap .htag{color:#fe2c55;font-weight:700;}
+.tt-mus{display:flex;align-items:center;gap:9px;}
+.tt-disc{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  animation:disc-rot 3s linear infinite;
+}
+@keyframes disc-rot{to{transform:rotate(360deg);}}
+.tt-mus-txt{font-size:13px;color:rgba(255,255,255,.8);}
+
+/* ═══════════════════════════════════════════════
+   TAP TO PLAY OVERLAY
+═══════════════════════════════════════════════ */
+#tap-screen{
+  position:absolute;inset:0;z-index:200;
+  background:rgba(0,0,0,.78);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:18px;cursor:pointer;
+}
+.tap-logo{
+  width:96px;height:96px;border-radius:26px;
+  background:linear-gradient(135deg,#C9A84C,#A8882F);
+  display:flex;align-items:center;justify-content:center;
+  font-size:46px;
+  box-shadow:0 0 50px rgba(201,168,76,.55);
+  animation:logo-pulse 1.9s ease-in-out infinite;
+}
+@keyframes logo-pulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 50px rgba(201,168,76,.55);}
+  50%    {transform:scale(1.1);box-shadow:0 0 80px rgba(201,168,76,.75);}
+}
+.tap-cta{font-size:20px;font-weight:800;color:#fff;letter-spacing:.3px;}
+.tap-note{font-size:13px;color:rgba(255,255,255,.45);}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ════ SCENE 1 — HOOK ════ -->
+  <div class="scene active" id="s1">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 50%,rgba(201,168,76,.05),transparent 70%);pointer-events:none;"></div>
+    <div id="pov-box"><!-- words injected --></div>
+    <div id="hook-sub">💎 ...and it was FAKE</div>
+  </div>
+
+  <!-- ════ SCENE 2 — IMMERSIVE SCAN ════ -->
+  <div class="scene" id="s2">
+    <!-- CSS watch -->
+    <div class="watch-stage">
+      <div class="w-case">
+        <div class="w-bezel">
+          <div class="w-dial">
+            <!-- hour indices -->
+            <div class="w-index" style="transform:rotate(0deg)"></div>
+            <div class="w-index" style="transform:rotate(30deg)"></div>
+            <div class="w-index" style="transform:rotate(60deg)"></div>
+            <div class="w-index" style="transform:rotate(90deg)"></div>
+            <div class="w-index" style="transform:rotate(120deg)"></div>
+            <div class="w-index" style="transform:rotate(150deg)"></div>
+            <div class="w-index" style="transform:rotate(180deg)"></div>
+            <div class="w-index" style="transform:rotate(210deg)"></div>
+            <div class="w-index" style="transform:rotate(240deg)"></div>
+            <div class="w-index" style="transform:rotate(270deg)"></div>
+            <div class="w-index" style="transform:rotate(300deg)"></div>
+            <div class="w-index" style="transform:rotate(330deg)"></div>
+            <div class="w-brand">ROLEX</div>
+            <div class="w-model">SUBMARINER</div>
+            <div class="w-crown-logo">♛</div>
+            <div class="h-hour"></div>
+            <div class="h-min"></div>
+            <div class="h-sec"></div>
+            <div class="h-center"></div>
+            <div class="w-date">3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD overlays -->
+    <div class="vf-hud">
+      <div class="vf-corner tl"></div>
+      <div class="vf-corner tr"></div>
+      <div class="vf-corner bl"></div>
+      <div class="vf-corner br"></div>
+      <div class="laser"></div>
+    </div>
+
+    <div class="ai-strip">
+      <div class="ai-badge">
+        <div class="ai-spin"></div>
+        <div class="ai-txt">WatchSnap AI Authenticating...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SCENE 3 — JUMP-SCARE ════ -->
+  <div class="scene" id="s3">
+    <div id="s3-flash"></div>
+
+    <div id="stamp">
+      <span class="stamp-main">⚠ REPLICA<br>DETECTED</span>
+      <span class="stamp-sub">Authentication Failed</span>
+    </div>
+
+    <div id="vals">
+      <div class="val-row real">
+        <span class="val-lbl">✓ Authentic Value</span>
+        <span class="val-amt">$14,000</span>
+      </div>
+      <div class="val-row fake">
+        <span class="val-lbl">✗ This Fake</span>
+        <span class="val-amt">$80</span>
+      </div>
+    </div>
+
+    <div id="sticker">
+      "This app saved me $8,000<br>in 10 seconds! 🤯"
+    </div>
+  </div>
+
+  <!-- ════ SCENE 4 — CTA ════ -->
+  <div class="scene" id="s4">
+    <div class="s4-logo">⌚</div>
+    <div class="s4-name">Watch<span>Snap</span></div>
+    <div class="s4-tag">
+      AI-powered watch authentication.<br>
+      <strong>Catch fakes in under 10 seconds.</strong>
+    </div>
+
+    <div class="store-btns">
+      <a class="sbtn apple" href="https://watchsnap.vercel.app" target="_blank">
+        <span class="sbtn-icon"></span>
+        <div class="sbtn-info">
+          <div class="sbtn-sub">Download on the</div>
+          <div class="sbtn-name">App Store</div>
+        </div>
+      </a>
+      <a class="sbtn gplay" href="https://watchsnap.vercel.app" target="_blank">
+        <span class="sbtn-icon">▶</span>
+        <div class="sbtn-info">
+          <div class="sbtn-sub">Get it on</div>
+          <div class="sbtn-name">Google Play</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="s4-footer">
+      <div class="ft-item">⭐ 4.9 Rating</div>
+      <div class="ft-sep"></div>
+      <div class="ft-item">🔒 Secure Checkout</div>
+      <div class="ft-sep"></div>
+      <div class="ft-item">7-Day Free Trial</div>
+    </div>
+  </div>
+
+  <!-- ════ TIKTOK UI CHROME ════ -->
+  <div id="tt-ui">
+    <!-- Status bar -->
+    <div id="tt-status">
+      <span class="tt-time">9:41</span>
+      <div class="tt-sys">
+        <div class="tt-sig">
+          <span style="height:5px"></span>
+          <span style="height:8px"></span>
+          <span style="height:11px"></span>
+          <span style="height:14px"></span>
+        </div>
+        <span style="font-size:12px;color:#fff;opacity:.8">WiFi</span>
+        <div class="tt-bat"><div class="tt-bat-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <div id="tt-side">
+      <div class="tt-av">W</div>
+      <div class="tt-plus">+</div>
+      <div class="tt-act">
+        <div class="tt-act-ic">❤️</div>
+        <span class="tt-act-n">847K</span>
+      </div>
+      <div class="tt-act">
+        <div class="tt-act-ic">💬</div>
+        <span class="tt-act-n">12.4K</span>
+      </div>
+      <div class="tt-act">
+        <div class="tt-act-ic">↗️</div>
+        <span class="tt-act-n">291K</span>
+      </div>
+      <div class="tt-act">
+        <div class="tt-act-ic">🔖</div>
+        <span class="tt-act-n">Save</span>
+      </div>
+    </div>
+
+    <!-- Bottom caption -->
+    <div id="tt-bottom">
+      <div class="tt-user">@watchsnap.app</div>
+      <div class="tt-cap">
+        Nearly paid $8K for a fake Rolex 😱 WatchSnap caught it in seconds
+        <span class="htag"> #WatchSnap #FakeWatch #Rolex #ScamAlert #CapCut</span>
+      </div>
+      <div class="tt-mus">
+        <div class="tt-disc">🎵</div>
+        <span class="tt-mus-txt">Phonk Drive — Trending Sound</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ TAP TO PLAY ════ -->
+  <div id="tap-screen">
+    <div class="tap-logo">⌚</div>
+    <div class="tap-cta">Tap to Watch</div>
+    <div class="tap-note">🔊 Turn on sound for full effect</div>
+  </div>
+
+</div><!-- end #stage -->
+
+<!-- Background track (phonk/hip-hop beat) -->
+<audio id="bgTrack"
+  src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3"
+  loop preload="auto">
+</audio>
+
+<script>
+/* ════════════════════════════════════════════════
+   WatchSnap — TikTok Ad Engine
+   Timeline:
+     S1  0.0s – 2.5s   Hook text
+     S2  2.5s – 6.0s   Camera scan
+     S3  6.0s – 10.0s  Replica jump-scare
+     S4  10.0s – 14.0s CTA → loop
+════════════════════════════════════════════════ */
+
+const bgTrack   = document.getElementById('bgTrack');
+const tapScreen = document.getElementById('tap-screen');
+const stage     = document.getElementById('stage');
+
+const S1 = document.getElementById('s1');
+const S2 = document.getElementById('s2');
+const S3 = document.getElementById('s3');
+const S4 = document.getElementById('s4');
+
+const $       = id => document.getElementById(id);
+const delay   = ms => new Promise(r => setTimeout(r, ms));
+
+/* ─── show / hide scenes ─── */
+function showOnly(el) {
+  [S1,S2,S3,S4].forEach(s => s.classList.toggle('active', s === el));
+}
+
+/* ─── Web Audio impact buzz (Scene 3 only) ─── */
+function fireImpact() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const sr   = ctx.sampleRate;
+    const dur  = 0.28;
+    const buf  = ctx.createBuffer(1, sr * dur, sr);
+    const d    = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) {
+      const t = i / sr;
+      // sub-bass thump + white noise burst
+      d[i] = (Math.random() * 2 - 1) * Math.exp(-t * 22)
+            + Math.sin(2 * Math.PI * 55 * t) * Math.exp(-t * 14) * 0.8;
+    }
+    const src  = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(2.6, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    src.buffer = buf;
+    src.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+  } catch(e) { /* audio unavailable */ }
+}
+
+/* ════════════════════════════════════════════════
+   SCENE 1  — Hook (2.5 s total)
+════════════════════════════════════════════════ */
+const HOOK = "POV: Someone tried to sell me this Rolex for $8,000...";
+const WORDS = HOOK.split(' ');
+
+function buildWords() {
+  const box = $('pov-box');
+  box.innerHTML = '';
+  return WORDS.map((w, i) => {
+    const s = document.createElement('span');
+    s.className = 'pov-word' + (i === 0 ? ' pov-prefix' : '');
+    s.textContent = w;
+    box.appendChild(s);
+    return s;
+  });
+}
+
+async function runS1() {
+  showOnly(S1);
+  // reset hook sub
+  $('hook-sub').classList.remove('show');
+  const spans = buildWords();
+  // fast beat-matched stagger
+  for (let i = 0; i < spans.length; i++) {
+    await delay(i === 0 ? 180 : 125);
+    spans[i].classList.add('show');
+  }
+  await delay(300);
+  $('hook-sub').classList.add('show');
+  await delay(700);  // hold for remaining time
+}
+
+/* ════════════════════════════════════════════════
+   SCENE 2  — Camera scan (3.5 s total)
+════════════════════════════════════════════════ */
+async function runS2() {
+  showOnly(S2);
+  await delay(3500);
+}
+
+/* ════════════════════════════════════════════════
+   SCENE 3  — Replica jump-scare (4.0 s total)
+════════════════════════════════════════════════ */
+async function runS3() {
+  // reset
+  const flash  = $('s3-flash');
+  const stamp  = $('stamp');
+  const vals   = $('vals');
+  const stick  = $('sticker');
+  flash.classList.remove('boom');
+  stamp.classList.remove('show');
+  vals.classList.remove('show');
+  stick.classList.remove('show');
+
+  showOnly(S3);
+  await delay(40);
+
+  // 1. Violent shake + red flash + impact buzz simultaneously
+  stage.classList.add('do-shake');
+  flash.classList.add('boom');
+  fireImpact();
+
+  await delay(90);
+  stage.classList.remove('do-shake');
+
+  // 2. Stamp slams in
+  await delay(210);
+  stamp.classList.add('show');
+
+  // Stamp flicker
+  let f = 0;
+  const flick = setInterval(() => {
+    stamp.style.opacity = ++f % 2 === 0 ? '1' : '0.2';
+    if (f >= 7) { clearInterval(flick); stamp.style.opacity = '1'; }
+  }, 75);
+
+  // 3. Value comparison slides up
+  await delay(750);
+  vals.classList.add('show');
+
+  // 4. Sticker pops in
+  await delay(950);
+  stick.classList.add('show');
+
+  await delay(2400);
+}
+
+/* ════════════════════════════════════════════════
+   SCENE 4  — CTA (4.0 s then loop)
+════════════════════════════════════════════════ */
+async function runS4() {
+  showOnly(S4);
+  await delay(4000);
+}
+
+/* ════════════════════════════════════════════════
+   MAIN LOOP
+════════════════════════════════════════════════ */
+async function runLoop() {
+  while (true) {
+    await runS1();
+    await runS2();
+    await runS3();
+    await runS4();
+  }
+}
+
+/* ─── Tap to start ─── */
+tapScreen.addEventListener('click', async () => {
+  // Fade out tap overlay
+  tapScreen.style.transition = 'opacity .25s';
+  tapScreen.style.opacity    = '0';
+  await delay(250);
+  tapScreen.style.display = 'none';
+
+  // Start background music
+  bgTrack.volume = 0.72;
+  try { await bgTrack.play(); } catch(e) { /* autoplay policy */ }
+
+  // Run
+  runLoop();
+}, { once: true });
+
+// Pre-build scene 1 text so first frame looks correct
+buildWords();
+</script>
+</body>
+</html>
