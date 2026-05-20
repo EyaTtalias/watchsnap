@@ -68,7 +68,7 @@ export async function createCheckoutUrl(opts: {
           desc:         true,
           discount:     true,
           button_color: "#C9A84C",
-          locale:       "en-US",
+          locale:       "en",
         },
         checkout_data: {
           ...(opts.email ? { email: opts.email } : {}),
@@ -106,7 +106,12 @@ export async function createCheckoutUrl(opts: {
     data: { attributes: { url: string } };
   };
 
-  const url = json?.data?.attributes?.url;
-  if (!url) throw new Error("LemonSqueezy did not return a checkout URL");
-  return url;
+  const rawUrl = json?.data?.attributes?.url;
+  if (!rawUrl) throw new Error("LemonSqueezy did not return a checkout URL");
+
+  // Append ?locale=en as a URL query parameter to force English
+  // regardless of store default or browser language
+  const checkoutUrl = new URL(rawUrl);
+  checkoutUrl.searchParams.set("locale", "en");
+  return checkoutUrl.toString();
 }
