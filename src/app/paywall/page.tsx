@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Crown, Check, Shield, Star, Zap, History, TrendingUp, CreditCard, Lock, Loader2, Mail } from "lucide-react";
+import { Crown, Check, Shield, Star, Zap, History, TrendingUp, CreditCard, Lock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { PRO_KEY } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
@@ -18,7 +18,6 @@ const features = [
 export default function PaywallPage() {
   const [loading, setLoading] = useState<"monthly" | "annual" | null>(null);
   const [error,   setError]   = useState("");
-  const [email,   setEmail]   = useState("");
 
   /* ── Handle return from LemonSqueezy checkout ── */
   useEffect(() => {
@@ -27,21 +26,11 @@ export default function PaywallPage() {
     if (params.get("upgraded") === "true") {
       try {
         localStorage.setItem(PRO_KEY, "1");
-        // If email was passed back in the redirect URL, store it for
-        // server-side subscription verification on the scan page
-        const emailParam = params.get("email");
-        if (emailParam) localStorage.setItem("watchsnap_email", emailParam.toLowerCase());
-        localStorage.removeItem("watchsnap_verified_at"); // force re-verify
+        localStorage.removeItem("watchsnap_verified_at");
       } catch { /* ignore */ }
       window.history.replaceState({}, "", "/scan");
       window.location.href = "/scan";
     }
-
-    // Pre-fill email from localStorage if already known
-    try {
-      const stored = localStorage.getItem("watchsnap_email");
-      if (stored) setEmail(stored);
-    } catch { /* ignore */ }
   }, []);
 
   /* ── Open LemonSqueezy hosted checkout ── */
@@ -49,16 +38,10 @@ export default function PaywallPage() {
     setLoading(plan);
     setError("");
     try {
-      // Store email before leaving the page so it's available on return
-      const trimmedEmail = email.trim().toLowerCase();
-      if (trimmedEmail) {
-        try { localStorage.setItem("watchsnap_email", trimmedEmail); } catch { /* ignore */ }
-      }
-
       const res  = await fetch(getApiUrl("/api/checkout"), {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ plan, email: trimmedEmail || undefined }),
+        body:    JSON.stringify({ plan }),
       });
       const data = await res.json() as { url?: string; error?: string };
 
@@ -188,24 +171,6 @@ export default function PaywallPage() {
               <p className="text-center text-[10px] text-gray-600 mt-2">30-day money-back guarantee</p>
             </div>
           </div>
-        </div>
-
-        {/* ── Optional email for subscription restore ── */}
-        <div className="mb-4 rounded-2xl border border-[#1E1E1E] bg-[#111111] p-4">
-          <label className="flex items-center gap-2 text-xs font-bold text-gray-400 mb-2.5">
-            <Mail className="h-3.5 w-3.5 text-[#C9A84C]" />
-            Email (optional — restores subscription across devices)
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            className="w-full rounded-xl bg-[#0D0D0D] border border-[#2A2A2A] px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
-          />
-          <p className="text-[10px] text-gray-600 mt-2">
-            Used only to verify your subscription — never shared.
-          </p>
         </div>
 
         {/* ── Error message ── */}
