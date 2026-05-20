@@ -162,7 +162,7 @@ export default function PaywallPage() {
               </div>
               <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-center">
                 <p className="text-xs text-emerald-400 font-semibold flex items-center justify-center gap-1.5">
-                  <Lock className="h-3 w-3" /> Card saved — 7-day free trial
+                  <Lock className="h-3 w-3" /> Instant access · 30-day refund
                 </p>
                 <p className="text-xs text-emerald-400/60 mt-0.5">~$5/month · Best deal</p>
               </div>

@@ -467,7 +467,7 @@ export default function LandingPage() {
                 </div>
                 <div className="mb-5 rounded-xl bg-emerald-500/8 border border-emerald-500/20 p-3 text-center">
                   <p className="text-xs text-emerald-400 font-semibold flex items-center justify-center gap-1.5">
-                    <Lock className="h-3 w-3" /> 7-day free trial included
+                    <Lock className="h-3 w-3" /> 30-day money-back guarantee
                   </p>
                 </div>
                 <ul className="space-y-2.5 mb-6 flex-1">

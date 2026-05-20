@@ -235,7 +235,7 @@ export function InitialPaywallModal() {
                 <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-1.5 py-0.5 text-[9px] font-black text-emerald-400">−50%</span>
               </div>
               <ul className="space-y-1.5 mb-4 flex-1 text-[11px] text-gray-300">
-                {["Everything in monthly", "~$5/month", "7-day trial included", "30-day refund"].map(f => (
+                {["Everything in monthly", "~$5/month", "30-day refund"].map(f => (
                   <li key={f} className="flex items-center gap-1.5">
                     <Check className="h-3 w-3 text-emerald-400 flex-shrink-0" />{f}
                   </li>
