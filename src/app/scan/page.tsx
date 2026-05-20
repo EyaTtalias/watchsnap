@@ -115,6 +115,7 @@ export default function ScanPage() {
         if (data.isPro === true) {
           localStorage.setItem(PRO_KEY, "1");
           setUserIsPro(true);
+          setShowPaywall(false); // close paywall if server confirms Pro (e.g. after email restore on new device)
         } else if (data.isPro === false) {
           // Only downgrade if this is a definitive "not subscribed" response
           if (data.status !== "unknown") {
@@ -441,15 +442,6 @@ export default function ScanPage() {
               }
             </button>
 
-            {/* Post-scan upgrade nudge for free users on last/no scans */}
-            {!userIsPro && scansLeft <= 0 && (
-              <Link href="/paywall"
-                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#C9A84C]/40 bg-[#C9A84C]/10 py-3.5 text-sm font-black text-[#C9A84C] hover:bg-[#C9A84C]/20 transition-all">
-                <Zap className="h-4 w-4" />
-                Unlock unlimited scans →
-              </Link>
-            )}
-
             <button onClick={reset}
               className="flex w-full items-center justify-center gap-2.5 rounded-2xl border-2 border-[#C9A84C]/35 bg-[#C9A84C]/8 py-4 text-base font-black text-[#C9A84C] hover:bg-[#C9A84C]/16 hover:border-[#C9A84C]/55 transition-all active:scale-[0.98]"
               style={{ minHeight: "60px" }}>
@@ -479,7 +471,15 @@ export default function ScanPage() {
         <input ref={galleryInputRef} type="file" accept="image/*" className="hidden" onChange={onInputChange} />
       </div>
 
-      {showPaywall && <PaywallModal onClose={userIsPro ? () => setShowPaywall(false) : undefined} />}
+      {showPaywall && (
+        <PaywallModal
+          onClose={userIsPro ? () => setShowPaywall(false) : undefined}
+          onProRestored={() => {
+            setUserIsPro(true);
+            setShowPaywall(false);
+          }}
+        />
+      )}}
       <InstallBanner show={showInstallBanner} onClose={() => setShowInstallBanner(false)} />
       <ReviewPopup show={showReview} onClose={() => setShowReview(false)} />
     </div>

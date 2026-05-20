@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,7 +17,22 @@ export function Navbar() {
   const [showIOSModal,  setShowIOSModal]  = useState(false);
   const [showDevMenu,   setShowDevMenu]   = useState(false);
   const [tapFeedback,   setTapFeedback]   = useState(0);   // 1-6 shows counter badge
+  const [userIsPro,     setUserIsPro]     = useState(false);
   const tapCountRef        = useRef(0);
+
+  // Keep Pro badge in sync with localStorage (current tab + other tabs + focus-on-return)
+  useEffect(() => {
+    const checkPro = () => {
+      try { setUserIsPro(localStorage.getItem("watchsnap_pro") === "1"); } catch { /* ignore */ }
+    };
+    checkPro();
+    window.addEventListener("storage", checkPro);
+    window.addEventListener("focus",   checkPro);
+    return () => {
+      window.removeEventListener("storage", checkPro);
+      window.removeEventListener("focus",   checkPro);
+    };
+  }, []);
   const tapTimerRef        = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tapFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -128,12 +143,19 @@ export function Navbar() {
               </button>
             )}
 
-            {/* Upgrade button */}
-            <Link href="/paywall"
-              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#C9A84C] to-[#A8882F] px-4 py-2 text-xs font-bold text-black hover:opacity-90 transition-opacity">
-              <Crown className="h-3.5 w-3.5" />
-              Upgrade
-            </Link>
+            {/* Upgrade / Pro badge */}
+            {userIsPro ? (
+              <div className="flex items-center gap-1.5 rounded-full border border-[#C9A84C]/40 bg-[#C9A84C]/10 px-4 py-2 text-xs font-bold text-[#C9A84C]">
+                <Crown className="h-3.5 w-3.5" />
+                Pro ✓
+              </div>
+            ) : (
+              <Link href="/paywall"
+                className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#C9A84C] to-[#A8882F] px-4 py-2 text-xs font-bold text-black hover:opacity-90 transition-opacity">
+                <Crown className="h-3.5 w-3.5" />
+                Upgrade
+              </Link>
+            )}
           </div>
         </div>
       </nav>
