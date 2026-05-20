@@ -19,6 +19,18 @@ function getHeaders() {
    Variant IDs
 ───────────────────────────────────────────────────────────────── */
 export function getVariantId(plan: "monthly" | "annual"): string {
+  const testMode = process.env.LEMONSQUEEZY_TEST_MODE === "true";
+
+  // In test mode, prefer dedicated test variant IDs (test_mode:true products).
+  // Fall back to live IDs only if test IDs are not configured.
+  if (testMode) {
+    const testId =
+      plan === "annual"
+        ? process.env.LEMONSQUEEZY_TEST_ANNUAL_VARIANT_ID
+        : process.env.LEMONSQUEEZY_TEST_MONTHLY_VARIANT_ID;
+    if (testId) return testId;
+  }
+
   const id =
     plan === "annual"
       ? process.env.LEMONSQUEEZY_ANNUAL_VARIANT_ID
@@ -44,13 +56,10 @@ export async function createCheckoutUrl(opts: {
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? "https://watchsnap.vercel.app";
   const successUrl = opts.successUrl ?? `${appUrl}/paywall?upgraded=true`;
 
-  const testMode = process.env.LEMONSQUEEZY_TEST_MODE === "true";
-
   const body = {
     data: {
       type: "checkouts",
       attributes: {
-        ...(testMode ? { test_mode: true } : {}),
         checkout_options: {
           dark:         true,
           embed:        false,

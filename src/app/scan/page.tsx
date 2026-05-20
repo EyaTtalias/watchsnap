@@ -11,7 +11,7 @@ import { CameraCapture } from "@/components/CameraCapture";
 import { InstallBanner } from "@/components/InstallBanner";
 import {
   saveToCollection, compressToThumbnail,
-  isPro, getScanCount, incrementScanCount, FREE_SCAN_LIMIT, PRO_KEY,
+  isPro, getScanCount, incrementScanCount, PRO_KEY,
 } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
 
@@ -76,8 +76,15 @@ export default function ScanPage() {
     if (params.get("upgraded") === "true") {
       window.history.replaceState({}, "", "/scan");
     }
-    setUserIsPro(isPro());
+    const pro = isPro();
+    const dev = localStorage.getItem("watchsnap_dev") === "1";
+    setUserIsPro(pro);
     setScansUsed(getScanCount());
+
+    // Hard gate: show paywall immediately if not pro and not in dev mode
+    if (!pro && !dev) {
+      setShowPaywall(true);
+    }
 
     /* ── Server-side subscription verification ──
        Checks Supabase for the user's actual subscription status.
@@ -125,10 +132,9 @@ export default function ScanPage() {
     verifySubscription();
   }, []);
 
-  const scansLeft = Math.max(0, FREE_SCAN_LIMIT - scansUsed);
   const isDevOverride = typeof window !== "undefined" &&
     localStorage.getItem("watchsnap_dev") === "1";
-  const canScan = userIsPro || isDevOverride || scansLeft > 0;
+  const canScan = userIsPro || isDevOverride;
 
   const handleFile = useCallback(async (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -165,10 +171,8 @@ export default function ScanPage() {
     const pro = isPro();
     setUserIsPro(pro);
     const dev = typeof window !== "undefined" && localStorage.getItem("watchsnap_dev") === "1";
-    const used = getScanCount();
-    setScansUsed(used);
 
-    if (!pro && !dev && used >= FREE_SCAN_LIMIT) {
+    if (!pro && !dev) {
       setShowPaywall(true);
       return;
     }
@@ -186,12 +190,6 @@ export default function ScanPage() {
       const res  = await fetch(getApiUrl("/api/identify"), { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Identification failed");
-
-      // Count the scan for free users
-      if (!pro && !dev) {
-        incrementScanCount();
-        setScansUsed(getScanCount());
-      }
 
       scanTimersRef.current.forEach(clearTimeout);
       setScanStepIdx(4);
@@ -266,29 +264,13 @@ export default function ScanPage() {
                 <span className="text-xs font-bold text-[#C9A84C]">Pro — unlimited scans</span>
               </div>
             ) : (
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#1E1E1E] bg-[#111111] px-4 py-1.5">
-                {scansLeft > 0 ? (
-                  <>
-                    {/* Coloured dots */}
-                    <div className="flex gap-1">
-                      {Array.from({ length: FREE_SCAN_LIMIT }).map((_, i) => (
-                        <span
-                          key={i}
-                          className="h-2 w-2 rounded-full"
-                          style={{ background: i < scansLeft ? "#C9A84C" : "#2A2A2A" }}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      <span className="font-bold text-white">{scansLeft}</span> free scan{scansLeft !== 1 ? "s" : ""} left
-                    </span>
-                  </>
-                ) : (
-                  <Link href="/paywall" className="text-xs text-[#C9A84C] font-semibold">
-                    Upgrade for more scans →
-                  </Link>
-                )}
-              </div>
+              <button
+                onClick={() => setShowPaywall(true)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10 px-4 py-1.5"
+              >
+                <Zap className="h-3.5 w-3.5 text-[#C9A84C]" />
+                <span className="text-xs font-bold text-[#C9A84C]">Upgrade to scan →</span>
+              </button>
             )}
           </div>
         </div>
@@ -364,13 +346,6 @@ export default function ScanPage() {
                 Make sure the watch face is clear and well-lit
               </p>
             </div>
-
-            {/* Scans left warning in preview */}
-            {!userIsPro && scansLeft === 1 && (
-              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-center">
-                <p className="text-xs font-semibold text-amber-400">Last free scan — upgrade for unlimited</p>
-              </div>
-            )}
 
             <button
               onClick={startScan}
@@ -504,7 +479,7 @@ export default function ScanPage() {
         <input ref={galleryInputRef} type="file" accept="image/*" className="hidden" onChange={onInputChange} />
       </div>
 
-      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
+      {showPaywall && <PaywallModal onClose={userIsPro ? () => setShowPaywall(false) : undefined} />}
       <InstallBanner show={showInstallBanner} onClose={() => setShowInstallBanner(false)} />
       <ReviewPopup show={showReview} onClose={() => setShowReview(false)} />
     </div>
