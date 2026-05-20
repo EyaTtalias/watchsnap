@@ -6,11 +6,7 @@ import { BookMarked, Trash2, TrendingUp, Shield, AlertTriangle, HelpCircle, Cloc
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import {
-  getCollection, removeFromCollection, removeFromCollectionRemote,
-  syncCollectionFromSupabase, CollectionItem, isPro,
-} from "@/lib/collection";
-import { supabase } from "@/lib/supabase";
+import { getCollection, removeFromCollection, CollectionItem, isPro } from "@/lib/collection";
 import WatchDetailClient from "./WatchDetailClient";
 
 const AUTH_CFG: Record<string, { label: string; Icon: React.ElementType; className: string; dot: string }> = {
@@ -130,38 +126,18 @@ export default function CollectionPage() {
   const [search,     setSearch]     = useState("");
   const [mounted,    setMounted]    = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [userId,     setUserId]     = useState<string | null>(null);
 
   useEffect(() => {
     if (!isPro()) {
       router.replace("/paywall");
       return;
     }
-
-    (async () => {
-      /* ── Try Supabase session; sync if logged in ── */
-      let uid: string | null = null;
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          uid = data.session.user.id;
-          setUserId(uid);
-          const synced = await syncCollectionFromSupabase(uid);
-          setItems(synced);
-          setMounted(true);
-          return;
-        }
-      } catch { /* ignore */ }
-
-      /* ── Fallback: localStorage only ── */
-      setItems(getCollection());
-      setMounted(true);
-    })();
+    setItems(getCollection());
+    setMounted(true);
   }, [router]);
 
   const handleDelete = (id: string) => {
     removeFromCollection(id);
-    if (userId) removeFromCollectionRemote(id, userId); // fire-and-forget
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
