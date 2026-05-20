@@ -68,6 +68,7 @@ export async function createCheckoutUrl(opts: {
           desc:         true,
           discount:     true,
           button_color: "#C9A84C",
+          locale:       "en",
         },
         checkout_data: {
           ...(opts.email ? { email: opts.email } : {}),
