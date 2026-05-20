@@ -7,6 +7,7 @@ import { ReviewPopup } from "@/components/ReviewPopup";
 import { ScanAnimation } from "@/components/ScanAnimation";
 import { ResultCard, WatchResult } from "@/components/ResultCard";
 import { PaywallModal } from "@/components/PaywallModal";
+import { LoginScreen } from "@/components/LoginScreen";
 import { CameraCapture } from "@/components/CameraCapture";
 import { InstallBanner } from "@/components/InstallBanner";
 import {
@@ -14,6 +15,7 @@ import {
   isPro, getScanCount, incrementScanCount, PRO_KEY,
 } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
+import { supabase } from "@/lib/supabase";
 
 type Phase = "idle" | "camera" | "preview" | "scanning" | "result" | "error";
 
@@ -63,6 +65,7 @@ export default function ScanPage() {
   const [saved,             setSaved]             = useState(false);
   const [saving,            setSaving]            = useState(false);
   const [showPaywall,       setShowPaywall]       = useState(false);
+  const [showLogin,         setShowLogin]         = useState(false);
   const [userIsPro,         setUserIsPro]         = useState(false);
   const [scansUsed,         setScansUsed]         = useState(0);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -81,22 +84,14 @@ export default function ScanPage() {
     setUserIsPro(pro);
     setScansUsed(getScanCount());
 
-    // Hard gate: show paywall immediately if not pro and not in dev mode
-    if (!pro && !dev) {
-      setShowPaywall(true);
-    }
-
     /* ── Server-side subscription verification ──
        Checks Supabase for the user's actual subscription status.
        Uses localStorage as a 60-minute cache to avoid hitting the
        API on every page load. Falls back silently to localStorage
        if the API is unreachable.
     ── */
-    const verifySubscription = async () => {
+    const verifySubscription = async (email: string) => {
       try {
-        const storedEmail = localStorage.getItem("watchsnap_email");
-        if (!storedEmail) return; // no email → localStorage-only mode
-
         const cachedAt  = parseInt(localStorage.getItem("watchsnap_verified_at") ?? "0", 10);
         const ONE_HOUR  = 60 * 60 * 1000;
         if (Date.now() - cachedAt < ONE_HOUR) return; // cache still fresh
@@ -104,24 +99,22 @@ export default function ScanPage() {
         const res = await fetch(getApiUrl("/api/verify-subscription"), {
           method:  "POST",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ email: storedEmail }),
+          body:    JSON.stringify({ email }),
         });
-        if (!res.ok) return; // server error → keep localStorage value
+        if (!res.ok) return;
 
         const data = await res.json() as { isPro?: boolean | null; status?: string };
 
-        if (data.isPro === null) return; // unknown (server error) → keep cache
+        if (data.isPro === null) return;
 
         if (data.isPro === true) {
           localStorage.setItem(PRO_KEY, "1");
           setUserIsPro(true);
-          setShowPaywall(false); // close paywall if server confirms Pro (e.g. after email restore on new device)
-        } else if (data.isPro === false) {
-          // Only downgrade if this is a definitive "not subscribed" response
-          if (data.status !== "unknown") {
-            localStorage.removeItem(PRO_KEY);
-            setUserIsPro(false);
-          }
+          setShowPaywall(false);
+          setShowLogin(false);
+        } else if (data.isPro === false && data.status !== "unknown") {
+          localStorage.removeItem(PRO_KEY);
+          setUserIsPro(false);
         }
 
         localStorage.setItem("watchsnap_verified_at", String(Date.now()));
@@ -130,7 +123,34 @@ export default function ScanPage() {
       }
     };
 
-    verifySubscription();
+    if (pro || dev) {
+      // Already unlocked locally — verify in background, no gate needed
+      const storedEmail = localStorage.getItem("watchsnap_email");
+      if (storedEmail) verifySubscription(storedEmail);
+      return;
+    }
+
+    /* ── Not Pro: check Supabase session ──
+       If logged in → verify subscription then show paywall if needed.
+       If not logged in → show login screen.
+    ── */
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email) {
+        // Logged in — store email and verify subscription
+        const email = session.user.email;
+        try { localStorage.setItem("watchsnap_email", email); } catch { /* ignore */ }
+        verifySubscription(email).then(() => {
+          // After verify, if still not pro → show paywall
+          if (!isPro()) setShowPaywall(true);
+        });
+      } else {
+        // Not logged in → show login screen
+        setShowLogin(true);
+      }
+    }).catch(() => {
+      // Supabase unreachable — fall back to paywall
+      setShowPaywall(true);
+    });
   }, []);
 
   const isDevOverride = typeof window !== "undefined" &&
@@ -174,7 +194,13 @@ export default function ScanPage() {
     const dev = typeof window !== "undefined" && localStorage.getItem("watchsnap_dev") === "1";
 
     if (!pro && !dev) {
-      setShowPaywall(true);
+      // Check session before deciding which gate to show
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.email) {
+        setShowPaywall(true);
+      } else {
+        setShowLogin(true);
+      }
       return;
     }
 
@@ -301,8 +327,12 @@ export default function ScanPage() {
               {/* Take Photo — always uses in-app getUserMedia camera */}
               <button
                 type="button"
-                onClick={() => {
-                  if (!canScan) { setShowPaywall(true); return; }
+                onClick={async () => {
+                  if (!canScan) {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    session?.user?.email ? setShowPaywall(true) : setShowLogin(true);
+                    return;
+                  }
                   setPhase("camera");
                 }}
                 className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[#C9A84C]/30 bg-[#C9A84C]/10 p-5 text-[#C9A84C] transition-all active:scale-95 hover:bg-[#C9A84C]/20"
@@ -316,8 +346,12 @@ export default function ScanPage() {
               {/* From Gallery */}
               <button
                 type="button"
-                onClick={() => {
-                  if (!canScan) { setShowPaywall(true); return; }
+                onClick={async () => {
+                  if (!canScan) {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    session?.user?.email ? setShowPaywall(true) : setShowLogin(true);
+                    return;
+                  }
                   galleryInputRef.current?.click();
                 }}
                 className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[#1E1E1E] bg-[#111111] p-5 text-gray-300 transition-all active:scale-95 hover:border-[#C9A84C]/30 hover:text-white"
@@ -471,7 +505,11 @@ export default function ScanPage() {
         <input ref={galleryInputRef} type="file" accept="image/*" className="hidden" onChange={onInputChange} />
       </div>
 
-      {showPaywall && (
+      {showLogin && (
+        <LoginScreen />
+      )}
+
+      {showPaywall && !showLogin && (
         <PaywallModal
           onClose={userIsPro ? () => setShowPaywall(false) : undefined}
           onProRestored={() => {
