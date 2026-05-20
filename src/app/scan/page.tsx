@@ -479,7 +479,7 @@ export default function ScanPage() {
             setShowPaywall(false);
           }}
         />
-      )}}
+      )}
       <InstallBanner show={showInstallBanner} onClose={() => setShowInstallBanner(false)} />
       <ReviewPopup show={showReview} onClose={() => setShowReview(false)} />
     </div>
