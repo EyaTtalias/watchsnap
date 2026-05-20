@@ -14,8 +14,8 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
   const router = useRouter();
   const [visible,        setVisible]        = useState(false);
   const [loading,        setLoading]        = useState<"monthly" | "annual" | null>(null);
-  const [email,          setEmail]          = useState("");
   const [showRestore,    setShowRestore]    = useState(false);
+  const [restoreEmail,   setRestoreEmail]   = useState("");
   const [restoreLoading, setRestoreLoading] = useState(false);
   const [restoreMsg,     setRestoreMsg]     = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -25,7 +25,7 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
     // Pre-fill email from localStorage if known
     try {
       const stored = localStorage.getItem("watchsnap_email");
-      if (stored) setEmail(stored);
+      if (stored) setRestoreEmail(stored);
     } catch { /* ignore */ }
     return () => { clearTimeout(t); document.body.style.overflow = ""; };
   }, []);
@@ -34,8 +34,8 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
   const handleUpgrade = async (plan: "monthly" | "annual") => {
     setLoading(plan);
     try {
-      // Save email before leaving the page so verify-subscription can run on return
-      const trimmed = email.trim().toLowerCase();
+      // Save email before leaving so verify-subscription can run on return
+      const trimmed = restoreEmail.trim().toLowerCase();
       if (trimmed) {
         try { localStorage.setItem("watchsnap_email", trimmed); } catch { /* ignore */ }
       }
@@ -57,7 +57,7 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
 
   /* ── Restore Pro access by email ── */
   const handleRestore = async () => {
-    const trimmed = email.trim().toLowerCase();
+    const trimmed = restoreEmail.trim().toLowerCase();
     if (!trimmed || !trimmed.includes("@")) {
       setRestoreMsg({ type: "error", text: "Please enter a valid email address." });
       return;
@@ -76,14 +76,13 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
         try {
           localStorage.setItem("watchsnap_pro",       "1");
           localStorage.setItem("watchsnap_email",     trimmed);
-          localStorage.removeItem("watchsnap_verified_at"); // force re-verify next time
+          localStorage.removeItem("watchsnap_verified_at");
         } catch { /* ignore */ }
         setRestoreMsg({ type: "success", text: "Pro access restored! ✓ Welcome back." });
-        // Close modal after a short delay so user sees the success message
         setTimeout(() => {
           setVisible(false);
           setTimeout(() => onProRestored?.(), 300);
-        }, 1200);
+        }, 1000);
       } else {
         setRestoreMsg({
           type: "error",
@@ -111,12 +110,20 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
         onClick={handleClose}
       />
 
-      <div className={`relative w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#C9A84C]/20 bg-[#0D0D0D] overflow-hidden transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#A8882F] via-[#E2C06D] to-[#A8882F]" />
+      {/*
+        KEY FIX: max-h-[90vh] + flex flex-col prevents the modal from exceeding
+        the viewport on small mobile screens. The gold bar stays at top; the
+        content area scrolls independently via overflow-y-auto.
+      */}
+      <div className={`relative w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#C9A84C]/20 bg-[#0D0D0D] overflow-hidden max-h-[90vh] flex flex-col transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
 
-        <div className="p-5">
+        {/* Gold bar — always visible at top */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#A8882F] via-[#E2C06D] to-[#A8882F] flex-shrink-0" />
+
+        {/* Scrollable content */}
+        <div className="overflow-y-auto flex-1 p-5">
           {onClose && (
-            <button onClick={handleClose} className="absolute right-4 top-5 flex h-8 w-8 items-center justify-center rounded-full bg-[#1E1E1E] text-gray-400 hover:text-white transition-colors">
+            <button onClick={handleClose} className="absolute right-4 top-5 flex h-8 w-8 items-center justify-center rounded-full bg-[#1E1E1E] text-gray-400 hover:text-white transition-colors z-10">
               <X className="h-4 w-4" />
             </button>
           )}
@@ -183,54 +190,56 @@ export function PaywallModal({ onClose, onProRestored }: PaywallModalProps) {
             </div>
           </div>
 
-          {/* Email field — optional, saves email for sync & pre-fills checkout */}
-          <div className="mb-3">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Mail className="h-3 w-3 text-[#C9A84C]/70" />
-              <span className="text-[10px] text-gray-500 font-medium">Email (optional — syncs Pro across devices)</span>
-            </div>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="w-full rounded-xl bg-[#0A0A0A] border border-[#2A2A2A] px-3 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
-            />
-          </div>
-
-          {/* Restore access section */}
-          <button
-            onClick={() => { setShowRestore(!showRestore); setRestoreMsg(null); }}
-            className="flex w-full items-center justify-between px-1 py-1 text-[10px] text-gray-500 hover:text-gray-300 transition-colors mb-2"
-          >
-            <span>Already subscribed? Restore access →</span>
-            {showRestore ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-          </button>
-
-          {showRestore && (
-            <div className="mb-3 rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] p-3 space-y-2">
-              <p className="text-[10px] text-gray-400">Enter the email you used when you subscribed to restore Pro access on this device.</p>
-              <button
-                onClick={handleRestore}
-                disabled={restoreLoading}
-                className="w-full rounded-xl py-2 text-xs font-black text-[#C9A84C] border border-[#C9A84C]/30 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 disabled:opacity-60 transition-all active:scale-95 min-h-[36px]"
-              >
-                {restoreLoading
-                  ? <span className="flex items-center justify-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> Checking...</span>
-                  : "Restore Pro Access"
-                }
-              </button>
-              {restoreMsg && (
-                <p className={`text-[10px] text-center font-semibold ${restoreMsg.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
-                  {restoreMsg.text}
-                </p>
-              )}
-            </div>
-          )}
-
-          <p className="text-center text-[10px] text-gray-600">
+          {/* Footer */}
+          <p className="text-center text-[10px] text-gray-600 mb-3">
             Cancel anytime · 30-day money-back guarantee
           </p>
+
+          {/* ── Restore access (always reachable — above the fold on all screens) ── */}
+          <div className="rounded-2xl border border-[#1E1E1E] bg-[#0A0A0A] overflow-hidden">
+            <button
+              onClick={() => { setShowRestore(!showRestore); setRestoreMsg(null); }}
+              className="flex w-full items-center justify-between px-4 py-3 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <Mail className="h-3.5 w-3.5 text-[#C9A84C]/60" />
+                Already subscribed? Restore access
+              </span>
+              {showRestore ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+
+            {showRestore && (
+              <div className="px-4 pb-4 space-y-2.5 border-t border-[#1E1E1E] pt-3">
+                <p className="text-[10px] text-gray-500">
+                  Enter the email you used when subscribing to restore Pro access on this device.
+                </p>
+                <input
+                  type="email"
+                  value={restoreEmail}
+                  onChange={(e) => setRestoreEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleRestore()}
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  className="w-full rounded-xl bg-[#111111] border border-[#2A2A2A] px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
+                />
+                <button
+                  onClick={handleRestore}
+                  disabled={restoreLoading}
+                  className="w-full rounded-xl py-2.5 text-xs font-black text-[#C9A84C] border border-[#C9A84C]/30 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 disabled:opacity-60 transition-all active:scale-95 min-h-[40px]"
+                >
+                  {restoreLoading
+                    ? <span className="flex items-center justify-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> Checking...</span>
+                    : "Restore Pro Access"
+                  }
+                </button>
+                {restoreMsg && (
+                  <p className={`text-[11px] text-center font-semibold py-1 ${restoreMsg.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
+                    {restoreMsg.text}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
