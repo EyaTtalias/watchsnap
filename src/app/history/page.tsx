@@ -6,11 +6,7 @@ import { BookMarked, Trash2, TrendingUp, Shield, AlertTriangle, HelpCircle, Cloc
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import {
-  getCollection, removeFromCollection, removeFromCollectionRemote,
-  syncCollectionFromSupabase, CollectionItem, isPro,
-} from "@/lib/collection";
-import { supabase } from "@/lib/supabase";
+import { getCollection, removeFromCollection, CollectionItem, isPro } from "@/lib/collection";
 import WatchDetailClient from "./WatchDetailClient";
 
 const AUTH_CFG: Record<string, { label: string; Icon: React.ElementType; className: string; dot: string }> = {
@@ -130,31 +126,19 @@ export default function CollectionPage() {
   const [search,     setSearch]     = useState("");
   const [mounted,    setMounted]    = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [userId,     setUserId]     = useState<string | null>(null);
 
   useEffect(() => {
     if (!isPro()) {
       router.replace("/paywall");
       return;
     }
-
-    // Load local collection immediately so UI shows instantly
     setItems(getCollection());
     setMounted(true);
-
-    // Then sync from Supabase in background (if logged in via Google)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session?.user?.id) return;
-      const uid = session.user.id;
-      setUserId(uid);
-      syncCollectionFromSupabase(uid).then((merged) => setItems(merged));
-    });
   }, [router]);
 
   const handleDelete = (id: string) => {
     removeFromCollection(id);
     setItems((prev) => prev.filter((i) => i.id !== id));
-    if (userId) removeFromCollectionRemote(id, userId);
   };
 
   // ── Show detail view when a watch is selected ──

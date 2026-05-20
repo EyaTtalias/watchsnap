@@ -11,11 +11,9 @@ import { CameraCapture } from "@/components/CameraCapture";
 import { InstallBanner } from "@/components/InstallBanner";
 import {
   saveToCollection, compressToThumbnail,
-  saveToCollectionRemote,
   isPro, getScanCount, incrementScanCount, PRO_KEY,
 } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
-import { supabase } from "@/lib/supabase";
 
 type Phase = "idle" | "camera" | "preview" | "scanning" | "result" | "error";
 
@@ -65,8 +63,6 @@ export default function ScanPage() {
   const [saved,             setSaved]             = useState(false);
   const [saving,            setSaving]            = useState(false);
   const [showPaywall,       setShowPaywall]       = useState(false);
-  const [isLoggedIn,        setIsLoggedIn]        = useState(false);
-  const [userId,            setUserId]            = useState<string | null>(null);
   const [userIsPro,         setUserIsPro]         = useState(false);
   const [scansUsed,         setScansUsed]         = useState(0);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -86,66 +82,7 @@ export default function ScanPage() {
     setUserIsPro(pro);
     setScansUsed(getScanCount());
 
-    /* ── Verify subscription against Supabase (with 60-min cache) ── */
-    const verifySubscription = async (email: string): Promise<boolean> => {
-      try {
-        const cachedAt = parseInt(localStorage.getItem("watchsnap_verified_at") ?? "0", 10);
-        const ONE_HOUR = 60 * 60 * 1000;
-        if (Date.now() - cachedAt < ONE_HOUR) return isPro(); // still fresh
-
-        const res  = await fetch(getApiUrl("/api/verify-subscription"), {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ email }),
-        });
-        if (!res.ok) return isPro();
-
-        const data = await res.json() as { isPro?: boolean | null; status?: string };
-        if (data.isPro === null) return isPro();
-
-        if (data.isPro === true) {
-          localStorage.setItem(PRO_KEY, "1");
-          localStorage.setItem("watchsnap_verified_at", String(Date.now()));
-          setUserIsPro(true);
-          setShowPaywall(false);
-          return true;
-        } else if (data.isPro === false && data.status !== "unknown") {
-          localStorage.removeItem(PRO_KEY);
-          localStorage.setItem("watchsnap_verified_at", String(Date.now()));
-          setUserIsPro(false);
-          return false;
-        }
-      } catch { /* network error — keep localStorage value */ }
-      return isPro();
-    };
-
-    /* ── Main access check ── */
-    const checkAccess = async () => {
-      /* 1. Check Supabase session (set by Google OAuth) */
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (session?.user) {
-        const email = session.user.email ?? "";
-        const uid   = session.user.id;
-        setIsLoggedIn(true);
-        setUserId(uid);
-        try { if (email) localStorage.setItem("watchsnap_email", email); } catch { /* ignore */ }
-
-        if (pro || dev) return; // already unlocked locally
-
-        const nowPro = await verifySubscription(email);
-        if (!nowPro) setShowPaywall(true);
-        return;
-      }
-
-      /* 2. No session — already Pro in localStorage? */
-      if (pro || dev) return;
-
-      /* 3. Not logged in, not Pro → show paywall (with Google sign-in button) */
-      setShowPaywall(true);
-    };
-
-    checkAccess().catch(() => setShowPaywall(true));
+    if (!pro && !dev) setShowPaywall(true);
   }, []);
 
   const isDevOverride = typeof window !== "undefined" &&
@@ -228,12 +165,8 @@ export default function ScanPage() {
     if (!result || saved || saving) return;
     setSaving(true);
     const thumbnail = imageUrl ? await compressToThumbnail(imageUrl) : "";
-    // Use UUID for Supabase compatibility
-    const id = (typeof crypto !== "undefined" && crypto.randomUUID)
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const item = {
-      id,
+    saveToCollection({
+      id:                `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       brand:             result.brand,
       model:             result.model,
       reference_number:  result.reference_number,
@@ -245,10 +178,7 @@ export default function ScanPage() {
       confidence:        result.confidence,
       thumbnail,
       savedAt:           Date.now(),
-    };
-    saveToCollection(item);
-    // Sync to Supabase if logged in
-    if (userId) saveToCollectionRemote(item, userId);
+    });
     setSaving(false);
     setSaved(true);
   };
@@ -494,13 +424,7 @@ export default function ScanPage() {
       </div>
 
       {showPaywall && (
-        <PaywallModal
-          isLoggedIn={isLoggedIn}
-          onProRestored={() => {
-            setUserIsPro(true);
-            setShowPaywall(false);
-          }}
-        />
+        <PaywallModal />
       )}
       <InstallBanner show={showInstallBanner} onClose={() => setShowInstallBanner(false)} />
       <ReviewPopup show={showReview} onClose={() => setShowReview(false)} />
