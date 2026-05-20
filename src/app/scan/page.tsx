@@ -11,8 +11,10 @@ import { CameraCapture } from "@/components/CameraCapture";
 import { InstallBanner } from "@/components/InstallBanner";
 import {
   saveToCollection, compressToThumbnail,
+  saveToCollectionRemote, syncCollectionFromSupabase,
   isPro, getScanCount, incrementScanCount, PRO_KEY,
 } from "@/lib/collection";
+import { supabase } from "@/lib/supabase";
 import { getApiUrl } from "@/lib/apiUrl";
 
 type Phase = "idle" | "camera" | "preview" | "scanning" | "result" | "error";
@@ -68,6 +70,7 @@ export default function ScanPage() {
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [showReview,        setShowReview]        = useState(false);
   const [scanStepIdx,       setScanStepIdx]       = useState(0);
+  const [userId,            setUserId]            = useState<string | null>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const scanTimersRef   = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -83,6 +86,22 @@ export default function ScanPage() {
     setScansUsed(getScanCount());
 
     if (!pro && !dev) setShowPaywall(true);
+
+    /* ── Google session: sync collection ── */
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) return;
+        const uid   = data.session.user.id;
+        const email = data.session.user.email ?? "";
+        setUserId(uid);
+        try {
+          if (email) localStorage.setItem("watchsnap_email",   email);
+          localStorage.setItem("watchsnap_user_id", uid);
+        } catch { /* ignore */ }
+        await syncCollectionFromSupabase(uid);
+      } catch { /* ignore */ }
+    })();
   }, []);
 
   const isDevOverride = typeof window !== "undefined" &&
@@ -165,7 +184,7 @@ export default function ScanPage() {
     if (!result || saved || saving) return;
     setSaving(true);
     const thumbnail = imageUrl ? await compressToThumbnail(imageUrl) : "";
-    saveToCollection({
+    const item = {
       id:                `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       brand:             result.brand,
       model:             result.model,
@@ -178,7 +197,9 @@ export default function ScanPage() {
       confidence:        result.confidence,
       thumbnail,
       savedAt:           Date.now(),
-    });
+    };
+    saveToCollection(item);
+    if (userId) saveToCollectionRemote(item, userId); // fire-and-forget
     setSaving(false);
     setSaved(true);
   };
@@ -424,7 +445,10 @@ export default function ScanPage() {
       </div>
 
       {showPaywall && (
-        <PaywallModal />
+        <PaywallModal onProRestored={() => {
+          setUserIsPro(true);
+          setShowPaywall(false);
+        }} />
       )}
       <InstallBanner show={showInstallBanner} onClose={() => setShowInstallBanner(false)} />
       <ReviewPopup show={showReview} onClose={() => setShowReview(false)} />
