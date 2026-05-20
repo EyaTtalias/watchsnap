@@ -22,8 +22,18 @@ export function PaywallModal({ onClose }: PaywallModalProps) {
   const handleUpgrade = async (plan: "monthly" | "annual") => {
     setLoading(plan);
     try {
-      const { openPaddleCheckout } = await import("@/lib/paddle");
-      await openPaddleCheckout(plan);
+      const email =
+        typeof window !== "undefined"
+          ? (localStorage.getItem("ws_user_email") ?? undefined)
+          : undefined;
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, email }),
+      });
+      if (!res.ok) throw new Error("checkout_failed");
+      const { url } = await res.json();
+      window.location.href = url;
     } catch {
       router.push(`/paywall?plan=${plan}`);
     } finally {

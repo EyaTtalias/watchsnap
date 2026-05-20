@@ -125,8 +125,18 @@ export function InitialPaywallModal() {
   const handleSubscribe = async (plan: "monthly" | "annual") => {
     setLoading(plan);
     try {
-      const { openPaddleCheckout } = await import("@/lib/paddle");
-      await openPaddleCheckout(plan);
+      const email =
+        typeof window !== "undefined"
+          ? (localStorage.getItem("ws_user_email") ?? undefined)
+          : undefined;
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, email }),
+      });
+      if (!res.ok) throw new Error("checkout_failed");
+      const { url } = await res.json();
+      window.location.href = url;
     } catch {
       window.location.href = `/paywall?plan=${plan}`;
     } finally {
@@ -246,7 +256,7 @@ export function InitialPaywallModal() {
         </div>
 
         <p className="mb-6 text-center text-[10px] text-gray-600">
-          Secure checkout via Paddle · Cancel anytime
+          Secure checkout via Lemon Squeezy · Cancel anytime
         </p>
 
         {/* ── Divider ── */}

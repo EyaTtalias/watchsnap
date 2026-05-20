@@ -144,12 +144,12 @@ export default function RefundPage() {
             </p>
           </Section>
 
-          <Section title="9. Paddle as Merchant of Record">
+          <Section title="9. Lemon Squeezy as Merchant of Record">
             <p>
-              All payments for WatchSnap are processed by <strong>Paddle</strong>, who acts as our Merchant of Record.
-              Refunds are issued through Paddle back to your original payment method. Paddle&apos;s own refund processing
-              is subject to their terms and conditions. In all cases, WatchSnap will honour the refund commitments
-              stated in this policy.
+              All payments for WatchSnap are processed by <strong>Lemon Squeezy</strong>, who acts as our Merchant of Record.
+              Refunds are issued through Lemon Squeezy back to your original payment method. Lemon Squeezy&apos;s own
+              refund processing is subject to their terms and conditions. In all cases, WatchSnap will honour the
+              refund commitments stated in this policy.
             </p>
           </Section>
 
