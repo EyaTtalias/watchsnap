@@ -70,7 +70,7 @@ export function InitialPaywallModal() {
       {/* bottom-sheet container */}
       <div className="absolute inset-x-0 bottom-0 flex justify-center pointer-events-none">
         <div
-          className={`pointer-events-auto w-full max-w-2xl h-[70vh] sm:h-[50vh] rounded-t-3xl bg-[#0D0D0D] border-t border-x border-[#C9A84C]/20 flex flex-col transition-transform duration-350 ease-out ${visible ? "translate-y-0" : "translate-y-full"}`}
+          className={`pointer-events-auto w-full max-w-2xl h-[70vh] sm:h-[65vh] rounded-t-3xl bg-[#0D0D0D] border-t border-x border-[#C9A84C]/20 flex flex-col transition-transform duration-350 ease-out ${visible ? "translate-y-0" : "translate-y-full"}`}
           style={{ boxShadow: "0 -8px 40px rgba(0,0,0,0.6)" }}
         >
           {/* drag handle */}
