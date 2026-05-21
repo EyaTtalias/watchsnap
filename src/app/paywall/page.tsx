@@ -248,7 +248,15 @@ export default function PaywallPage() {
           ))}
         </div>}
 
-        <div className="mt-4 text-center">
+        {/* ── Terms agreement ── */}
+        <p className="mb-4 text-center text-[10px] text-gray-700 leading-snug">
+          By subscribing, you agree to our{" "}
+          <Link href="/terms" className="underline hover:text-gray-500 transition-colors">Terms of Service</Link>
+          {" "}and{" "}
+          <Link href="/privacy" className="underline hover:text-gray-500 transition-colors">Privacy Policy</Link>.
+        </p>
+
+        <div className="mt-2 text-center">
           <Link href="/" className="text-sm text-gray-600 hover:text-gray-400 transition-colors">
             ← Back to home
           </Link>

@@ -232,6 +232,14 @@ export function PaywallModal({ onProRestored: _onProRestored }: PaywallModalProp
               Cancel anytime · 30-day money-back guarantee
             </p>
           )}
+
+          {/* ── Terms agreement ── */}
+          <p className="text-center text-[9px] text-gray-700 mt-2 leading-snug px-1">
+            By subscribing, you agree to our{" "}
+            <a href="/terms" className="underline hover:text-gray-500 transition-colors">Terms of Service</a>
+            {" "}and{" "}
+            <a href="/privacy" className="underline hover:text-gray-500 transition-colors">Privacy Policy</a>.
+          </p>
         </div>
       </div>
     </div>

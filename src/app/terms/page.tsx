@@ -74,15 +74,16 @@ export default function TermsPage() {
 
             <SubHeading>4.3 Billing</SubHeading>
             <p>
-              Payments are processed by Paddle, our Merchant of Record. By subscribing you authorise Paddle to charge
-              your payment method on a recurring basis (monthly or annually) until you cancel. Paddle issues all
-              receipts and invoices.
+              Payments are processed by <strong>Link, LLC f/k/a Lemon Squeezy LLC (&quot;Lemon Squeezy&quot;)</strong>,
+              our Merchant of Record. By subscribing you authorise Lemon Squeezy to charge your payment method on a
+              recurring basis (monthly or annually) until you cancel. Lemon Squeezy issues all receipts and invoices
+              and is responsible for payment processing, refunds, and tax remittance on your behalf.
             </p>
 
             <SubHeading>4.4 Cancellation</SubHeading>
             <p>
-              You may cancel your subscription at any time through your Paddle account portal or by contacting us.
-              Cancellation takes effect at the end of the current billing period; you retain access until then.
+              You may cancel your subscription at any time through your Lemon Squeezy customer portal or by contacting
+              us. Cancellation takes effect at the end of the current billing period; you retain access until then.
             </p>
           </Section>
 

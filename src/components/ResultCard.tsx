@@ -651,7 +651,7 @@ export function ResultCard({ result, imageUrl }: ResultCardProps) {
         <div className="flex items-start gap-2.5">
           <Info className={clsx("h-4 w-4 flex-shrink-0 mt-0.5", isReplica ? "text-red-400/50" : "text-gray-600")} />
           <p className={clsx("text-xs leading-relaxed", isReplica ? "text-red-400/55" : "text-gray-500")}>
-            {result.disclaimer || "This is an AI estimate only. Always seek professional authentication before any high-value purchase or sale."}
+            {result.disclaimer || "Results are AI estimates only and do not constitute professional authentication or appraisal. Always consult a qualified expert before making purchasing decisions."}
           </p>
         </div>
       </div>
