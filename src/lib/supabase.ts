@@ -1,9 +1,30 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl     = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+// Lazily initialised — avoids "supabaseUrl is required" during Next.js
+// static generation when NEXT_PUBLIC_* env vars are absent at build time.
+let _client: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getClient(): SupabaseClient | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  if (!_client) _client = createClient(url, key);
+  return _client;
+}
+
+// Backward-compatible export: callers use `supabase.from(...)` unchanged.
+// When env vars are missing the proxy returns a no-op so SSG never throws.
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop: string | symbol) {
+    const client = getClient();
+    if (!client) {
+      // Safe stub — returns a thenable that resolves to empty data
+      return () => Promise.resolve({ data: null, error: null });
+    }
+    const val = Reflect.get(client, prop);
+    return typeof val === "function" ? (val as (...a: unknown[]) => unknown).bind(client) : val;
+  },
+});
 
 /* ─────────────────────────────────────────────────────────────────
    Types — mirror the SQL schema in supabase/schema.sql
