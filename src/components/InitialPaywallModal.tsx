@@ -255,8 +255,15 @@ export function InitialPaywallModal() {
           </div>
         </div>
 
-        <p className="mb-6 text-center text-[10px] text-gray-600">
+        <p className="mb-2 text-center text-[10px] text-gray-600">
           Secure checkout via Lemon Squeezy · Cancel anytime
+        </p>
+
+        <p className="mb-6 text-center text-xs text-gray-400 leading-snug">
+          By subscribing, you agree to our{" "}
+          <a href="/terms" className="text-gray-300 underline hover:text-white transition-colors">Terms of Service</a>
+          {" "}and{" "}
+          <a href="/privacy" className="text-gray-300 underline hover:text-white transition-colors">Privacy Policy</a>.
         </p>
 
         {/* ── Divider ── */}
