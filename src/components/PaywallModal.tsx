@@ -111,10 +111,10 @@ export function PaywallModal({ onProRestored: _onProRestored }: PaywallModalProp
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className={`absolute inset-0 z-0 bg-black/85 backdrop-blur-sm transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`} />
 
-      <div className={`relative z-10 w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#C9A84C]/20 bg-[#0D0D0D] transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-        <div className="h-1.5 w-full rounded-t-3xl sm:rounded-t-3xl bg-gradient-to-r from-[#A8882F] via-[#E2C06D] to-[#A8882F]" />
+      <div className={`relative z-10 w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#C9A84C]/20 bg-[#0D0D0D] transition-all duration-300 max-h-[92vh] flex flex-col ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+        <div className="h-1.5 w-full flex-shrink-0 rounded-t-3xl sm:rounded-t-3xl bg-gradient-to-r from-[#A8882F] via-[#E2C06D] to-[#A8882F]" />
 
-        <div className="p-5">
+        <div className="p-5 overflow-y-auto flex-1 pb-safe">
           {/* ── Header ── */}
           <div className="mb-4 flex flex-col items-center text-center">
             <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full"
