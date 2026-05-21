@@ -6,6 +6,7 @@ import Foundation
 // JS name: "IAP"  —  import via registerPlugin<IAPPlugin>("IAP") in TypeScript.
 
 @objc(IAPPlugin)
+@MainActor
 public class IAPPlugin: CAPPlugin, CAPBridgedPlugin {
 
     public let identifier   = "IAPPlugin"

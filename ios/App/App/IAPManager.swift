@@ -23,7 +23,6 @@ enum IAPError: LocalizedError {
 
 // MARK: - IAPManager (StoreKit 2)
 
-@MainActor
 final class IAPManager {
 
     static let proProductIds: Set<String> = [
