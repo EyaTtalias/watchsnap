@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PwaInit } from "@/components/PwaInit";
 import { DevReset } from "@/components/DevReset";
+import { InitialPaywallModal } from "@/components/InitialPaywallModal";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://watchsnap.vercel.app"),
@@ -123,6 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="overflow-x-hidden">
           <PwaInit />
           <DevReset />
+          <InitialPaywallModal />
           <Navbar />
           {/* Extra bottom padding on mobile for bottom tab bar */}
           <main className="sm:pb-0 pb-20">{children}</main>
