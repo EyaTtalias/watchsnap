@@ -9,6 +9,13 @@ import Capacitor
 // causing:  "UIPopoverPresentationController … must have a non-nil sourceView"
 class ViewController: CAPBridgeViewController {
 
+    // Explicitly register in-app plugins.
+    // CAPBridgedPlugin auto-discovery only works for Swift Package plugins;
+    // plugins compiled into the app target must be registered here.
+    override func capacitorDidLoad() {
+        bridge?.registerPluginInstance(IAPPlugin())
+    }
+
     override func present(
         _ viewControllerToPresent: UIViewController,
         animated flag: Bool,
