@@ -17,7 +17,7 @@ public class IAPPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "checkEntitlements", returnType: CAPPluginReturnPromise),
     ]
 
-    private let manager = IAPManager()
+    private lazy var manager = IAPManager()
 
     // ── getProducts({ productIds: string[] }) ───────────────────────
     @objc func getProducts(_ call: CAPPluginCall) {
