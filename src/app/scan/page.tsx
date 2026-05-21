@@ -13,6 +13,7 @@ import {
   saveToCollection, compressToThumbnail,
   isPro, getScanCount, incrementScanCount, PRO_KEY,
 } from "@/lib/collection";
+import { isNativeIOS, iapCheckEntitlements } from "@/lib/iap";
 import { getApiUrl } from "@/lib/apiUrl";
 
 type Phase = "idle" | "camera" | "preview" | "scanning" | "result" | "error";
@@ -77,12 +78,23 @@ export default function ScanPage() {
       window.history.replaceState({}, "", "/scan");
     }
 
-    const pro = isPro();
-    const dev = localStorage.getItem("watchsnap_dev") === "1";
-    setUserIsPro(pro);
-    setScansUsed(getScanCount());
+    (async () => {
+      let pro = isPro();
+      const dev = localStorage.getItem("watchsnap_dev") === "1";
 
-    if (!pro && !dev) setShowPaywall(true);
+      // On iOS: silently verify StoreKit entitlements — auto-unlock if active subscription found
+      if (!pro && !dev && isNativeIOS()) {
+        const iosActive = await iapCheckEntitlements();
+        if (iosActive) {
+          try { localStorage.setItem(PRO_KEY, "1"); } catch { /* ignore */ }
+          pro = true;
+        }
+      }
+
+      setUserIsPro(pro);
+      setScansUsed(getScanCount());
+      if (!pro && !dev) setShowPaywall(true);
+    })();
   }, []);
 
   const isDevOverride = typeof window !== "undefined" &&

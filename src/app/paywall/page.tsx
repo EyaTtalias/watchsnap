@@ -5,6 +5,7 @@ import { Crown, Check, Shield, Star, Zap, History, TrendingUp, CreditCard, Lock,
 import Link from "next/link";
 import { PRO_KEY } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
+import { isNativeIOS, iapPurchase, iapRestore } from "@/lib/iap";
 
 const features = [
   { icon: Zap,        text: "Unlimited watch scans — no monthly cap" },
@@ -16,12 +17,15 @@ const features = [
 ];
 
 export default function PaywallPage() {
-  const [loading, setLoading] = useState<"monthly" | "annual" | null>(null);
+  const [loading, setLoading] = useState<"monthly" | "annual" | "restore" | null>(null);
   const [error,   setError]   = useState("");
+  const [iosMode, setIosMode] = useState(false);
 
-  /* ── Handle return from LemonSqueezy checkout ── */
+  /* ── Detect platform + handle LS return ── */
   useEffect(() => {
     if (typeof window === "undefined") return;
+    setIosMode(isNativeIOS());
+
     const params = new URLSearchParams(window.location.search);
     if (params.get("upgraded") === "true") {
       try {
@@ -33,8 +37,37 @@ export default function PaywallPage() {
     }
   }, []);
 
-  /* ── Open LemonSqueezy hosted checkout ── */
+  /* ── iOS: Apple IAP purchase ── */
+  const handleIAPSubscribe = async (plan: "monthly" | "annual") => {
+    setLoading(plan);
+    setError("");
+    const result = await iapPurchase(plan);
+    if (result.success) {
+      try { localStorage.setItem(PRO_KEY, "1"); } catch { /* ignore */ }
+      window.location.href = "/scan";
+    } else if (!result.cancelled) {
+      setError(result.error ?? "Purchase failed. Please try again.");
+    }
+    setLoading(null);
+  };
+
+  /* ── iOS: Restore purchases ── */
+  const handleRestore = async () => {
+    setLoading("restore");
+    setError("");
+    const result = await iapRestore();
+    if (result.restored) {
+      try { localStorage.setItem(PRO_KEY, "1"); } catch { /* ignore */ }
+      window.location.href = "/scan";
+    } else {
+      setError(result.error ?? "No previous purchases found.");
+    }
+    setLoading(null);
+  };
+
+  /* ── Web: LemonSqueezy hosted checkout ── */
   const handleSubscribe = async (plan: "monthly" | "annual") => {
+    if (iosMode) { handleIAPSubscribe(plan); return; }
     setLoading(plan);
     setError("");
     try {
@@ -48,8 +81,6 @@ export default function PaywallPage() {
       if (!res.ok || !data.url) {
         throw new Error(data.error ?? "Could not create checkout. Please try again.");
       }
-
-      // Redirect to LemonSqueezy hosted checkout page
       window.location.href = data.url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not open checkout. Please try again.");
@@ -116,8 +147,8 @@ export default function PaywallPage() {
                 className="w-full rounded-2xl py-3.5 text-sm font-black text-black transition-all active:scale-[0.98] hover:scale-[1.01] disabled:opacity-60 min-h-[52px]"
                 style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E2C06D 50%, #A8882F 100%)", boxShadow: "0 6px 24px rgba(201,168,76,0.25)" }}>
                 {loading === "monthly"
-                  ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Opening checkout...</span>
-                  : <span className="flex items-center justify-center gap-2"><CreditCard className="h-4 w-4" /> Start Free Trial</span>
+                  ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> {iosMode ? "Processing..." : "Opening checkout..."}</span>
+                  : <span className="flex items-center justify-center gap-2">{iosMode ? <AppleIconLg /> : <CreditCard className="h-4 w-4" />} Start Free Trial</span>
                 }
               </button>
               <p className="text-center text-[10px] text-gray-600 mt-2">Cancel before trial ends — no charge</p>
@@ -164,11 +195,13 @@ export default function PaywallPage() {
                 disabled={loading !== null}
                 className="w-full rounded-2xl py-3.5 text-sm font-black text-emerald-400 min-h-[52px] border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-60 transition-all active:scale-[0.98]">
                 {loading === "annual"
-                  ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Opening checkout...</span>
-                  : <span className="flex items-center justify-center gap-2"><CreditCard className="h-4 w-4" /> Get Annual Access</span>
+                  ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> {iosMode ? "Processing..." : "Opening checkout..."}</span>
+                  : <span className="flex items-center justify-center gap-2">{iosMode ? <AppleIconLg className="text-emerald-400" /> : <CreditCard className="h-4 w-4" />} Get Annual Access</span>
                 }
               </button>
-              <p className="text-center text-[10px] text-gray-600 mt-2">30-day money-back guarantee</p>
+              <p className="text-center text-[10px] text-gray-600 mt-2">
+                {iosMode ? "Billed via Apple ID" : "30-day money-back guarantee"}
+              </p>
             </div>
           </div>
         </div>
@@ -180,8 +213,29 @@ export default function PaywallPage() {
           </div>
         )}
 
-        {/* ── Trust row ── */}
-        <div className="mb-8 grid grid-cols-3 gap-3 text-center">
+        {/* ── iOS: Restore Purchases ── */}
+        {iosMode && (
+          <div className="mb-4 text-center">
+            <button
+              onClick={handleRestore}
+              disabled={loading !== null}
+              className="text-sm text-gray-500 hover:text-gray-300 transition-colors disabled:opacity-40 flex items-center gap-1.5 mx-auto"
+            >
+              {loading === "restore" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              Restore Purchases
+            </button>
+          </div>
+        )}
+
+        {/* ── iOS: Apple legal disclaimer ── */}
+        {iosMode && (
+          <p className="mb-4 text-center text-[10px] text-gray-700 px-4 leading-snug">
+            Payment charged to Apple ID at confirmation. Subscription auto-renews unless cancelled at least 24h before the end of the current period. Manage subscriptions in App Store settings.
+          </p>
+        )}
+
+        {/* ── Web: Trust row ── */}
+        {!iosMode && <div className="mb-8 grid grid-cols-3 gap-3 text-center">
           {[
             { icon: "🔒", label: "SSL Encrypted"  },
             { icon: "🍋", label: "Powered by Lemon Squeezy" },
@@ -192,7 +246,7 @@ export default function PaywallPage() {
               <p className="text-[10px] text-gray-500 font-semibold leading-tight">{label}</p>
             </div>
           ))}
-        </div>
+        </div>}
 
         <div className="mt-4 text-center">
           <Link href="/" className="text-sm text-gray-600 hover:text-gray-400 transition-colors">
@@ -201,5 +255,13 @@ export default function PaywallPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function AppleIconLg({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={`h-4 w-4 flex-shrink-0 fill-current ${className ?? "text-black"}`}>
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.58 2.95-1.39z" />
+    </svg>
   );
 }
