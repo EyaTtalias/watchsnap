@@ -161,7 +161,7 @@ export function InitialPaywallModal() {
       <div className="pointer-events-none fixed inset-0"
         style={{ background: "radial-gradient(ellipse 65% 38% at 50% 0%, rgba(201,168,76,0.13) 0%, transparent 65%)" }} />
 
-      <div className="relative mx-auto w-full max-w-lg px-4 pt-14 pb-12">
+      <div className="relative mx-auto w-full max-w-2xl px-4 pt-14 pb-8">
 
         {/* ── Header ── */}
         <div className="mb-7 text-center">
@@ -322,11 +322,11 @@ export function InitialPaywallModal() {
             Complete an action above to continue for free, or choose a plan.
           </p>
         )}
-        <p className="mt-6 text-center text-xs text-gray-400">
+        <p className="mt-8 mb-2 text-center text-xs sm:text-sm text-gray-400 leading-relaxed">
           By subscribing, you agree to our{" "}
-          <a href="/terms" className="underline text-gray-300">Terms of Service</a>
+          <a href="/terms" className="underline text-gray-300 hover:text-white transition-colors">Terms of Service</a>
           {" "}and{" "}
-          <a href="/privacy" className="underline text-gray-300">Privacy Policy</a>.
+          <a href="/privacy" className="underline text-gray-300 hover:text-white transition-colors">Privacy Policy</a>.
         </p>
       </div>
     </div>
