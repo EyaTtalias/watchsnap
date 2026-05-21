@@ -249,11 +249,11 @@ export default function PaywallPage() {
         </div>}
 
         {/* ── Terms agreement ── */}
-        <p className="mb-4 text-center text-[10px] text-gray-700 leading-snug">
+        <p className="mb-4 text-center text-xs text-gray-400 leading-snug">
           By subscribing, you agree to our{" "}
-          <Link href="/terms" className="underline hover:text-gray-500 transition-colors">Terms of Service</Link>
+          <Link href="/terms" className="text-gray-300 underline hover:text-white transition-colors">Terms of Service</Link>
           {" "}and{" "}
-          <Link href="/privacy" className="underline hover:text-gray-500 transition-colors">Privacy Policy</Link>.
+          <Link href="/privacy" className="text-gray-300 underline hover:text-white transition-colors">Privacy Policy</Link>.
         </p>
 
         <div className="mt-2 text-center">

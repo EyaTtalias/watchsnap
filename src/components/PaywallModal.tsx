@@ -234,11 +234,11 @@ export function PaywallModal({ onProRestored: _onProRestored }: PaywallModalProp
           )}
 
           {/* ── Terms agreement ── */}
-          <p className="text-center text-[9px] text-gray-700 mt-2 leading-snug px-1">
+          <p className="text-center text-xs text-gray-400 mt-3 leading-snug px-1">
             By subscribing, you agree to our{" "}
-            <a href="/terms" className="underline hover:text-gray-500 transition-colors">Terms of Service</a>
+            <a href="/terms" className="text-gray-300 underline hover:text-white transition-colors">Terms of Service</a>
             {" "}and{" "}
-            <a href="/privacy" className="underline hover:text-gray-500 transition-colors">Privacy Policy</a>.
+            <a href="/privacy" className="text-gray-300 underline hover:text-white transition-colors">Privacy Policy</a>.
           </p>
         </div>
       </div>
