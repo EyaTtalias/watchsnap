@@ -185,17 +185,20 @@ async function handleOrderCreated(orderId: string, attrs: LsOrderAttributes) {
 ───────────────────────────────────────────────────────────────── */
 export async function POST(req: NextRequest) {
   const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
+
+  // Reject all requests if the webhook secret is not configured.
+  // This prevents unauthenticated requests from manipulating subscription state.
+  if (!secret) {
+    console.error("[ls webhook] LEMONSQUEEZY_WEBHOOK_SECRET is not set — rejecting request");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
+
   const rawBody = await req.text();
 
-  // Verify signature only when secret is configured
-  if (secret) {
-    const sig = req.headers.get("x-signature");
-    if (!verifySignature(rawBody, sig, secret)) {
-      console.error("[ls webhook] invalid signature");
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-    }
-  } else {
-    console.warn("[ls webhook] LEMONSQUEEZY_WEBHOOK_SECRET not set — skipping signature check");
+  const sig = req.headers.get("x-signature");
+  if (!verifySignature(rawBody, sig, secret)) {
+    console.error("[ls webhook] invalid signature");
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   let evt: LsEvent;

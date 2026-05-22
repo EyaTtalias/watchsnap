@@ -90,7 +90,7 @@ function WatchCard({
         {/* Delete */}
         <button
           onClick={handleDelete}
-          className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-gray-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all duration-200 backdrop-blur-sm"
+          className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-gray-500 sm:opacity-0 sm:group-hover:opacity-100 opacity-100 hover:text-red-400 transition-all duration-200 backdrop-blur-sm"
         >
           <Trash2 className="h-3 w-3" />
         </button>

@@ -11,17 +11,34 @@ export const dynamic =
   process.env.BUILD_TARGET === "capacitor" ? "auto" : "force-dynamic";
 
 // ── CORS headers ─────────────────────────────────────────────────────────────
-// Capacitor Android apps run on https://localhost — without these headers the
-// WebView's CORS policy will block every response from the Vercel origin.
-const CORS: Record<string, string> = {
-  "Access-Control-Allow-Origin":  "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept",
-};
+// Capacitor Android WebViews use origin "https://localhost" (or "http://localhost").
+// iOS native calls have no Origin header at all.
+// We restrict to known origins instead of *.
+const ALLOWED_ORIGINS = new Set([
+  "https://watchsnap.vercel.app",
+  "https://localhost",
+  "http://localhost",
+  "http://localhost:3000",
+  "capacitor://localhost",
+]);
+
+function corsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin =
+    origin && ALLOWED_ORIGINS.has(origin) ? origin : "https://watchsnap.vercel.app";
+  return {
+    "Access-Control-Allow-Origin":  allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Accept",
+    "Vary": "Origin",
+  };
+}
 
 // Pre-flight handler (browser sends OPTIONS before the real POST)
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: CORS });
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders(req.headers.get("origin")),
+  });
 }
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -385,6 +402,8 @@ IMPORTANT: Return ONLY the JSON object. No text before or after.`;
    ROUTE HANDLER
 ───────────────────────────────────────────────────────────────── */
 export async function POST(req: NextRequest) {
+  const CORS = corsHeaders(req.headers.get("origin"));
+
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: "ANTHROPIC_API_KEY not configured" }, { status: 500, headers: CORS });
   }

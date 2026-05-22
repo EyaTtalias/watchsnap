@@ -196,6 +196,8 @@ export default function ScanPage() {
   };
 
   const reset = () => {
+    scanTimersRef.current.forEach(clearTimeout);
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
     setPhase("idle");
     setImageFile(null);
     setImageUrl("");
@@ -388,23 +390,27 @@ export default function ScanPage() {
           <div className="space-y-4">
             <ResultCard result={result} imageUrl={imageUrl} />
 
-            <button
-              onClick={handleAddToCollection}
-              disabled={saving || saved}
-              className={`flex w-full items-center justify-center gap-2.5 rounded-2xl border py-4 text-sm font-bold transition-all active:scale-[0.98] ${
-                saved
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] hover:bg-[#C9A84C]/20"
-              }`}
-              style={{ minHeight: "56px" }}
-            >
-              {saved
-                ? <><CheckCircle2 className="h-5 w-5 fill-emerald-400 text-emerald-400" /> Saved to Collection</>
-                : saving
-                ? <><BookMarked className="h-5 w-5" /> Saving...</>
-                : <><BookMarked className="h-5 w-5" /> Add to My Collection</>
-              }
-            </button>
+            {saved ? (
+              <Link
+                href="/history"
+                className="flex w-full items-center justify-center gap-2.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 py-4 text-sm font-bold transition-all active:scale-[0.98] hover:bg-emerald-500/20"
+                style={{ minHeight: "56px" }}
+              >
+                <CheckCircle2 className="h-5 w-5 fill-emerald-400 text-emerald-400" /> View in Collection →
+              </Link>
+            ) : (
+              <button
+                onClick={handleAddToCollection}
+                disabled={saving}
+                className="flex w-full items-center justify-center gap-2.5 rounded-2xl border border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] hover:bg-[#C9A84C]/20 py-4 text-sm font-bold transition-all active:scale-[0.98]"
+                style={{ minHeight: "56px" }}
+              >
+                {saving
+                  ? <><BookMarked className="h-5 w-5" /> Saving...</>
+                  : <><BookMarked className="h-5 w-5" /> Add to My Collection</>
+                }
+              </button>
+            )}
 
             <button onClick={reset}
               className="flex w-full items-center justify-center gap-2.5 rounded-2xl border-2 border-[#C9A84C]/35 bg-[#C9A84C]/8 py-4 text-base font-black text-[#C9A84C] hover:bg-[#C9A84C]/16 hover:border-[#C9A84C]/55 transition-all active:scale-[0.98]"
@@ -436,7 +442,7 @@ export default function ScanPage() {
       </div>
 
       {showPaywall && (
-        <PaywallModal />
+        <PaywallModal onProRestored={() => { setUserIsPro(true); setShowPaywall(false); }} />
       )}
       <InstallBanner show={showInstallBanner} onClose={() => setShowInstallBanner(false)} />
       <ReviewPopup show={showReview} onClose={() => setShowReview(false)} />

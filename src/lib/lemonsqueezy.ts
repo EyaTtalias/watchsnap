@@ -122,6 +122,5 @@ export async function createCheckoutUrl(opts: {
     finalUrl = `${rawUrl}${sep}locale=en`;
   }
 
-  console.log("[checkout] final URL →", finalUrl);
   return finalUrl;
 }
