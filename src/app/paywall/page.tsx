@@ -1,30 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Crown, Check, Shield, Star, Zap, History, TrendingUp, CreditCard, Lock, Loader2 } from "lucide-react";
+import { Crown, Check, CreditCard, Lock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { PRO_KEY } from "@/lib/collection";
 import { getApiUrl } from "@/lib/apiUrl";
 import { isNativeIOS, iapPurchase, iapRestore } from "@/lib/iap";
 
-const features = [
-  { icon: Zap,        text: "Unlimited watch scans — no monthly cap" },
-  { icon: TrendingUp, text: "Live market value with comparable sales data" },
-  { icon: Shield,     text: "Full 30-point authentication report" },
-  { icon: History,    text: "My Collection — save & organize your scans" },
-  { icon: Star,       text: "Priority AI analysis — faster results" },
-  { icon: Crown,      text: "Early access to new features" },
-];
-
 export default function PaywallPage() {
   const [loading, setLoading] = useState<"monthly" | "annual" | "restore" | null>(null);
   const [error,   setError]   = useState("");
   const [iosMode, setIosMode] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   /* ── Detect platform + handle LS return ── */
   useEffect(() => {
     if (typeof window === "undefined") return;
     setIosMode(isNativeIOS());
+    setTimeout(() => setVisible(true), 30);
 
     const params = new URLSearchParams(window.location.search);
     if (params.get("upgraded") === "true") {
@@ -77,10 +70,7 @@ export default function PaywallPage() {
         body:    JSON.stringify({ plan }),
       });
       const data = await res.json() as { url?: string; error?: string };
-
-      if (!res.ok || !data.url) {
-        throw new Error(data.error ?? "Could not create checkout. Please try again.");
-      }
+      if (!res.ok || !data.url) throw new Error(data.error ?? "Could not create checkout. Please try again.");
       window.location.href = data.url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not open checkout. Please try again.");
@@ -89,186 +79,170 @@ export default function PaywallPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] pt-24 sm:pt-20 pb-safe pb-10">
-      <div className="pointer-events-none fixed inset-0"
-        style={{ background: "radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%)" }} />
+    /* ── Full-screen backdrop ── */
+    <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm">
 
-      <div className="relative mx-auto max-w-lg px-4 w-full">
-
-        {/* ── Header ── */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full"
-              style={{ background: "linear-gradient(135deg, #C9A84C, #A8882F)", boxShadow: "0 0 40px rgba(201,168,76,0.3)" }}>
-              <Crown className="h-10 w-10 text-black" />
-            </div>
-          </div>
-          <h1 className="mb-2 text-3xl font-black tracking-tight">Unlock Full Access</h1>
-          <p className="text-gray-400 text-sm">Professional watch intelligence. Cancel anytime.</p>
-        </div>
-
-        {/* ── Plan cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-
-          {/* Monthly */}
-          <div className="relative overflow-hidden rounded-3xl border border-[#C9A84C]/40 bg-[#111111] flex flex-col"
-            style={{ boxShadow: "0 0 30px rgba(201,168,76,0.08)" }}>
-            <div className="bg-gradient-to-r from-[#C9A84C] to-[#E2C06D] px-4 py-2.5 text-center">
-              <p className="text-xs font-black text-black tracking-wide">✨ Most Popular</p>
-            </div>
-            <div className="p-5 flex flex-col flex-1">
-              <div className="mb-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#C9A84C] mb-1">Free Trial</p>
-                <h2 className="text-xl font-black">7 Days Free</h2>
-                <p className="text-3xl font-black text-white mt-2">
-                  $9.99<span className="text-base font-normal text-gray-400">/mo</span>
-                </p>
-                <p className="text-xs text-gray-500 mt-1">after trial ends</p>
-              </div>
-              <div className="mb-4 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 p-3 text-center">
-                <p className="text-xs text-[#C9A84C] font-semibold flex items-center justify-center gap-1.5">
-                  <Lock className="h-3 w-3" /> Card saved — not charged yet
-                </p>
-                <p className="text-xs text-[#C9A84C]/60 mt-0.5">Auto-charges after 7 days</p>
-              </div>
-              <ul className="space-y-2 mb-5 flex-1">
-                {features.map(({ icon: Icon, text }) => (
-                  <li key={text} className="flex items-start gap-2">
-                    <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#C9A84C]/15 mt-0.5">
-                      <Check className="h-3 w-3 text-[#C9A84C]" />
-                    </div>
-                    <span className="text-xs text-gray-300 leading-relaxed">{text}</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => handleSubscribe("monthly")}
-                disabled={loading !== null}
-                className="w-full rounded-2xl py-3.5 text-sm font-black text-black transition-all active:scale-[0.98] hover:scale-[1.01] disabled:opacity-60 min-h-[52px]"
-                style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E2C06D 50%, #A8882F 100%)", boxShadow: "0 6px 24px rgba(201,168,76,0.25)" }}>
-                {loading === "monthly"
-                  ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> {iosMode ? "Processing..." : "Opening checkout..."}</span>
-                  : <span className="flex items-center justify-center gap-2">{iosMode ? <AppleIconLg /> : <CreditCard className="h-4 w-4" />} Start Free Trial</span>
-                }
-              </button>
-              <p className="text-center text-[10px] text-gray-600 mt-2">Cancel before trial ends — no charge</p>
-            </div>
+      {/* ── Bottom-sheet container ── */}
+      <div className="absolute inset-x-0 bottom-0 flex justify-center">
+        <div
+          className={`w-full max-w-2xl h-[70vh] sm:h-[65vh] rounded-t-3xl bg-[#0D0D0D] border-t border-x border-[#C9A84C]/20 flex flex-col transition-transform duration-300 ease-out ${visible ? "translate-y-0" : "translate-y-full"}`}
+          style={{ boxShadow: "0 -8px 40px rgba(0,0,0,0.6)" }}
+        >
+          {/* drag handle */}
+          <div className="flex flex-shrink-0 justify-center pt-3 pb-1">
+            <div className="h-1 w-10 rounded-full bg-[#333]" />
           </div>
 
-          {/* Annual */}
-          <div className="relative overflow-hidden rounded-3xl border border-[#2A2A2A] bg-[#0D0D0D] flex flex-col">
-            <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-2.5 text-center">
-              <p className="text-xs font-black text-white tracking-wide">🏆 Best Value</p>
+          {/* ── Scrollable content ── */}
+          <div className="flex-1 overflow-y-auto px-5 pb-6 pt-2">
+
+            {/* Header */}
+            <div className="mb-5 flex items-center gap-3">
+              <div
+                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
+                style={{ background: "linear-gradient(135deg, #C9A84C, #A8882F)", boxShadow: "0 0 24px rgba(201,168,76,0.35)" }}
+              >
+                <Crown className="h-5 w-5 text-black" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black leading-tight">Unlock WatchSnap</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Professional watch intelligence. Cancel anytime.</p>
+              </div>
             </div>
-            <div className="p-5 flex flex-col flex-1">
-              <div className="mb-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-1">Annual Plan</p>
-                <h2 className="text-xl font-black">Full Year</h2>
-                <div className="mt-2 flex items-center justify-center gap-2">
-                  <p className="text-3xl font-black text-white">
-                    $59.99<span className="text-base font-normal text-gray-400">/yr</span>
+
+            {/* ── Plan cards ── */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+
+              {/* Monthly */}
+              <div
+                className="relative overflow-hidden rounded-2xl border border-[#C9A84C]/40 bg-[#111111] flex flex-col"
+                style={{ boxShadow: "0 0 20px rgba(201,168,76,0.07)" }}
+              >
+                <div className="bg-gradient-to-r from-[#C9A84C] to-[#E2C06D] px-3 py-1.5 text-center">
+                  <p className="text-[10px] font-black text-black tracking-wide">✨ Most Popular</p>
+                </div>
+                <div className="p-3 flex flex-col flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#C9A84C] mb-0.5">Free Trial</p>
+                  <p className="text-sm font-black leading-tight">7 Days Free</p>
+                  <p className="text-xl font-black text-white mt-1">
+                    $9.99<span className="text-[10px] font-normal text-gray-400">/mo</span>
                   </p>
-                </div>
-                <div className="mt-1 flex items-center justify-center gap-1.5">
-                  <span className="text-xs text-gray-500 line-through">$119.88</span>
-                  <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-black text-emerald-400">Save 50%</span>
+                  <p className="text-[10px] text-gray-500 mb-2">after trial · cancel anytime</p>
+                  <div className="mb-2 rounded-lg bg-[#C9A84C]/10 border border-[#C9A84C]/20 px-2 py-1.5 text-center">
+                    <p className="text-[10px] text-[#C9A84C] font-semibold flex items-center justify-center gap-1">
+                      <Lock className="h-2.5 w-2.5" /> Not charged yet
+                    </p>
+                  </div>
+                  <ul className="space-y-1 mb-3 flex-1 text-[10px] text-gray-300">
+                    {["Unlimited scans", "Full auth report", "Live market data"].map((f) => (
+                      <li key={f} className="flex items-center gap-1.5">
+                        <Check className="h-2.5 w-2.5 text-[#C9A84C] flex-shrink-0" />{f}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => handleSubscribe("monthly")}
+                    disabled={loading !== null}
+                    className="w-full rounded-xl py-2.5 text-xs font-black text-black disabled:opacity-60 transition-all active:scale-95 min-h-[40px]"
+                    style={{ background: "linear-gradient(135deg, #C9A84C, #A8882F)" }}
+                  >
+                    {loading === "monthly" ? (
+                      <Loader2 className="h-3 w-3 animate-spin mx-auto" />
+                    ) : (
+                      <span className="flex items-center justify-center gap-1.5">
+                        {iosMode ? <AppleIcon /> : <CreditCard className="h-3 w-3" />}
+                        Start Free Trial
+                      </span>
+                    )}
+                  </button>
                 </div>
               </div>
-              <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-center">
-                <p className="text-xs text-emerald-400 font-semibold flex items-center justify-center gap-1.5">
-                  <Lock className="h-3 w-3" /> Instant access · 30-day refund
-                </p>
-                <p className="text-xs text-emerald-400/60 mt-0.5">~$5/month · Best deal</p>
+
+              {/* Annual */}
+              <div className="relative overflow-hidden rounded-2xl border border-[#2A2A2A] bg-[#0D0D0D] flex flex-col">
+                <div className="bg-gradient-to-r from-emerald-700 to-emerald-500 px-3 py-1.5 text-center">
+                  <p className="text-[10px] font-black text-white tracking-wide">🏆 Best Value</p>
+                </div>
+                <div className="p-3 flex flex-col flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-0.5">Annual</p>
+                  <p className="text-sm font-black leading-tight">Full Year</p>
+                  <p className="text-xl font-black text-white mt-1">
+                    $59.99<span className="text-[10px] font-normal text-gray-400">/yr</span>
+                  </p>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="text-[10px] text-gray-600 line-through">$119.88</span>
+                    <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-1.5 py-0.5 text-[9px] font-black text-emerald-400">−50%</span>
+                  </div>
+                  <ul className="space-y-1 mb-3 flex-1 text-[10px] text-gray-300">
+                    {["Everything in monthly", "~$5/month", "30-day refund"].map((f) => (
+                      <li key={f} className="flex items-center gap-1.5">
+                        <Check className="h-2.5 w-2.5 text-emerald-400 flex-shrink-0" />{f}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => handleSubscribe("annual")}
+                    disabled={loading !== null}
+                    className="w-full rounded-xl py-2.5 text-xs font-black text-emerald-400 min-h-[40px] border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-60 transition-all active:scale-95"
+                  >
+                    {loading === "annual" ? (
+                      <Loader2 className="h-3 w-3 animate-spin mx-auto" />
+                    ) : (
+                      <span className="flex items-center justify-center gap-1.5">
+                        {iosMode ? <AppleIcon className="text-emerald-400" /> : <CreditCard className="h-3 w-3" />}
+                        Get Annual
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
-              <ul className="space-y-2 mb-5 flex-1">
-                {features.map(({ icon: Icon, text }) => (
-                  <li key={text} className="flex items-start gap-2">
-                    <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/15 mt-0.5">
-                      <Check className="h-3 w-3 text-emerald-400" />
-                    </div>
-                    <span className="text-xs text-gray-300 leading-relaxed">{text}</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => handleSubscribe("annual")}
-                disabled={loading !== null}
-                className="w-full rounded-2xl py-3.5 text-sm font-black text-emerald-400 min-h-[52px] border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-60 transition-all active:scale-[0.98]">
-                {loading === "annual"
-                  ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> {iosMode ? "Processing..." : "Opening checkout..."}</span>
-                  : <span className="flex items-center justify-center gap-2">{iosMode ? <AppleIconLg className="text-emerald-400" /> : <CreditCard className="h-4 w-4" />} Get Annual Access</span>
-                }
-              </button>
-              <p className="text-center text-[10px] text-gray-600 mt-2">
-                {iosMode ? "Billed via Apple ID" : "30-day money-back guarantee"}
+            </div>
+
+            {/* ── Error message ── */}
+            {error && (
+              <div className="mb-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-center">
+                <p className="text-xs text-red-400">{error}</p>
+              </div>
+            )}
+
+            {/* ── iOS: Restore purchases ── */}
+            {iosMode && (
+              <div className="mb-3 text-center">
+                <button
+                  onClick={handleRestore}
+                  disabled={loading !== null}
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors disabled:opacity-40 flex items-center gap-1.5 mx-auto"
+                >
+                  {loading === "restore" && <Loader2 className="h-3 w-3 animate-spin" />}
+                  Restore Purchases
+                </button>
+              </div>
+            )}
+
+            {/* ── iOS: Apple legal disclaimer ── */}
+            {iosMode && (
+              <p className="mb-3 text-center text-[9px] text-gray-700 px-2 leading-snug">
+                Payment charged to Apple ID at confirmation. Auto-renews unless cancelled at least 24h before the end of the current period. Manage in App Store settings.
               </p>
-            </div>
+            )}
+
+            {/* ── Terms ── */}
+            <p className="text-center text-xs sm:text-sm text-gray-400 leading-snug">
+              By subscribing, you agree to our{" "}
+              <Link href="/terms" className="underline text-gray-300 hover:text-white transition-colors">Terms of Service</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="underline text-gray-300 hover:text-white transition-colors">Privacy Policy</Link>.
+            </p>
           </div>
-        </div>
-
-        {/* ── Error message ── */}
-        {error && (
-          <div className="mb-4 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center">
-            <p className="text-sm text-red-400">{error}</p>
-          </div>
-        )}
-
-        {/* ── iOS: Restore Purchases ── */}
-        {iosMode && (
-          <div className="mb-4 text-center">
-            <button
-              onClick={handleRestore}
-              disabled={loading !== null}
-              className="text-sm text-gray-500 hover:text-gray-300 transition-colors disabled:opacity-40 flex items-center gap-1.5 mx-auto"
-            >
-              {loading === "restore" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-              Restore Purchases
-            </button>
-          </div>
-        )}
-
-        {/* ── iOS: Apple legal disclaimer ── */}
-        {iosMode && (
-          <p className="mb-4 text-center text-[10px] text-gray-700 px-4 leading-snug">
-            Payment charged to Apple ID at confirmation. Subscription auto-renews unless cancelled at least 24h before the end of the current period. Manage subscriptions in App Store settings.
-          </p>
-        )}
-
-        {/* ── Web: Trust row ── */}
-        {!iosMode && <div className="mb-8 grid grid-cols-3 gap-3 text-center">
-          {[
-            { icon: "🔒", label: "SSL Encrypted"  },
-            { icon: "🍋", label: "Powered by Lemon Squeezy" },
-            { icon: "↩️",  label: "30-Day Refund"  },
-          ].map(({ icon, label }) => (
-            <div key={label} className="rounded-xl border border-[#1E1E1E] bg-[#111111] py-3 px-2">
-              <p className="text-lg mb-1">{icon}</p>
-              <p className="text-[10px] text-gray-500 font-semibold leading-tight">{label}</p>
-            </div>
-          ))}
-        </div>}
-
-        {/* ── Terms agreement ── */}
-        <p className="mb-4 text-center text-xs text-gray-400 leading-snug">
-          By subscribing, you agree to our{" "}
-          <Link href="/terms" className="text-gray-300 underline hover:text-white transition-colors">Terms of Service</Link>
-          {" "}and{" "}
-          <Link href="/privacy" className="text-gray-300 underline hover:text-white transition-colors">Privacy Policy</Link>.
-        </p>
-
-        <div className="mt-2 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-gray-400 transition-colors">
-            ← Back to home
-          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-function AppleIconLg({ className }: { className?: string }) {
+function AppleIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={`h-4 w-4 flex-shrink-0 fill-current ${className ?? "text-black"}`}>
+    <svg viewBox="0 0 24 24" className={`h-3 w-3 flex-shrink-0 fill-current ${className ?? "text-black"}`}>
       <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.58 2.95-1.39z" />
     </svg>
   );
