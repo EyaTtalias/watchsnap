@@ -109,18 +109,10 @@ export async function createCheckoutUrl(opts: {
   const rawUrl = json?.data?.attributes?.url;
   if (!rawUrl) throw new Error("LemonSqueezy did not return a checkout URL");
 
-  // Append ?locale=en to force English regardless of store default / browser language.
-  // Uses URLSearchParams so it is encoded correctly and never duplicated.
-  let finalUrl: string;
-  try {
-    const u = new URL(rawUrl);
-    u.searchParams.set("locale", "en");
-    finalUrl = u.toString();
-  } catch {
-    // Fallback: rawUrl already has params → append with & or ?
-    const sep = rawUrl.includes("?") ? "&" : "?";
-    finalUrl = `${rawUrl}${sep}locale=en`;
-  }
-
-  return finalUrl;
+  // Return the URL exactly as LemonSqueezy returned it.
+  // LemonSqueezy checkout URLs are signed — any modification (including appending
+  // query parameters like ?locale=en) invalidates the signature and causes
+  // "Invalid signature. Sorry, you are forbidden from accessing this page."
+  // Locale is already set via checkout_options.locale in the API request body above.
+  return rawUrl;
 }
