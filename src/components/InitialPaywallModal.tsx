@@ -28,11 +28,6 @@ export function InitialPaywallModal() {
     return () => { document.body.style.overflow = ""; };
   }, [show]);
 
-  const dismiss = () => {
-    setVisible(false);
-    setTimeout(() => setShow(false), 350);
-  };
-
   const handleSubscribe = async (plan: "monthly" | "annual") => {
     setLoading(plan);
     try {
@@ -61,10 +56,9 @@ export function InitialPaywallModal() {
     /* ── full-screen backdrop ── */
     <div className="fixed inset-0 z-[250]">
 
-      {/* semi-transparent overlay — click to dismiss */}
+      {/* semi-transparent overlay — intentionally non-dismissible */}
       <div
         className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
-        onClick={dismiss}
       />
 
       {/* bottom-sheet container */}
